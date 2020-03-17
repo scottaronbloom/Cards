@@ -22,6 +22,10 @@
 
 set(qtproject_SRCS
     MainWindow.cpp
+    Card.cpp
+    Hand.cpp
+    Game.cpp
+    Player.cpp
 )
 
 set(qtproject_H
@@ -29,6 +33,10 @@ set(qtproject_H
 )
 
 set(project_H
+    Game.h
+    Hand.h
+    Card.h
+    Player.h
 )
 
 set(qtproject_UIS

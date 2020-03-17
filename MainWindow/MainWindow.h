@@ -20,120 +20,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef _Cards_H
-#define _Cards_H
+#ifndef _MAINWINDOW_H
+#define _MAINWINDOW_H
 
 #include <QDialog>
 #include <memory>
 #include <unordered_map>
 #include <functional>
 #include <list>
+class CGame;
 namespace Ui {class CMainWindow;};
-
-class QStringListModel;
-class QAbstractButton;
-
-enum class ETrigOperator
-{
-    eSin,
-    eArcSin,
-    eSinH,
-    eCos,
-    eArcCos,
-    eCosH,
-    eTan,
-    eArcTan,
-    eTanH,
-    eSec,
-    eArcSec,
-    eSecH,
-    eCsc,
-    eArcCsc,
-    eCscH,
-    eCot,
-    eArcCot,
-    eCotH
-};
 
 class CMainWindow : public QDialog
 {
     Q_OBJECT
-
 public:
     CMainWindow(QWidget *parent = 0);
     ~CMainWindow();
-    void keyPressEvent( QKeyEvent * event );
-
-    int numValues() const;
-    bool eventFilter(QObject *obj, QEvent *event);
-    
 public slots:
-    void binaryOperatorClicked( char op );
-
-    void btnEnterClicked();
-
-    void btnCClicked();
-    void btnDelClicked();
-    void btnBSClicked();
-
-    void btnAverageClicked();
-
-    void btnMedianClicked();
-
-    void btnStdDeviationClicked();
-    void btnSampleStdDeviationClicked();
-    void btnPctStdDeviationClicked();
-
-    void btnNarcissisticClicked();
-    void btnFactorsClicked( bool incNum );
-
-    void reportPrime( std::list<int64_t>& factors, int64_t curr, bool incNum, int numShowsPrime );
-
-    void btnPrimeFactorsClicked();
-    void btnPerfectClicked();
-    void btnSemiPerfectClicked();
-
-    void btnWeirdClicked();
-    void btnSublimeClicked();
-    void btnAbundantClicked();
-    void btnFactorialClicked();
-    void btnFactorClicked();
-
-    void slotDataChanged();
-    void slotNegate();
-    void slotPercent();
-    void slotInvert();
-    void slotSquare();
-    void slotSquareRoot();
+    void slotReshuffle();
+    void slotNextDealer();
 private:
-    void trigOperatorClicked( ETrigOperator op );
-
-    double getMean();
-    std::pair< double, double > calcStdDeviation( bool sample );
-
-    template< typename T >
-    T getLastValue( bool popLast );
-    template< typename T >
-    std::vector<T> getAllValues( bool sorted );
-    void addValue( char value );
-    void addLastValue( double value );
-    void addLastValue( bool value );
-    void addLastValue( int64_t value );
-    void addLastValue( const QString & newValue );
-
-    double pi() const;
-    double degToRad( double degrees ) const;
-    double radToDeg( double radians ) const;
-
     std::unique_ptr< Ui::CMainWindow > fImpl;
-    QStringListModel * fModel;
-
-    void initMaps();
-    using TBinaryOpFunc = std::function< double( double, double ) >;
-    std::unordered_map< char, TBinaryOpFunc > fOpMap;
-    std::unordered_map< QAbstractButton*, int32_t > fNumRowsPerFunctionMap;
-    using TKeyPressedFunction = std::function< void( void ) >;
-    std::unordered_map< int, TKeyPressedFunction > fKeyMap;
+    std::shared_ptr< CGame > fGame;
 };
 
 #endif // _ALCULATOR_H
