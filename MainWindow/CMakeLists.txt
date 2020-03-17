@@ -42,3 +42,4 @@ add_library(MainWindow STATIC
     ${qtproject_QRC_SOURCES}
     ${_CMAKE_FILES}
 )
+set_target_properties( MainWindow PROPERTIES FOLDER Libs )

@@ -27,69 +27,74 @@ endif()
 
 project(CardGame) 
 
-SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/Modules ${CMAKE_MODULE_PATH})
+SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/Utils/Modules ${CMAKE_MODULE_PATH})
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 find_package(Threads)
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
-
 find_package(Deploy REQUIRED)
+option( gtest_force_shared_crt "Use shared ( DLL ) run-time lib even when Google Test is built as static lib." ON ) 
+add_subdirectory( googletest ) 
+set_target_properties( gmock PROPERTIES FOLDER 3rdParty/google  )
+set_target_properties( gmock_main PROPERTIES FOLDER 3rdParty/google )
+set_target_properties( gtest PROPERTIES FOLDER 3rdParty/google )
+set_target_properties( gtest_main PROPERTIES FOLDER 3rdParty/google )
+set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
-SET(CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/Install)
-IF(${CMAKE_INSTALL_CONFIG_NAME} MATCHES "^([Dd][Ee][Bb][Uu][Gg])$")
-    SET(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}.debug)
-ENDIF()
+SET( CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/Install )
+IF( ${CMAKE_INSTALL_CONFIG_NAME} MATCHES "^( [Dd][Ee][Bb][Uu][Gg] )$" )
+    SET( CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}.debug )
+ENDIF(  )
 
 INSTALL( CODE "
         MESSAGE( STATUS \"Making a \${CMAKE_INSTALL_CONFIG_NAME} install area\" )
-        IF(\${CMAKE_INSTALL_CONFIG_NAME} MATCHES \"^([Dd][Ee][Bb][Uu][Gg])$\")
-            SET(CMAKE_INSTALL_PREFIX \${CMAKE_INSTALL_PREFIX}.debug)
-        ENDIF()
+        IF( \${CMAKE_INSTALL_CONFIG_NAME} MATCHES \"^([Dd][Ee][Bb][Uu][Gg])$\" )
+            SET( CMAKE_INSTALL_PREFIX \${CMAKE_INSTALL_PREFIX}.debug )
+        ENDIF(  )
         MESSAGE( STATUS \"Installing to \${CMAKE_INSTALL_PREFIX}\" )
-    ")
+    " )
 
-add_subdirectory(Utils)
-add_subdirectory(MainWindow)
-
+add_subdirectory( Utils )
+add_subdirectory( MainWindow )
 
 include( include.cmake )
-include(Utils/Project.cmake)
+include( Utils/Project.cmake )
 
-add_executable(CardGame WIN32
-    ${project_SRCS} 
-    ${project_H}  
-    ${qtproject_SRCS} 
-    ${qtproject_QRC} 
-    ${qtproject_QRC_SRCS} 
-    ${qtproject_UIS_H} 
-    ${qtproject_MOC_SRCS} 
-    ${qtproject_H} 
-    ${qtproject_UIS}
-    ${qtproject_QRC_SOURCES}
-    ${_CMAKE_FILES}
-    ${_CMAKE_MODULE_FILES}
-)
+add_executable( CardGame WIN32
+                 ${project_SRCS} 
+                 ${project_H} 
+                 ${qtproject_SRCS} 
+                 ${qtproject_QRC} 
+                 ${qtproject_QRC_SRCS} 
+                 ${qtproject_UIS_H} 
+                 ${qtproject_MOC_SRCS} 
+                 ${qtproject_H} 
+                 ${qtproject_UIS}
+                 ${qtproject_QRC_SOURCES}
+                 ${_CMAKE_FILES}
+                 ${_CMAKE_MODULE_FILES}
+          )
+set_target_properties( CardGame PROPERTIES FOLDER Apps )
+          
 target_link_libraries( CardGame 
-    Qt5::Widgets
-    Qt5::Core
-    SABUtils
-    MainWindow
-)
-SET(CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION .)
+                 Qt5::Widgets
+                 Qt5::Core
+                 SABUtils
+                 MainWindow
+          )
+SET( CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION . )
 
 DeployQt( CardGame . )
 DeploySystem( CardGame )
 
-INSTALL(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION . )
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/${PROJECT_NAME}.pdb DESTINATION . CONFIGURATIONS Debug )
+INSTALL( TARGETS ${PROJECT_NAME} RUNTIME DESTINATION . )
+INSTALL( FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/${PROJECT_NAME}.pdb DESTINATION . CONFIGURATIONS Debug )
 
 
-SET(CPACK_PACKAGE_VENDOR "Scott Aron Bloom")
-SET(CPACK_PACKAGE_VERSION_MAJOR "1")
-SET(CPACK_PACKAGE_VERSION_MINOR "0")
-SET(CPACK_PACKAGE_VERSION_PATCH "0")
-SET(CPACK_GENERATOR ZIP )
-include(CPack)
+SET( CPACK_PACKAGE_VENDOR "Scott Aron Bloom" )
+SET( CPACK_PACKAGE_VERSION_MAJOR "1" )
+SET( CPACK_PACKAGE_VERSION_MINOR "0" )
+SET( CPACK_PACKAGE_VERSION_PATCH "0" )
+SET( CPACK_GENERATOR ZIP )
+include( CPack )
