@@ -29,11 +29,12 @@ project(CardGame)
 
 SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/Utils/Modules ${CMAKE_MODULE_PATH})
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 find_package(Threads)
 find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 find_package(Deploy REQUIRED)
+find_package(AddUnitTest REQUIRED)
 option( gtest_force_shared_crt "Use shared ( DLL ) run-time lib even when Google Test is built as static lib." ON ) 
 add_subdirectory( googletest ) 
 set_target_properties( gmock PROPERTIES FOLDER 3rdParty/google  )
@@ -55,7 +56,9 @@ INSTALL( CODE "
         MESSAGE( STATUS \"Installing to \${CMAKE_INSTALL_PREFIX}\" )
     " )
 
+add_custom_target( SABTests_Utils )
 add_subdirectory( Utils )
+add_subdirectory( Utils/UnitTests )
 add_subdirectory( MainWindow )
 
 include( include.cmake )

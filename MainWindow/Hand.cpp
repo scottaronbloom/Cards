@@ -548,7 +548,7 @@ ECard CHand::getMaxCard() const
     auto value = cardsOrValue() >> 16;
     if ( isStraight() && ( value == kWheel ) )
         return ECard::eFive;
-    auto pos = NUtils::find_last_index_of_bit_set( value );
+    auto pos = NUtils::findLargestIndexInBitSet( value );
     if ( pos.has_value() )
         return static_cast< ECard >( pos.value() );
     else 
