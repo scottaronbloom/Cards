@@ -38,11 +38,15 @@ public:
     CMainWindow(QWidget *parent = 0);
     ~CMainWindow();
 public slots:
-    void slotReshuffle();
+    void slotDeal();
+    void slotAutoDeal();
+    void slotRunAutoDeal();
     void slotNextDealer();
+    void slotPrevDealer();
 private:
     std::unique_ptr< Ui::CMainWindow > fImpl;
     std::shared_ptr< CGame > fGame;
+    bool fAutoDealing{ false };
 };
 
 #endif // _ALCULATOR_H

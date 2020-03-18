@@ -57,9 +57,12 @@ INSTALL( CODE "
     " )
 
 add_custom_target( SABTests_Utils )
+add_custom_target( SABTests_Cards )
 add_subdirectory( Utils )
 add_subdirectory( Utils/UnitTests )
 add_subdirectory( MainWindow )
+add_subdirectory( Cards )
+add_subdirectory( Cards/UnitTests )
 
 include( include.cmake )
 include( Utils/Project.cmake )
@@ -85,6 +88,7 @@ target_link_libraries( CardGame
                  Qt5::Core
                  SABUtils
                  MainWindow
+                 Cards
           )
 SET( CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION . )
 

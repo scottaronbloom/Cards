@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>810</width>
+    <width>625</width>
     <height>562</height>
    </rect>
   </property>
@@ -37,26 +37,69 @@
      </property>
     </spacer>
    </item>
-   <item row="0" column="0" colspan="3">
-    <widget class="QTextEdit" name="data"/>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="reshuffle">
+   <item row="1" column="1">
+    <widget class="QPushButton" name="autoDeal">
      <property name="text">
-      <string>Re-Shuffle</string>
+      <string>Auto Deal</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QPushButton" name="nextDealer">
+   <item row="1" column="2">
+    <widget class="QPushButton" name="deal">
      <property name="text">
-      <string>Next Dealer</string>
+      <string>Deal</string>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="3">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <widget class="QWidget" name="">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Game:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="data">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Stats:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="stats">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>data</tabstop>
+ </tabstops>
  <resources>
   <include location="application.qrc"/>
  </resources>

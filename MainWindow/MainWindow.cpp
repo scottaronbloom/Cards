@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 #include "MainWindow.h"
-#include "Game.h"
+#include "Cards/Game.h"
 #include "ui_MainWindow.h"
 
 #include <QTimer>
@@ -32,25 +32,61 @@ CMainWindow::CMainWindow( QWidget* parent )
 {
     fImpl->setupUi( this );
     fGame = std::make_shared< CGame >();
+    fGame->createPlayers();
 
-    connect( fImpl->reshuffle, &QPushButton::clicked, this, &CMainWindow::slotReshuffle );
-    connect( fImpl->nextDealer, &QPushButton::clicked, this, &CMainWindow::slotNextDealer );
-    QTimer::singleShot( 0, this, &CMainWindow::slotReshuffle );
+    (void)connect( fImpl->deal, &QPushButton::clicked, this, &CMainWindow::slotDeal );
+    (void)connect( fImpl->autoDeal, &QPushButton::clicked, this, &CMainWindow::slotAutoDeal );
+    //QTimer::singleShot( 0, this, &CMainWindow::slotDeal );
 }
 
 CMainWindow::~CMainWindow()
 {
 }
 
-void CMainWindow::slotReshuffle()
+void CMainWindow::slotDeal()
 {
-    fGame->shuffle();
+    fGame->nextDealer();
+    fGame->shuffleAndDeal();
     fImpl->data->setPlainText( fGame->dumpGame() );
+    fImpl->stats->setPlainText( fGame->dumpStats() );
 }
+
+void CMainWindow::slotAutoDeal()
+{
+    fAutoDealing = !fAutoDealing;
+    fImpl->autoDeal->setText( fAutoDealing ? "Stop Auto Deal" : "Auto Deal" );
+    slotRunAutoDeal();
+}
+
+void CMainWindow::slotRunAutoDeal()
+{
+    if ( fAutoDealing )
+    {
+        fGame->nextDealer();
+        fGame->shuffleAndDeal();
+        int interval = 100;
+#ifndef _DEBUG
+        interval = 10000;
+#endif
+        if ( ( fGame->numGames() % interval ) == 0 )
+        {
+            fImpl->data->setPlainText( fGame->dumpGame() );
+            fImpl->stats->setPlainText( fGame->dumpStats() );
+        }
+        QTimer::singleShot( 0, this, &CMainWindow::slotRunAutoDeal );
+    }
+}
+
 
 void CMainWindow::slotNextDealer()
 {
     fGame->nextDealer();
+    fImpl->data->setPlainText( fGame->dumpGame() );
+}
+
+void CMainWindow::slotPrevDealer()
+{
+    fGame->prevDealer();
     fImpl->data->setPlainText( fGame->dumpGame() );
 }
 
