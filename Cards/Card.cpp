@@ -157,9 +157,12 @@ CCard::~CCard()
 }
 
 
-QString CCard::toString( bool verbose ) const
+QString CCard::toString( bool verbose, bool includeBitValue ) const
 {
-    return ::toString( fCard, verbose ) + ::toString( fSuit, verbose ) + " - " + QString::fromStdString( fBitValue.to_string() );
+    auto retVal = ::toString( fCard, verbose ) + ::toString( fSuit, verbose );
+    if ( includeBitValue )
+        retVal += + " - " + QString::fromStdString( fBitValue.to_string() );
+    return retVal;
 }
 
 bool CCard::operator<( const CCard& rhs ) const

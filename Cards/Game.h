@@ -23,8 +23,9 @@
 #ifndef _GAME_H
 #define _GAME_H
 
+#include "Utils/QtUtils.h"
 #include <memory>
-
+#include <unordered_map>
 #include <vector>
 #include <QString>
 
@@ -51,6 +52,7 @@ public:
     void resetGames();
     size_t numGames() const{ return fGames.size(); }
     QString dumpStats() const;
+    std::shared_ptr< CCard > getCard( const QString & cardName ) const;
 private:
     void createDeck();
 
@@ -63,6 +65,7 @@ private:
     std::weak_ptr< CPlayer > fDealer;
     std::vector< std::shared_ptr< CCard > > fCards; // original and sorted
     std::vector< std::shared_ptr< CCard > > fShuffledCards;
+    std::unordered_map< QString, std::shared_ptr< CCard > > fCardMap;
 
     std::vector< std::pair< EHand, std::weak_ptr< CPlayer > > > fGames;
     std::vector< uint64_t > fWinsByHand;

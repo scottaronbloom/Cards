@@ -526,7 +526,7 @@ QString CHand::toString() const
     retVal += "Cards:\n";
     for ( auto&& ii : fCards )
     {
-        retVal += ii->toString( false ) + "\n";
+        retVal += ii->toString( false, true ) + "\n";
     }
     retVal += "HAND: " + determineHandName();
     return retVal;

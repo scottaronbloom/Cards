@@ -24,3 +24,5 @@ SAB_UNIT_TEST(CardTester
     "${QT_LIBRARIES};Cards;gmock"
     )
 
+DeployQt( Cards_CardTester . )
+include_directories( ${CMAKE_SOURCE_DIR} )

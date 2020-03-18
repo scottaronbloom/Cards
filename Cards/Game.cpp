@@ -120,6 +120,8 @@ void CGame::createDeck()
         {
             auto card = std::make_shared< CCard >( currCard, currSuit );
             fCards.push_back( card );
+            fCardMap[ card->toString( false, false ) ] = card;
+            fCardMap[ card->toString( true, false ) ] = card;
         }
     }
 }
@@ -133,7 +135,7 @@ QString CGame::dumpDeck( bool shuffled ) const
         "=================================\n";
     for ( auto&& ii : ( shuffled ? fShuffledCards : fCards ) )
     {
-        data += ii->toString( false ) + "\n";
+        data += ii->toString( false, true ) + "\n";
     }
     return data;
 }
@@ -245,5 +247,12 @@ void CGame::dealCards()
 
     fWinsByHand[ static_cast< size_t >( hand ) ]++;
     fWinsByPlayer[ (*winner)->playerID() ]++;
+}
 
+std::shared_ptr< CCard > CGame::getCard( const QString & cardName ) const
+{
+    auto pos = fCardMap.find( cardName );
+    if ( pos == fCardMap.end() )
+        return nullptr;
+    return (*pos).second;
 }

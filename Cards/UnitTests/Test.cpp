@@ -17,7 +17,9 @@
  *
  *
 */
-#include "../Game.h"
+#include "Cards/Game.h"
+#include "Cards/Player.h"
+#include "Cards/Hand.h"
 
 #include <string>
 #include "gmock/gmock.h"
@@ -50,7 +52,18 @@ namespace
         CGame * fGame{nullptr};
     };
 
-    TEST_F(CHandTester, Basic) {
+    TEST_F(CHandTester, Flushes) {
+        auto p1 = fGame->addPlayer( "Scott" );
+
+        for( )
+        p1->addCard( fGame->getCard( "AH" ) );
+        p1->addCard( fGame->getCard( "KH" ) );
+        p1->addCard( fGame->getCard( "QH" ) );
+        p1->addCard( fGame->getCard( "JH" ) );
+        p1->addCard( fGame->getCard( "TH" ) );
+
+        auto hand =p1->determineHand();
+        EXPECT_EQ( EHand::eStraightFlush, std::get< 0 >( hand ) );
     }
 
 }  // namespace

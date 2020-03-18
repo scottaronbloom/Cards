@@ -31,7 +31,7 @@
 #include <map>
 
 class CCard;
-enum class ECard : uint8_t;
+enum class ECard;
 enum class EHand
 {
     eStraightFlush,

@@ -39,7 +39,7 @@ DECLARE_ENUM_ITERATORS( ESuit, ESuit::eSpades, ESuit::eClubs );
 QString toString( ESuit suit, bool verbose );
 uint8_t toBitValue( ESuit suit );
 
-enum class ECard : uint8_t
+enum class ECard
 {
     eUNKNOWN=99,
     eTwo=0,
@@ -71,7 +71,7 @@ public:
     CCard( ECard card, ESuit suit );
     virtual ~CCard();
 
-    QString toString( bool verbose ) const;
+    QString toString( bool verbose, bool includeBitValue ) const;
     TCardBitType bitValue() const{ return fBitValue; }
 
     ESuit getSuit() const{ return fSuit; }

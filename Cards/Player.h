@@ -29,6 +29,7 @@
 
 class CHand;
 class CCard;
+enum class ECard;
 enum class EHand;
 class CPlayer 
 {
@@ -58,6 +59,7 @@ public:
     size_t playerID() const { return fPlayerID; }
 
     EHand hand() const;
+    std::tuple< EHand, std::vector< ECard >, std::vector< ECard > >  determineHand() const;// hand, mycard, kicker cards
 public:
     void addCard( std::shared_ptr< CCard > & card );
     void clearCards();

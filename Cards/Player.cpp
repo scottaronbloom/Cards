@@ -65,6 +65,12 @@ EHand CPlayer::hand() const
     return std::get< 0 >( fHand->determineHand() );
 }
 
+
+std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CPlayer::determineHand() const// hand, mycard, kicker cards
+{
+    return fHand->determineHand();
+}
+
 void CPlayer::addCard( std::shared_ptr< CCard >& card )
 {
     fHand->addCard( card );
