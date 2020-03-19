@@ -32,6 +32,22 @@
 class CCard;
 class CPlayer;
 enum class EHand;
+enum class ECard;
+enum class ESuit : uint8_t;
+
+namespace std
+{
+    template <>
+    struct hash< std::pair< ECard, ESuit > >
+    {
+        std::size_t operator()( const std::pair< ECard, ESuit > & k ) const
+        {
+            auto h1 = std::hash< uint64_t >{}( static_cast< uint64_t >( k.first ) );
+            auto h2 = std::hash< uint64_t >{}( static_cast<uint64_t>( k.second ) );
+            return h1 ^ (h2<<1);
+        }
+    };
+}
 
 class CGame 
 {
@@ -53,6 +69,7 @@ public:
     size_t numGames() const{ return fGames.size(); }
     QString dumpStats() const;
     std::shared_ptr< CCard > getCard( const QString & cardName ) const;
+    std::shared_ptr< CCard > getCard( ECard card, ESuit suit ) const;
 private:
     void createDeck();
 
@@ -65,7 +82,8 @@ private:
     std::weak_ptr< CPlayer > fDealer;
     std::vector< std::shared_ptr< CCard > > fCards; // original and sorted
     std::vector< std::shared_ptr< CCard > > fShuffledCards;
-    std::unordered_map< QString, std::shared_ptr< CCard > > fCardMap;
+    std::unordered_map< QString, std::shared_ptr< CCard > > fStringCardMap;
+    std::unordered_map< std::pair< ECard, ESuit >, std::shared_ptr< CCard > > fCardMap;
 
     std::vector< std::pair< EHand, std::weak_ptr< CPlayer > > > fGames;
     std::vector< uint64_t > fWinsByHand;

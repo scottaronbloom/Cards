@@ -23,12 +23,16 @@
 #ifndef _HAND_H
 #define _HAND_H
 
-#include "Card.h"
+#include "Utils/EnumUtils.h"
 
 #include <QString>
 #include <memory>
 #include <vector>
 #include <map>
+#include <optional>
+#include <bitset>
+
+using TCardBitType = std::bitset< 29 >;
 
 class CCard;
 enum class ECard;
@@ -47,7 +51,7 @@ enum class EHand
 DECLARE_ENUM_FUNCS_ARITHMETIC( EHand );
 DECLARE_ENUM_ITERATORS( EHand, EHand::eStraightFlush, EHand::eHighCard );
 QString toString( EHand hand, bool format );
-
+std::ostream & operator<<( std::ostream& oss, EHand value );
 
 class CHand
 {
@@ -76,6 +80,7 @@ private:
     TCardBitType cardsOrValue() const;
 
     std::vector< std::shared_ptr< CCard > > fCards;
+    mutable std::optional< std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > > fHand;
 };
 
 #endif // _ALCULATOR_H

@@ -129,6 +129,18 @@ uint8_t toBitValue( ESuit suit )
     return static_cast< uint8_t >( suit );
 }
 
+std::ostream & operator<<( std::ostream& oss, ESuit suit )
+{
+    oss << toString( suit, false ).toStdString();
+    return oss;
+}
+
+std::ostream & operator<<( std::ostream& oss, ECard suit )
+{
+    oss << toString( suit, false ).toStdString();
+    return oss;
+}
+
 uint8_t toRankValue( ECard card )
 {
     return static_cast<uint8_t>( card );

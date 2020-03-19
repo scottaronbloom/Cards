@@ -38,6 +38,7 @@ DECLARE_ENUM_FUNCS_ARITHMETIC_ONEHOT( ESuit );
 DECLARE_ENUM_ITERATORS( ESuit, ESuit::eSpades, ESuit::eClubs );
 QString toString( ESuit suit, bool verbose );
 uint8_t toBitValue( ESuit suit );
+std::ostream & operator<<( std::ostream & oss, ESuit suit );
 
 enum class ECard
 {
@@ -63,6 +64,7 @@ uint8_t toPrimeValue( ECard card );
 uint16_t toBitValue( ECard card );
 ECard fromBitValue( uint16_t value );
 uint8_t toRankValue( ECard card );
+std::ostream & operator<<( std::ostream& oss, ECard card );
 
 using TCardBitType = std::bitset< 29 >;
 class CCard

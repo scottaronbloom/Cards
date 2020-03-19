@@ -21,11 +21,10 @@
 // SOFTWARE.
 
 #include "Hand.h"
+#include "Card.h"
 #include "Utils/utils.h"
 #include <unordered_set>
 #include <QStringList>
-
-static const uint16_t kWheel{ 0b01000000001111 };
 
 CHand::CHand()
 {
@@ -478,6 +477,12 @@ QString toString( EHand hand, bool format )
     return QString();
 }
 
+std::ostream & operator<<( std::ostream& oss, EHand value )
+{
+    oss << toString( value, false ).toStdString();
+    return oss;
+}
+
 bool CHand::operator<( const CHand& rhs ) const
 {
     bool isFlush = this->isFlush();
@@ -543,10 +548,25 @@ QString CHand::determineHandName() const
     return retVal;
 }
 
+enum EStraightType
+{
+    eAce   = 0b01111100000000, // AKQJT
+    eKing  = 0b00111110000000, // KQJT9
+    eQueen = 0b00011111000000, // QJT98
+    eJack  = 0b00001111100000, // JT987
+    eTen   = 0b00000111110000, // T9876
+    eNine  = 0b00000011111000, // 98765
+    eEight = 0b00000001111100, // 87654
+    eSeven = 0b00000000111110, // 76543
+    eSix   = 0b00000000011111, // 65432
+    eWheel = 0b01000000001111
+};
+
+
 ECard CHand::getMaxCard() const
 {
     auto value = cardsOrValue() >> 16;
-    if ( isStraight() && ( value == kWheel ) )
+    if ( isStraight() && ( value == EStraightType::eWheel ) )
         return ECard::eFive;
     auto pos = NUtils::findLargestIndexInBitSet( value );
     if ( pos.has_value() )
@@ -577,16 +597,16 @@ bool CHand::isStraight() const
 {
     static std::unordered_set< uint16_t > sStraights =
     {
-        0b01111100000000, // AKQJT
-        0b00111110000000, // KQJT9
-        0b00011111000000, // QJT98
-        0b00001111100000, // JT987
-        0b00000111110000, // T9876
-        0b00000011111000, // 98765
-        0b00000001111100, // 87654
-        0b00000000111110, // 76543
-        0b00000000011111, // 65432
-        kWheel  // 5432A
+        EStraightType::eAce, // AKQJT
+        EStraightType::eKing, // KQJT9
+        EStraightType::eQueen, // QJT98
+        EStraightType::eJack, // JT987
+        EStraightType::eTen, // T9876
+        EStraightType::eNine, // 98765
+        EStraightType::eEight, // 87654
+        EStraightType::eSeven, // 76543
+        EStraightType::eSix, // 65432
+        EStraightType::eWheel  // 5432A
     };
     auto value = get5CardValue();
     return sStraights.find( value ) != sStraights.end();
@@ -595,15 +615,18 @@ bool CHand::isStraight() const
 // hand my cards kickers
 std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CHand::determineHand() const
 {
+    if ( fHand.has_value() )
+        return *fHand;
+
     if ( isFlush() )
     {
         if ( isStraight() )
-            return std::make_tuple( EHand::eStraightFlush, std::vector< ECard >( { getMaxCard() } ), std::vector< ECard >() );
+            return *( fHand = std::make_tuple( EHand::eStraightFlush, std::vector< ECard >( { getMaxCard() } ), std::vector< ECard >() ) );
         else
-            return std::make_tuple( EHand::eFlush, std::vector< ECard >( { getMaxCard() } ), std::vector< ECard >() );
+            return *( fHand = std::make_tuple( EHand::eFlush, std::vector< ECard >( { getMaxCard() } ), std::vector< ECard >() ) );
     }
     if ( isStraight() )
-        return std::make_tuple( EHand::eStraight, std::vector< ECard >( { getMaxCard() } ), std::vector< ECard >() );
+        return *( fHand = std::make_tuple( EHand::eStraight, std::vector< ECard >( { getMaxCard() } ), std::vector< ECard >() ) );
 
     std::map< ECard, uint8_t > cardHits;
     for( auto && card : fCards)
@@ -623,19 +646,24 @@ std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CHand::determine
 
         auto firstCount = cardHits.begin()->second;
         auto secondCount = cardHits.rbegin()->second;
-        if ( firstCount > secondCount )
+        if ( secondCount > firstCount )
+        {
             std::swap( firstCard, secondCard );
+            std::swap( firstCount, secondCount );
+        }
 
-        if ( firstCount == 4 )
+
+        if ( ( firstCount == 4 ) && ( secondCount == 1 ) )
         {
             hand = EHand::eFourOfAKind;
             cards = std::vector< ECard >( { firstCard } );
             kickers = std::vector< ECard >( { secondCard } );
         }
-        else if ( secondCount == 3 )
+        else if ( ( firstCount == 3 ) && ( secondCount == 2 ) )
         {
             hand = EHand::eFullHouse;
-            cards = std::vector< ECard >( { firstCard, secondCard } );
+            cards = std::vector< ECard >( { firstCard } );
+            kickers = std::vector< ECard >( { secondCard } );
         }
     }
     else if ( cardHits.size() == 3 )
@@ -679,7 +707,7 @@ std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CHand::determine
     else // if ( cardHits.size() == 5 )
     {
         hand = EHand::eHighCard;
-        for ( auto&& ii : cardHits )
+        for ( auto && ii : cardHits )
         {
             cards.push_back( ii.first );
         }
@@ -688,17 +716,26 @@ std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CHand::determine
     }
     std::sort( kickers.begin(), kickers.end(), []( ECard lhs, ECard rhs ){ return lhs > rhs; } );
     std::sort( cards.begin(), cards.end(), []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
-    return std::make_tuple( hand, cards, kickers );
+    if ( hand == EHand::eHighCard )
+    {
+        kickers = cards;
+        kickers.erase( kickers.begin(), ++kickers.begin() );
+        cards.erase( ++cards.begin(), cards.end() );
+    }
+
+    return *( fHand = std::make_tuple( hand, cards, kickers ) );
 }
 
 void CHand::addCard( std::shared_ptr< CCard >& card )
 {
+    Q_ASSERT( card );
     fCards.push_back( card );
 }
 
 void CHand::clearCards()
 {
     fCards.clear();
+    fHand.reset();
 }
 
 TCardBitType CHand::cardsAndValue() const

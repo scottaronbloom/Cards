@@ -120,8 +120,9 @@ void CGame::createDeck()
         {
             auto card = std::make_shared< CCard >( currCard, currSuit );
             fCards.push_back( card );
-            fCardMap[ card->toString( false, false ) ] = card;
-            fCardMap[ card->toString( true, false ) ] = card;
+            fStringCardMap[ card->toString( false, false ) ] = card;
+            fStringCardMap[ card->toString( true, false ) ] = card;
+            fCardMap[ std::make_pair( currCard, currSuit ) ] = card;
         }
     }
 }
@@ -196,23 +197,16 @@ std::shared_ptr< CPlayer > CGame::addPlayer( const QString & name )
 
 void CGame::shuffleDeck()
 {
-    std::unordered_set< size_t > usedCards;
 
     std::random_device rd;
     std::mt19937_64 gen( rd() );
-    std::uniform_int_distribution<> dis( 0, 51 );
-
-    fShuffledCards.clear();
-    for( size_t ii = 0; ii < fCards.size(); ++ii )
-    {
-        size_t value = dis( gen );
-        while( usedCards.find( value ) != usedCards.end() )
-        {
-            value = dis( gen );
-        }
-        fShuffledCards.push_back( fCards[ value ] );
-        usedCards.insert( value );
-    }
+    fShuffledCards = fCards;
+    std::shuffle( fShuffledCards.begin(), fShuffledCards.end(), gen );
+    std::shuffle( fShuffledCards.begin(), fShuffledCards.end(), gen );
+    std::shuffle( fShuffledCards.begin(), fShuffledCards.end(), gen );
+    std::shuffle( fShuffledCards.begin(), fShuffledCards.end(), gen );
+    std::shuffle( fShuffledCards.begin(), fShuffledCards.end(), gen );
+    std::shuffle( fShuffledCards.begin(), fShuffledCards.end(), gen );
 }
 
 void CGame::dealCards()
@@ -251,8 +245,16 @@ void CGame::dealCards()
 
 std::shared_ptr< CCard > CGame::getCard( const QString & cardName ) const
 {
-    auto pos = fCardMap.find( cardName );
-    if ( pos == fCardMap.end() )
+    auto pos = fStringCardMap.find( cardName );
+    if ( pos == fStringCardMap.end() )
         return nullptr;
     return (*pos).second;
+}
+
+std::shared_ptr< CCard > CGame::getCard( ECard card, ESuit suit ) const
+{
+    auto pos = fCardMap.find( std::make_pair( card, suit ) );
+    if ( pos == fCardMap.end() )
+        return nullptr;
+    return ( *pos ).second;
 }
