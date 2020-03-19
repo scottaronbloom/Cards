@@ -27,6 +27,7 @@
 #include <random>
 #include <unordered_set>
 
+#include <QLocale>
 CGame::CGame()
 {
     createDeck();
@@ -84,22 +85,31 @@ void CGame::prevDealer()
 
 QString CGame::dumpStats() const
 {
+    QLocale locale;
     QString retVal = 
-        QString( "Number of Games: %1\n" ).arg( fGames.size() ) +
+        QString( "Number of Games: %1\n" ).arg( locale.toString( fGames.size() ) ) +
         "=================================\n";
-    retVal += QString( "Number of Games: %1\n" ).arg( fGames.size() );
-    "=================================\n";
-    retVal += QString( "Games Won by Hand:\n" );
-    for ( auto&& ii : EHand() )
-    {
-        retVal += QString( "\t%1 - %2 (%3%)\n" ).arg( ::toString( ii, false ) ).arg( fWinsByHand[ static_cast< size_t >( ii ) ] ).arg( (100.0* fWinsByHand[ static_cast<size_t>( ii ) ] )/fGames.size(), 0, 'g', 3, QChar( '0' ) );
-    }
-    retVal += "=================================\n";
+
     retVal += QString( "Games Won by Player:\n" );
     for ( size_t ii = 0; ii < fPlayers.size(); ++ii )
     {
-        retVal += QString( "\t%1 - %2 (%3%)\n" ).arg( fPlayers[ ii ]->name() ).arg( fWinsByPlayer[ static_cast<size_t>( ii ) ] ).arg( ( 100.0 * fWinsByPlayer[ static_cast<size_t>( ii ) ] ) / fGames.size(), 0, 'g', 3, QChar( '0' ) );
+        retVal += QString( "\t%1 - %2 (%3%)\n" ).arg( fPlayers[ ii ]->name() ).arg( locale.toString( fWinsByPlayer[ static_cast<size_t>( ii ) ] ) ).arg( locale.toString( ( 100.0 * fWinsByPlayer[ static_cast<size_t>( ii ) ] ) / fGames.size(), 'g', 3 ) );
     }
+    retVal += "=================================\n";
+
+    retVal += QString( "Games Won by Hand:\n" );
+    for ( auto&& ii : EHand() )
+    {
+        retVal += QString( "\t%1 - %2 (%3%)\n" ).arg( ::toString( ii, false ) ).arg( locale.toString( fWinsByHand[ static_cast< size_t >( ii ) ] ) ).arg( locale.toString( (100.0* fWinsByHand[ static_cast<size_t>( ii ) ] )/fGames.size(), 'g', 3 ) );
+    }
+    retVal += "=================================\n";
+
+    retVal += QString( "Hand Count:\n" );
+    for ( auto&& ii : EHand() )
+    {
+        retVal += QString( "\t%1 - %2 (%3%)\n" ).arg( ::toString( ii, false ) ).arg( locale.toString( fHandCount[ static_cast<size_t>( ii ) ] ) ).arg( locale.toString( ( 100.0 * fHandCount[ static_cast<size_t>( ii ) ] ) / fGames.size(), 'g', 3 ) );
+    }
+
     return retVal;
 }
 
@@ -171,8 +181,10 @@ void CGame::createPlayers()
 void CGame::resetGames()
 {
     fGames.clear(); 
-    fWinsByHand.clear(); 
-    fWinsByHand.resize( static_cast< size_t >( EHand::eHighCard ) + 1);
+    fHandCount.clear(); 
+    fHandCount.resize( static_cast< size_t >( EHand::eHighCard ) + 1);
+    fWinsByHand.clear();
+    fWinsByHand.resize( static_cast<size_t>( EHand::eHighCard ) + 1 );
     fWinsByPlayer.clear();
     fWinsByPlayer.resize( fPlayers.size() );
 }
@@ -233,13 +245,15 @@ void CGame::dealCards()
     auto winner = std::max_element( fPlayers.begin(), fPlayers.end(), 
                []( const std::shared_ptr< CPlayer > & lhs, const std::shared_ptr< CPlayer >& rhs )
                {
-                   return lhs->operator <( *rhs );// sort in descending order
+                   return !lhs->operator <( *rhs );// sort in descending order
                } );
     (*winner)->setWinner( true );
     auto hand = (*winner)->hand();
     fGames.push_back( std::make_pair( hand, *winner ) );
 
-    fWinsByHand[ static_cast< size_t >( hand ) ]++;
+    for( auto && ii : fPlayers )
+        fHandCount[ static_cast< size_t >( ii->hand() ) ]++;
+    fWinsByHand[ static_cast<size_t>( hand ) ]++;
     fWinsByPlayer[ (*winner)->playerID() ]++;
 }
 

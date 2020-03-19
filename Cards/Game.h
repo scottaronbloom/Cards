@@ -87,6 +87,7 @@ private:
 
     std::vector< std::pair< EHand, std::weak_ptr< CPlayer > > > fGames;
     std::vector< uint64_t > fWinsByHand;
+    std::vector< uint64_t > fHandCount;
     std::vector< uint64_t > fWinsByPlayer;
 
 };
