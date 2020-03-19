@@ -32,7 +32,6 @@ CMainWindow::CMainWindow( QWidget* parent )
 {
     fImpl->setupUi( this );
     fGame = std::make_shared< CGame >();
-    fGame->createPlayers();
 
     (void)connect( fImpl->deal, &QPushButton::clicked, this, &CMainWindow::slotDeal );
     (void)connect( fImpl->autoDeal, &QPushButton::clicked, this, &CMainWindow::slotAutoDeal );

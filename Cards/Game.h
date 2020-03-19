@@ -63,7 +63,6 @@ public:
     void prevDealer();
     void autoSetDealer();
     std::shared_ptr< CPlayer > addPlayer( const QString & name );
-    void createPlayers();
 
     void resetGames();
     size_t numGames() const{ return fGames.size(); }

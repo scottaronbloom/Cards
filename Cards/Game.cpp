@@ -164,20 +164,6 @@ QString CGame::dumpPlayers( ) const
     return data;
 }
 
-const int kScott{0};
-const int kCraig{ 1 };
-const int kKeith{ 2 };
-const int kEric{ 3 };
-
-void CGame::createPlayers()
-{
-    addPlayer( "Scott" )->setPlayerID( fPlayers.size() - 1 );
-    addPlayer( "Craig" )->setPlayerID( fPlayers.size() - 1 );
-    addPlayer( "Keith" )->setPlayerID( fPlayers.size() - 1 );
-    addPlayer( "Eric" )->setPlayerID( fPlayers.size() - 1 );
-}
-
-
 void CGame::resetGames()
 {
     fGames.clear(); 
