@@ -22,7 +22,7 @@
 
 #include "Hand.h"
 #include "Card.h"
-#include "Utils/utils.h"
+#include "SABUtils/utils.h"
 #include <unordered_set>
 #include <QStringList>
 

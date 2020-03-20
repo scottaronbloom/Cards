@@ -27,7 +27,7 @@ endif()
 
 project(CardGame) 
 
-SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/Utils/Modules ${CMAKE_MODULE_PATH})
+SET(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/SABUtils/Modules ${CMAKE_MODULE_PATH})
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
@@ -36,7 +36,7 @@ find_package(Qt5 COMPONENTS Core Widgets REQUIRED)
 find_package(Deploy REQUIRED)
 find_package(AddUnitTest REQUIRED)
 option( gtest_force_shared_crt "Use shared ( DLL ) run-time lib even when Google Test is built as static lib." ON ) 
-add_subdirectory( googletest ) 
+add_subdirectory( ${CMAKE_SOURCE_DIR}/googletest ) 
 set_target_properties( gmock PROPERTIES FOLDER 3rdParty/google  )
 set_target_properties( gmock_main PROPERTIES FOLDER 3rdParty/google )
 set_target_properties( gtest PROPERTIES FOLDER 3rdParty/google )
@@ -56,48 +56,14 @@ INSTALL( CODE "
         MESSAGE( STATUS \"Installing to \${CMAKE_INSTALL_PREFIX}\" )
     " )
 
-add_custom_target( SABTests_Utils )
+add_custom_target( SABTests_SABUtils )
 add_custom_target( SABTests_Cards )
-add_subdirectory( Utils )
-add_subdirectory( Utils/UnitTests )
+add_subdirectory( SABUtils )
+add_subdirectory( SABUtils/UnitTests )
 add_subdirectory( MainWindow )
 add_subdirectory( Cards )
 add_subdirectory( Cards/UnitTests )
-
-include( include.cmake )
-include( Utils/Project.cmake )
-
-add_executable( CardGame WIN32
-                 ${project_SRCS} 
-                 ${project_H} 
-                 ${qtproject_SRCS} 
-                 ${qtproject_QRC} 
-                 ${qtproject_QRC_SRCS} 
-                 ${qtproject_UIS_H} 
-                 ${qtproject_MOC_SRCS} 
-                 ${qtproject_H} 
-                 ${qtproject_UIS}
-                 ${qtproject_QRC_SOURCES}
-                 ${_CMAKE_FILES}
-                 ${_CMAKE_MODULE_FILES}
-          )
-set_target_properties( CardGame PROPERTIES FOLDER Apps )
-          
-target_link_libraries( CardGame 
-                 Qt5::Widgets
-                 Qt5::Core
-                 SABUtils
-                 MainWindow
-                 Cards
-          )
-SET( CMAKE_INSTALL_SYSTEM_RUNTIME_DESTINATION . )
-
-DeployQt( CardGame . )
-DeploySystem( CardGame )
-
-INSTALL( TARGETS ${PROJECT_NAME} RUNTIME DESTINATION . )
-INSTALL( FILES ${CMAKE_CURRENT_BINARY_DIR}/Debug/${PROJECT_NAME}.pdb DESTINATION . CONFIGURATIONS Debug )
-
+add_subdirectory( main )
 
 SET( CPACK_PACKAGE_VENDOR "Scott Aron Bloom" )
 SET( CPACK_PACKAGE_VERSION_MAJOR "1" )

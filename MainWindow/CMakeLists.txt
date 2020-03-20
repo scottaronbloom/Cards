@@ -27,7 +27,7 @@ endif()
 project( MainWindow )
 
 include( include.cmake )
-include( ${CMAKE_SOURCE_DIR}/Utils/Project.cmake )
+include( ${CMAKE_SOURCE_DIR}/SABUtils/Project.cmake )
 
 add_library(MainWindow STATIC
     ${project_SRCS} 

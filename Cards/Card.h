@@ -22,7 +22,7 @@
 
 #ifndef _CARDS_H
 #define _CARDS_H
-#include "Utils/EnumUtils.h"
+#include "SABUtils/EnumUtils.h"
 #include <bitset>
 #include <QString>
 

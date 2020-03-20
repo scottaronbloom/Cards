@@ -27,7 +27,7 @@ endif()
 project( Cards )
 
 include( include.cmake )
-include( ${CMAKE_SOURCE_DIR}/Utils/Project.cmake )
+include( ${CMAKE_SOURCE_DIR}/SABUtils/Project.cmake )
 
 add_library(Cards STATIC
     ${project_SRCS} 

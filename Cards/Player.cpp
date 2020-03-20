@@ -22,7 +22,7 @@
 
 #include "Player.h"
 #include "Hand.h"
-#include "Utils/utils.h"
+#include "SABUtils/utils.h"
 
 #include <QStringList>
 
