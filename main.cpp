@@ -28,6 +28,11 @@
 int main( int argc, char ** argv )
 {
     QApplication appl( argc, argv );
+    appl.setApplicationName( "CardGame" );
+    appl.setApplicationVersion( "0.9" );
+    appl.setOrganizationName( "Scott Aron Bloom" );
+    appl.setOrganizationDomain( "www.towel42.com" );
+
     Q_INIT_RESOURCE( application );
     CMainWindow mainWindow;
     return mainWindow.exec();

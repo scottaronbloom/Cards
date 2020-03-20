@@ -24,6 +24,7 @@
 #include "Cards/Game.h"
 #include "ui_MainWindow.h"
 
+#include <QSettings>
 #include <QTimer>
 
 CMainWindow::CMainWindow( QWidget* parent )
@@ -31,23 +32,86 @@ CMainWindow::CMainWindow( QWidget* parent )
     fImpl( new Ui::CMainWindow )
 {
     fImpl->setupUi( this );
+    using nameWidgetVector = std::vector< std::pair< QLabel*, QLineEdit* > >;
+    fNameWidgets = nameWidgetVector( 
+                { 
+                      { fImpl->playerLabel1, fImpl->playerName1 }
+                    , { fImpl->playerLabel2, fImpl->playerName2 }
+                    , { fImpl->playerLabel3, fImpl->playerName3 }
+                    , { fImpl->playerLabel4, fImpl->playerName4 }
+                    , { fImpl->playerLabel5, fImpl->playerName5 }
+                    , { fImpl->playerLabel6, fImpl->playerName6 }
+                    , { fImpl->playerLabel7, fImpl->playerName7 }
+                    , { fImpl->playerLabel8, fImpl->playerName8 }
+                    , { fImpl->playerLabel9, fImpl->playerName9 }
+                    , { fImpl->playerLabel10, fImpl->playerName10 }
+        }
+                );
     fGame = std::make_shared< CGame >();
 
     (void)connect( fImpl->deal, &QPushButton::clicked, this, &CMainWindow::slotDeal );
     (void)connect( fImpl->autoDeal, &QPushButton::clicked, this, &CMainWindow::slotAutoDeal );
-    //QTimer::singleShot( 0, this, &CMainWindow::slotDeal );
+    (void)connect( fImpl->numPlayers, static_cast< void( QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &CMainWindow::slotNumPlayersChanged );
+    for( size_t ii = 0; ii < fNameWidgets.size(); ++ii )
+    {
+        (void)connect( fNameWidgets[ ii ].second, &QLineEdit::editingFinished, this, 
+                       [=]()
+                       {
+                            if ( fGame->setPlayerName( ii, fNameWidgets[ ii ].second->text() ).first )
+                                showGame();
+                       } );
+    }
+
+    loadPlayers();
+    showGame();
 }
 
 CMainWindow::~CMainWindow()
 {
+    savePlayers();
+}
+
+void CMainWindow::loadPlayers()
+{
+    QStringList players = { "Scott", "Craig", "Eric", "Keith" };
+    
+    QSettings settings;
+    players = settings.value( "Players", players ).toStringList();
+    fImpl->numPlayers->setValue( players.count() );
+    for( int ii = 0; ii < players.count(); ++ii )
+    {
+        fNameWidgets[ ii ].second->setText( players[ ii ] );
+        fGame->setPlayerName( ii, players[ ii ] );
+    }
+}
+
+void CMainWindow::savePlayers()
+{
+    QStringList players;
+    for( int ii = 0; ii < fImpl->numPlayers->value(); ++ii )
+    {
+        players << fNameWidgets[ ii ].second->text();
+    }
+    QSettings settings;
+    settings.setValue( "Players", players );
 }
 
 void CMainWindow::slotDeal()
 {
     fGame->nextDealer();
     fGame->shuffleAndDeal();
-    fImpl->data->setPlainText( fGame->dumpGame() );
-    fImpl->stats->setPlainText( fGame->dumpStats() );
+    showGame();
+    showStats();
+}
+
+void CMainWindow::showStats()
+{
+    return fImpl->stats->setPlainText( fGame->dumpStats() );
+}
+
+void CMainWindow::showGame()
+{
+    return fImpl->data->setPlainText( fGame->dumpGame() );
 }
 
 void CMainWindow::slotAutoDeal()
@@ -69,8 +133,8 @@ void CMainWindow::slotRunAutoDeal()
 #endif
         if ( ( fGame->numGames() % interval ) == 0 )
         {
-            fImpl->data->setPlainText( fGame->dumpGame() );
-            fImpl->stats->setPlainText( fGame->dumpStats() );
+            showGame();
+            showStats();
         }
         QTimer::singleShot( 0, this, &CMainWindow::slotRunAutoDeal );
     }
@@ -80,12 +144,30 @@ void CMainWindow::slotRunAutoDeal()
 void CMainWindow::slotNextDealer()
 {
     fGame->nextDealer();
-    fImpl->data->setPlainText( fGame->dumpGame() );
+    showGame();
 }
 
 void CMainWindow::slotPrevDealer()
 {
     fGame->prevDealer();
-    fImpl->data->setPlainText( fGame->dumpGame() );
+    showGame();
+}
+
+void CMainWindow::slotNumPlayersChanged()
+{
+    fGame->setNumPlayers( fImpl->numPlayers->value() );
+    for( int ii = 0; ii < fImpl->numPlayers->value(); ++ii )
+    {
+        fNameWidgets[ ii ].first->setVisible( true );
+        fNameWidgets[ ii ].second->setVisible( true );
+        fGame->setPlayerName( ii, fNameWidgets[ ii ].second->text() );
+    }
+    for ( size_t ii = fImpl->numPlayers->value(); ii < fNameWidgets.size(); ++ii )
+    {
+        fNameWidgets[ ii ].first->setVisible( false );
+        fNameWidgets[ ii ].second->setVisible( false );
+        fGame->removePlayer( ii );
+    }
+    showGame();
 }
 

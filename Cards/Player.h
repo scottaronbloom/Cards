@@ -34,7 +34,7 @@ enum class EHand;
 class CPlayer 
 {
 public:
-    CPlayer( const QString & playerName );
+    CPlayer( const QString & playerName=QString() );
     virtual ~CPlayer();
 
 public:
@@ -53,6 +53,7 @@ public:
     QString toString() const;
     bool operator<( const CPlayer & rhs ) const;
 
+    bool setName( const QString & name );
     QString name() const{ return fName; }
 
     void setPlayerID( size_t id ) { fPlayerID = id; }
@@ -60,8 +61,11 @@ public:
 
     EHand hand() const;
     std::tuple< EHand, std::vector< ECard >, std::vector< ECard > >  determineHand() const;// hand, mycard, kicker cards
+
+    QString handCards() const;
 public:
     void addCard( std::shared_ptr< CCard > & card );
+    void setCards( const std::vector< std::shared_ptr< CCard > > & cards );
     void clearCards();
 private:
     QString fName;

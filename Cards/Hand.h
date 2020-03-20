@@ -38,18 +38,19 @@ class CCard;
 enum class ECard;
 enum class EHand
 {
-    eStraightFlush,
-    eFourOfAKind,
-    eFullHouse,
-    eFlush,
-    eStraight,
-    eThreeOfAKind,
-    eTwoPair,
-    ePair,
-    eHighCard
+    eNoCards=-1,
+    eHighCard=0,
+    ePair=1,
+    eTwoPair=2,
+    eThreeOfAKind=3,
+    eStraight=4,
+    eFlush=5,
+    eFullHouse=6,
+    eFourOfAKind=7,
+    eStraightFlush=8
 };
 DECLARE_ENUM_FUNCS_ARITHMETIC( EHand );
-DECLARE_ENUM_ITERATORS( EHand, EHand::eStraightFlush, EHand::eHighCard );
+DECLARE_ENUM_ITERATORS( EHand, EHand::eHighCard, EHand::eStraightFlush );
 QString toString( EHand hand, bool format );
 std::ostream & operator<<( std::ostream& oss, EHand value );
 
@@ -68,9 +69,11 @@ public:
     bool isStraight() const;
 
     void addCard( std::shared_ptr< CCard > & card );
+    void setCards( const std::vector< std::shared_ptr< CCard > > & cards );
     void clearCards();
 
     bool operator<( const CHand & rhs ) const;
+    QString handCards() const;
 private:
 
     uint16_t get5CardValue() const;

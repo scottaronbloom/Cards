@@ -552,6 +552,18 @@ namespace
             }
         }
     }
+
+    TEST_F( CHandTester, FindWinner )
+    {
+        fGame->addPlayer( "Scott" )->setCards( fGame->getCards( "7D AS 4D QH JC" ) ); // ace high, QJ74
+        fGame->addPlayer( "Craig" )->setCards( fGame->getCards( "9C 8C 6D 3D 2H" ) ); // 9 high, 8632
+        fGame->addPlayer( "Eric" )->setCards( fGame->getCards(  "9H 8S 6H 3C 2S" ) ); // 9 high, 8632
+        fGame->addPlayer( "Keith" )->setCards( fGame->getCards( "KD QS 7C 6S 5C" ) ); // K high, Q765
+
+        auto winner = fGame->findWinner();
+        EXPECT_EQ( "Scott", winner->name() );
+    }
+
 }  // namespace
 
 

@@ -29,6 +29,8 @@
 #include <functional>
 #include <list>
 class CGame;
+class QLabel;
+class QLineEdit;
 namespace Ui {class CMainWindow;};
 
 class CMainWindow : public QDialog
@@ -43,10 +45,18 @@ public slots:
     void slotRunAutoDeal();
     void slotNextDealer();
     void slotPrevDealer();
+    void slotNumPlayersChanged();
 private:
+    void showStats();
+    void showGame();
+    void loadPlayers();
+    void savePlayers();
+
     std::unique_ptr< Ui::CMainWindow > fImpl;
     std::shared_ptr< CGame > fGame;
     bool fAutoDealing{ false };
+
+    std::vector< std::pair< QLabel *, QLineEdit * > > fNameWidgets;
 };
 
 #endif // _ALCULATOR_H

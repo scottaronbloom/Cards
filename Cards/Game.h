@@ -35,6 +35,7 @@ enum class EHand;
 enum class ECard;
 enum class ESuit : uint8_t;
 
+using TCardDeal = std::pair< std::vector< uint8_t >, std::vector< uint8_t > >;
 namespace std
 {
     template <>
@@ -62,18 +63,30 @@ public:
     void nextDealer();
     void prevDealer();
     void autoSetDealer();
-    std::shared_ptr< CPlayer > addPlayer( const QString & name );
+    std::shared_ptr< CPlayer > findWinner();
 
     void resetGames();
     size_t numGames() const{ return fGames.size(); }
     QString dumpStats() const;
     std::shared_ptr< CCard > getCard( const QString & cardName ) const;
     std::shared_ptr< CCard > getCard( ECard card, ESuit suit ) const;
+    std::vector< std::shared_ptr< CCard > > getCards( const QString & cardNames ) const;
+
+    void setCardDeal( const TCardDeal & cards ){ fNumCardsToDeal = cards; }
+    TCardDeal cardDeal() const{ return fNumCardsToDeal; }
+
+    size_t setNumPlayers( size_t numPlayers );
+    std::shared_ptr< CPlayer > addPlayer( const QString& name );
+    std::pair< bool, std::shared_ptr< CPlayer > > setPlayerName( size_t playerNum, const QString & playerName );
+
+    void removePlayer( size_t playerNum );
 private:
+    void recomputeNextPrev();
     void createDeck();
 
     void shuffleDeck();
     void dealCards();
+
     QString dumpDeck( bool shuffled ) const;
     QString dumpPlayers() const;
 
@@ -89,6 +102,8 @@ private:
     std::vector< uint64_t > fHandCount;
     std::vector< uint64_t > fWinsByPlayer;
 
+    TCardDeal fNumCardsToDeal{ { 5 }, {} }; // first vector is player deals (first) then last is community, default is 5 card 
 };
 
 #endif // _ALCULATOR_H
+;

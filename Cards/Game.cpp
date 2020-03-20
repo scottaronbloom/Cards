@@ -28,6 +28,8 @@
 #include <unordered_set>
 
 #include <QLocale>
+#include <QDebug>
+
 CGame::CGame()
 {
     createDeck();
@@ -48,6 +50,8 @@ CGame::~CGame()
 
 void CGame::autoSetDealer()
 {
+    if ( fPlayers.empty() )
+         return;
     std::random_device rd;
     std::mt19937_64 gen( rd() );
     std::uniform_int_distribution< size_t > dis( 0, fPlayers.size() - 1 );
@@ -65,8 +69,12 @@ void CGame::nextDealer()
     {
         auto currDealer = fDealer.lock();
         currDealer->setDealer( false );
-        fDealer = currDealer->nextPlayer();
-        fDealer.lock()->setDealer( true );
+        auto nextDealer = currDealer->nextPlayer();
+        if ( !nextDealer.expired() )
+        {
+            fDealer = nextDealer;
+            fDealer.lock()->setDealer( true );
+        }
     }
 }
 
@@ -168,29 +176,11 @@ void CGame::resetGames()
 {
     fGames.clear(); 
     fHandCount.clear(); 
-    fHandCount.resize( static_cast< size_t >( EHand::eHighCard ) + 1);
+    fHandCount.resize( static_cast< size_t >( EHand::eStraightFlush ) + 1);
     fWinsByHand.clear();
-    fWinsByHand.resize( static_cast<size_t>( EHand::eHighCard ) + 1 );
+    fWinsByHand.resize( static_cast<size_t>( EHand::eStraightFlush ) + 1 );
     fWinsByPlayer.clear();
     fWinsByPlayer.resize( fPlayers.size() );
-}
-
-std::shared_ptr< CPlayer > CGame::addPlayer( const QString & name )
-{
-    auto newPlayer = std::make_shared< CPlayer >( name );
-    auto lastPlayer = fPlayers.size() ? fPlayers.back() : nullptr;
-    fPlayers.push_back( newPlayer );
-    if ( lastPlayer )
-        lastPlayer->setNextPlayer( newPlayer );
-
-    newPlayer->setNextPlayer( fPlayers[ 0 ] );
-    if ( fPlayers.size() > 1 )
-    {
-        fPlayers[ 0 ]->setPrevPlayer( newPlayer );
-        newPlayer->setPrevPlayer( lastPlayer );
-    }
-    fWinsByPlayer.resize( fPlayers.size() );
-    return newPlayer;
 }
 
 void CGame::shuffleDeck()
@@ -209,38 +199,57 @@ void CGame::shuffleDeck()
 
 void CGame::dealCards()
 {
-    for ( auto&& player : fPlayers )
+    for ( auto && player : fPlayers )
     {
         player->clearCards();
         player->setWinner( false );
     }
 
-    size_t currCard = 0;
-    for( size_t ii = 0; ii < 5; ++ii )
+    auto currCard = fShuffledCards.begin();
+    for( auto currDeal = fNumCardsToDeal.first.begin(); ( currCard != fShuffledCards.end() ) && ( currDeal != fNumCardsToDeal.first.end() ); ++currDeal  )
     {
-        for( auto && player : fPlayers)
+        for( uint8_t ii = 0; ii < *currDeal; ++ii )
         {
-            player->addCard( fShuffledCards[ currCard++] );
-            if ( currCard >= fShuffledCards.size() )
-                break;
+            auto currPlayer = fPlayers.begin();
+            while( ( currPlayer != fPlayers.end() ) && ( currCard != fShuffledCards.end() ) )
+            {
+                (*currPlayer)->addCard( *currCard );
+                ++currCard;
+                ++currPlayer;
+            }
         }
-        if ( currCard >= fShuffledCards.size() )
-            break;
     }
 
-    auto winner = std::max_element( fPlayers.begin(), fPlayers.end(), 
-               []( const std::shared_ptr< CPlayer > & lhs, const std::shared_ptr< CPlayer >& rhs )
-               {
-                   return !lhs->operator <( *rhs );// sort in descending order
-               } );
-    (*winner)->setWinner( true );
-    auto hand = (*winner)->hand();
-    fGames.push_back( std::make_pair( hand, *winner ) );
-
+    auto winner = findWinner();
+    if ( !winner )
+        return;
     for( auto && ii : fPlayers )
         fHandCount[ static_cast< size_t >( ii->hand() ) ]++;
-    fWinsByHand[ static_cast<size_t>( hand ) ]++;
-    fWinsByPlayer[ (*winner)->playerID() ]++;
+    fWinsByHand[ static_cast<size_t>( winner->hand() ) ]++;
+    fWinsByPlayer[ winner->playerID() ]++;
+}
+
+std::shared_ptr< CPlayer > CGame::findWinner()
+{
+    //qDebug() << "==============================";
+    //for( auto && ii : fPlayers )
+    //{
+    //    qDebug() << "Player: " << ii->name() << " Hand: " << ii->handCards();
+    //}
+
+    auto winner = std::max_element( fPlayers.begin(), fPlayers.end(),
+                                    []( const std::shared_ptr< CPlayer >& lhs, const std::shared_ptr< CPlayer >& rhs )
+                                    {
+                                        return lhs->operator <( *rhs );
+                                    } );
+    if ( winner == fPlayers.end() )
+        return nullptr;
+
+    auto retVal = *winner;
+    retVal->setWinner( true );
+    auto hand = retVal->hand();
+    fGames.push_back( std::make_pair( hand, retVal ) );
+    return retVal;
 }
 
 std::shared_ptr< CCard > CGame::getCard( const QString & cardName ) const
@@ -257,4 +266,89 @@ std::shared_ptr< CCard > CGame::getCard( ECard card, ESuit suit ) const
     if ( pos == fCardMap.end() )
         return nullptr;
     return ( *pos ).second;
+}
+
+std::vector< std::shared_ptr< CCard > > CGame::getCards( const QString& cardNames ) const
+{
+    std::vector< std::shared_ptr< CCard > > retVal;
+    for ( int ii = 0; ii < cardNames.length()-1; ++ii )
+    {
+        if ( ( cardNames[ ii ].isSpace() ) || ( cardNames[ ii ] == '_' ) )
+            continue;
+
+        auto cardName = cardNames.mid( ii, 2 );
+        auto currCard = getCard( cardName );
+        if ( !currCard )
+            return {};
+        retVal.push_back( currCard );
+        ii++; // skip one
+    }
+    return retVal;
+}
+
+size_t CGame::setNumPlayers( size_t numPlayers )
+{
+    while( numPlayers >= fPlayers.size() )
+        fPlayers.push_back( std::make_shared< CPlayer >() );
+    while( numPlayers < fPlayers.size() )
+        fPlayers.pop_back();
+    for( size_t ii = 0; ii < fPlayers.size(); ++ii )
+        fPlayers[ ii ]->setPlayerID( ii );
+
+    fWinsByPlayer.resize( fPlayers.size() );
+    return fPlayers.empty() ? 0 : ( fPlayers.size() - 1 );
+}
+
+std::shared_ptr< CPlayer > CGame::addPlayer( const QString& name )
+{
+    auto pos = setNumPlayers( fPlayers.size() + 1 );
+    return setPlayerName( pos, name ).second;
+}
+
+std::pair< bool, std::shared_ptr< CPlayer > > CGame::setPlayerName( size_t playerNum, const QString& playerName )
+{
+    if ( playerNum >= fPlayers.size() )
+        return std::make_pair( false, nullptr );
+
+    auto currPlayer = fPlayers[ playerNum ];
+    if ( !currPlayer )
+    {
+        return std::make_pair( false, nullptr );
+    }
+    bool retVal = fPlayers[ playerNum ]->setName( playerName );
+
+    recomputeNextPrev();
+
+    return std::make_pair( retVal, fPlayers[ playerNum ] );
+}
+
+void CGame::recomputeNextPrev()
+{
+    auto prev = ( fPlayers.size() > 1 ) ? fPlayers[ fPlayers.size() - 1 ] : nullptr;
+    for ( size_t ii = 0; ii < fPlayers.size(); ++ii )
+    {
+        if ( !fPlayers[ ii ] )
+            continue;
+
+        fPlayers[ ii ]->setPrevPlayer( prev );
+        prev = fPlayers[ ii ];
+
+        if ( ii < ( fPlayers.size() - 1 ) )
+            fPlayers[ ii ]->setNextPlayer( fPlayers[ ii + 1 ] );
+    }
+    if ( fPlayers.size() > 1 )
+        fPlayers[ fPlayers.size() - 1 ]->setNextPlayer( fPlayers[ 0 ] );
+}
+
+void CGame::removePlayer( size_t playerNum )
+{
+    if ( playerNum >= fPlayers.size() )
+        return;
+    auto player = fPlayers[ playerNum ];
+    auto prev = player->prevPlayer().lock();
+    auto next = player->nextPlayer().lock();
+    if ( prev )
+        prev->setNextPlayer( next );
+    if ( next )
+        next->setPrevPlayer( prev );
 }

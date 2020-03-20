@@ -60,6 +60,16 @@ bool CPlayer::operator<( const CPlayer& rhs ) const
 }
 
 
+bool CPlayer::setName( const QString& name )
+{
+    if ( fName != name ) 
+    { 
+        fName = name; 
+        return true; 
+    } 
+    return false;
+}
+
 EHand CPlayer::hand() const
 {
     return std::get< 0 >( fHand->determineHand() );
@@ -71,9 +81,19 @@ std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CPlayer::determi
     return fHand->determineHand();
 }
 
+QString CPlayer::handCards() const
+{
+    return fHand->handCards();
+}
+
 void CPlayer::addCard( std::shared_ptr< CCard >& card )
 {
     fHand->addCard( card );
+}
+
+void CPlayer::setCards( const std::vector< std::shared_ptr< CCard > >& cards )
+{
+    fHand->setCards( cards );
 }
 
 void CPlayer::clearCards()

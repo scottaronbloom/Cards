@@ -473,6 +473,7 @@ QString toString( EHand hand, bool format )
         case EHand::eTwoPair: return format ? "Two Pair '%1 and %2' - '%3' kicker" : "Two Pair";
         case EHand::ePair: return format ? "Pair of '%1' - '%2, %3, %4' kicker" : "Pair";
         case EHand::eHighCard: return format ? "High Card '%1' : %2, %3, %4, %5 kickers" : "High Card";
+        case EHand::eNoCards: return format ? "No Cards" : "No Cards";
     }
     return QString();
 }
@@ -497,10 +498,12 @@ bool CHand::operator<( const CHand& rhs ) const
     // if the hand types are different, easy computation
     auto hand = determineHand();
     auto rhsHand = rhs.determineHand();
-    if ( std::get< 0 >( hand ) < std::get< 0 >( rhsHand ) )
+    auto lhsHandType = std::get< 0 >( hand );
+    auto rhsHandType = std::get< 0 >( rhsHand );
+    if ( lhsHandType < rhsHandType )
         return true;
 
-    if ( std::get< 0 >( hand ) > std::get< 0 >( rhsHand ) )
+    if ( lhsHandType > rhsHandType )
         return false;
 
     // hand type is the same
@@ -522,6 +525,19 @@ bool CHand::operator<( const CHand& rhs ) const
     return false;
 
 
+}
+
+QString CHand::handCards() const
+{
+    QString retVal;
+    bool first = true;
+    for ( auto&& ii : fCards )
+    {
+        if ( !first )
+            retVal += " ";
+        retVal += ii->toString( false, false );
+    }
+    return retVal;
 }
 
 QString CHand::toString() const
@@ -588,6 +604,9 @@ QString CHand::maxCardName() const
 
 bool CHand::isFlush() const
 {
+    if ( fCards.empty() )
+        return false;
+
     auto value = cardsAndValue();
     value &= 0x0F000;
     return value.to_ulong() != 0;
@@ -608,6 +627,9 @@ bool CHand::isStraight() const
         EStraightType::eSix, // 65432
         EStraightType::eWheel  // 5432A
     };
+    if ( fCards.empty() )
+        return false;
+
     auto value = get5CardValue();
     return sStraights.find( value ) != sStraights.end();
 }
@@ -617,6 +639,10 @@ std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CHand::determine
 {
     if ( fHand.has_value() )
         return *fHand;
+
+    if ( fCards.empty() )
+        return *( fHand = std::make_tuple( EHand::eNoCards, std::vector< ECard >(), std::vector< ECard >() ) );
+
 
     if ( isFlush() )
     {
@@ -730,6 +756,11 @@ void CHand::addCard( std::shared_ptr< CCard >& card )
 {
     Q_ASSERT( card );
     fCards.push_back( card );
+}
+
+void CHand::setCards( const std::vector< std::shared_ptr< CCard > >& cards )
+{
+    fCards = cards;
 }
 
 void CHand::clearCards()
