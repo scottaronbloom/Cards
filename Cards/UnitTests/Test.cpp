@@ -564,6 +564,80 @@ namespace
         EXPECT_EQ( "Scott", winner->name() );
     }
 
+    TEST_F( CHandTester, AllHands )
+    {
+        std::vector< std::shared_ptr< CHand > > allHands;
+        size_t numHands = 0;
+        auto allCards = getAllCards();
+        for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
+        {
+            for ( size_t c2 = c1+1; c2 < allCards.size(); ++c2 )
+            {
+                for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
+                {
+                    for ( size_t c4 = c3 + 1; c4 < allCards.size(); ++c4 )
+                    {
+                        for ( size_t c5 = c4 + 1; c5 < allCards.size(); ++c5 )
+                        {
+                            auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ], allCards[ c4 ], allCards[ c5 ] } ) );
+                            allHands.push_back( hand );
+                            numHands++;
+                        }
+                    }
+                }
+            }
+        }
+
+        std::sort( allHands.begin(), allHands.end(), []( const std::shared_ptr< CHand > &lhs, const std::shared_ptr< CHand > & rhs ) 
+                   { return lhs->operator >( *rhs ); } 
+        );
+
+        EXPECT_EQ( 2598960, numHands );
+        EXPECT_EQ( 2598960, allHands.size() );
+
+        std::vector< std::shared_ptr< CHand > > uniqueHands;
+        std::shared_ptr< CHand > prevHand;
+        for( size_t ii = 0; ii < allHands.size(); ++ii )
+        {
+            if ( prevHand && ( prevHand->operator ==( *allHands[ ii ] ) ) )
+                continue;
+            prevHand = allHands[ ii ];
+            uniqueHands.push_back( prevHand );
+        }
+        EXPECT_EQ( 7462, uniqueHands.size() );
+
+        std::map< EHand, size_t > freq;
+        for( auto && ii : allHands )
+        {
+            auto hand = ii->determineHand();
+            freq[ std::get< 0 >( hand ) ]++;
+        }
+        EXPECT_EQ(      40, freq[ EHand::eStraightFlush ] );
+        EXPECT_EQ(     624, freq[ EHand::eFourOfAKind   ] );
+        EXPECT_EQ(    3744, freq[ EHand::eFullHouse     ] );
+        EXPECT_EQ(    5108, freq[ EHand::eFlush         ] );
+        EXPECT_EQ(   10200, freq[ EHand::eStraight      ] );
+        EXPECT_EQ(   54912, freq[ EHand::eThreeOfAKind  ] );
+        EXPECT_EQ(  123552, freq[ EHand::eTwoPair       ] );
+        EXPECT_EQ( 1098240, freq[ EHand::ePair          ] );
+        EXPECT_EQ( 1302540, freq[ EHand::eHighCard      ] );
+
+        std::map< EHand, size_t > subFreq;
+        for ( auto&& ii : uniqueHands )
+        {
+            auto hand = ii->determineHand();
+            subFreq[ std::get< 0 >( hand ) ]++;
+        }
+        EXPECT_EQ( 10, subFreq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 156, subFreq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 156, subFreq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 1277, subFreq[ EHand::eFlush ] );
+        EXPECT_EQ( 10, subFreq[ EHand::eStraight ] );
+        EXPECT_EQ( 858, subFreq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 858, subFreq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 2860, subFreq[ EHand::ePair ] );
+        EXPECT_EQ( 1277, subFreq[ EHand::eHighCard ] );
+    }
 }  // namespace
 
 

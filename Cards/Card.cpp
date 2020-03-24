@@ -141,6 +141,19 @@ std::ostream & operator<<( std::ostream& oss, ECard suit )
     return oss;
 }
 
+std::vector< std::shared_ptr< CCard > > getAllCards()
+{
+    std::vector< std::shared_ptr< CCard > > retVal;
+    for ( auto&& card : ECard() )
+    {
+        for ( auto&& suit : ESuit() )
+        {
+            retVal.push_back( std::make_shared< CCard >( card, suit ) );
+        }
+    }
+    return retVal;
+}
+
 uint8_t toRankValue( ECard card )
 {
     return static_cast<uint8_t>( card );
@@ -151,6 +164,12 @@ CCard::CCard( ECard card, ESuit suit) :
     fSuit( suit )
 {
     computeBitValue();
+}
+
+CCard::CCard( const std::pair< ECard, ESuit >& card ) :
+    CCard( card.first, card.second )
+{
+
 }
 
 void CCard::computeBitValue()

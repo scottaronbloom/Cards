@@ -185,7 +185,6 @@ void CGame::resetGames()
 
 void CGame::shuffleDeck()
 {
-
     std::random_device rd;
     std::mt19937_64 gen( rd() );
     fShuffledCards = fCards;

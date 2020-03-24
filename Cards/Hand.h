@@ -58,6 +58,7 @@ class CHand
 {
 public:
     CHand();
+    CHand( const std::vector< std::shared_ptr< CCard > >& cards );
     virtual ~CHand();
 public:
     QString toString() const;
@@ -72,10 +73,12 @@ public:
     void setCards( const std::vector< std::shared_ptr< CCard > > & cards );
     void clearCards();
 
+    bool operator>( const CHand& rhs ) const;
+
     bool operator<( const CHand & rhs ) const;
+    bool operator==( const CHand& rhs ) const;
     QString handCards() const;
 private:
-
     uint16_t get5CardValue() const;
     QString maxCardName() const;
     ECard getMaxCard() const;
@@ -84,6 +87,10 @@ private:
 
     std::vector< std::shared_ptr< CCard > > fCards;
     mutable std::optional< std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > > fHand;
+    mutable std::optional< uint16_t > f5CardValue;
+    mutable std::optional< ECard > fMaxCard;
+    mutable std::optional< TCardBitType > fAndValue;
+    mutable std::optional< TCardBitType > fOrValue;
 };
 
 #endif // _ALCULATOR_H

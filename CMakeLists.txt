@@ -64,6 +64,7 @@ add_subdirectory( MainWindow )
 add_subdirectory( Cards )
 add_subdirectory( Cards/UnitTests )
 add_subdirectory( main )
+add_subdirectory( allfive )
 
 SET( CPACK_PACKAGE_VENDOR "Scott Aron Bloom" )
 SET( CPACK_PACKAGE_VERSION_MAJOR "1" )

@@ -31,6 +31,11 @@ CHand::CHand()
 
 }
 
+CHand::CHand( const std::vector< std::shared_ptr< CCard > >& cards )
+{
+    setCards( cards );
+}
+
 CHand::~CHand()
 {
 
@@ -484,6 +489,11 @@ std::ostream & operator<<( std::ostream& oss, EHand value )
     return oss;
 }
 
+bool CHand::operator>( const CHand& rhs ) const
+{
+    return rhs.operator <( *this );
+}
+
 bool CHand::operator<( const CHand& rhs ) const
 {
     bool isFlush = this->isFlush();
@@ -523,8 +533,15 @@ bool CHand::operator<( const CHand& rhs ) const
     }
     // equal
     return false;
+}
 
-
+bool CHand::operator==( const CHand& rhs ) const
+{
+    if ( this->operator<( rhs ) )
+        return false;
+    if ( this->operator>( rhs ) )
+        return false;
+    return true;
 }
 
 QString CHand::handCards() const
@@ -581,19 +598,29 @@ enum EStraightType
 
 ECard CHand::getMaxCard() const
 {
+    if ( fMaxCard.has_value() )
+        return fMaxCard.value();
+
     auto value = cardsOrValue() >> 16;
     if ( isStraight() && ( value == EStraightType::eWheel ) )
-        return ECard::eFive;
-    auto pos = NUtils::findLargestIndexInBitSet( value );
-    if ( pos.has_value() )
-        return static_cast< ECard >( pos.value() );
-    else 
-        return ECard::eUNKNOWN;
+        fMaxCard = ECard::eFive;
+    else
+    {
+        auto pos = NUtils::findLargestIndexInBitSet( value );
+        if ( pos.has_value() )
+            fMaxCard = static_cast<ECard>( pos.value() );
+        else
+            return ECard::eUNKNOWN;
+    }
+    return fMaxCard.value();
 }
 
 uint16_t CHand::get5CardValue() const
 {
-    return static_cast< uint16_t >( ( cardsOrValue() >> 16 ).to_ulong() );
+    if ( f5CardValue.has_value() )
+        return f5CardValue.value();
+    f5CardValue = static_cast< uint16_t >( ( cardsOrValue() >> 16 ).to_ulong() );
+    return f5CardValue.value();
 }
 
 QString CHand::maxCardName() const
@@ -642,7 +669,6 @@ std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CHand::determine
 
     if ( fCards.empty() )
         return *( fHand = std::make_tuple( EHand::eNoCards, std::vector< ECard >(), std::vector< ECard >() ) );
-
 
     if ( isFlush() )
     {
@@ -771,17 +797,25 @@ void CHand::clearCards()
 
 TCardBitType CHand::cardsAndValue() const
 {
+    if ( fAndValue.has_value() )
+        return fAndValue.value();
+
     TCardBitType value( std::numeric_limits< int64_t >::max() );
     for ( auto && ii : fCards )
         value &= ii->bitValue();
 
-    return value;
+    fAndValue = value;
+    return fAndValue.value();
 }
 
 TCardBitType CHand::cardsOrValue() const
 {
+    if ( fOrValue.has_value() )
+        return fOrValue.value();
+
     TCardBitType value;
     for ( auto&& ii : fCards )
         value |= ii->bitValue();
-    return value;
+    fOrValue = value;
+    return fOrValue.value();
 }

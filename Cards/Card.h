@@ -24,7 +24,9 @@
 #define _CARDS_H
 #include "SABUtils/EnumUtils.h"
 #include <bitset>
+#include <vector>
 #include <QString>
+class CCard;
 
 enum class ESuit : uint8_t
 {
@@ -66,11 +68,13 @@ ECard fromBitValue( uint16_t value );
 uint8_t toRankValue( ECard card );
 std::ostream & operator<<( std::ostream& oss, ECard card );
 
+std::vector< std::shared_ptr< CCard > > getAllCards();
 using TCardBitType = std::bitset< 29 >;
 class CCard
 {
 public:
     CCard( ECard card, ESuit suit );
+    CCard( const std::pair< ECard, ESuit > & card );
     virtual ~CCard();
 
     QString toString( bool verbose, bool includeBitValue ) const;
