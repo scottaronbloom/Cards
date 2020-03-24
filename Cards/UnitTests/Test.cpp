@@ -628,15 +628,15 @@ namespace
             auto hand = ii->determineHand();
             subFreq[ std::get< 0 >( hand ) ]++;
         }
-        EXPECT_EQ( 10, subFreq[ EHand::eStraightFlush ] );
-        EXPECT_EQ( 156, subFreq[ EHand::eFourOfAKind ] );
-        EXPECT_EQ( 156, subFreq[ EHand::eFullHouse ] );
-        EXPECT_EQ( 1277, subFreq[ EHand::eFlush ] );
-        EXPECT_EQ( 10, subFreq[ EHand::eStraight ] );
-        EXPECT_EQ( 858, subFreq[ EHand::eThreeOfAKind ] );
-        EXPECT_EQ( 858, subFreq[ EHand::eTwoPair ] );
-        EXPECT_EQ( 2860, subFreq[ EHand::ePair ] );
-        EXPECT_EQ( 1277, subFreq[ EHand::eHighCard ] );
+        EXPECT_EQ(   10, subFreq[ EHand::eStraightFlush ] );
+        EXPECT_EQ(  156, subFreq[ EHand::eFourOfAKind   ] );
+        EXPECT_EQ(  156, subFreq[ EHand::eFullHouse     ] );
+        EXPECT_EQ( 1277, subFreq[ EHand::eFlush         ] );
+        EXPECT_EQ(   10, subFreq[ EHand::eStraight      ] );
+        EXPECT_EQ(  858, subFreq[ EHand::eThreeOfAKind  ] );
+        EXPECT_EQ(  858, subFreq[ EHand::eTwoPair       ] );
+        EXPECT_EQ( 2860, subFreq[ EHand::ePair          ] );
+        EXPECT_EQ( 1277, subFreq[ EHand::eHighCard      ] );
     }
 }  // namespace
 

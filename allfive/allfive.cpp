@@ -2,6 +2,7 @@
 #include "arrays.h"
 
 #include <stdio.h>
+#include <set>
 
 /*************************************************/
 /*                                               */
@@ -17,46 +18,57 @@
 
 int main( int argc, char** argv )
 {
-    int deck[ 52 ], hand[ 5 ], freq[ 10 ];
-    int a, b, c, d, e, i, j;
-
-    // initialize the deck
+    int deck[ 52 ] = {0};
     init_deck( deck );
 
-    // zero out the frequency array
-    for ( i = 0; i < 10; i++ )
-        freq[ i ] = 0;
+    int freq[ 10 ] = {0};
+    int subFreq[ 10 ] = {0};
+    //int deck[ 52 ], hand[ 5 ], freq[ 10 ];
+    //int a, b, c, d, e, i, j;
+
+    //// zero out the frequency array
+    //for ( i = 0; i < 10; i++ )
+    //    freq[ i ] = 0;
 
     std::set< int > seen;
     // loop over every possible five-card hand
-    for ( a = 0; a < 48; a++ )
+    for ( int c1 = 0; c1 < 48; c1++ )
     {
-        hand[ 0 ] = deck[ a ];
-        for ( b = a + 1; b < 49; b++ )
+        int hand[ 5 ] = { 0 };
+        hand[ 0 ] = deck[ c1 ];
+        for ( int c2 = c1 + 1; c2 < 49; c2++ )
         {
-            hand[ 1 ] = deck[ b ];
-            for ( c = b + 1; c < 50; c++ )
+            hand[ 1 ] = deck[ c2 ];
+            for ( int c3 = c2 + 1; c3 < 50; c3++ )
             {
-                hand[ 2 ] = deck[ c ];
-                for ( d = c + 1; d < 51; d++ )
+                hand[ 2 ] = deck[ c3 ];
+                for ( int c4 = c3 + 1; c4 < 51; c4++ )
                 {
-                    hand[ 3 ] = deck[ d ];
-                    for ( e = d + 1; e < 52; e++ )
+                    hand[ 3 ] = deck[ c4 ];
+                    for ( int c5 = c4 + 1; c5 < 52; c5++ )
                     {
-                        hand[ 4 ] = deck[ e ];
+                        hand[ 4 ] = deck[ c5 ];
 
-                        i = eval_5hand( hand );
-                        if ( seen.find( i ) == seen.end() )
-                            continue;
+                        auto i = eval_5hand( hand );
+                        auto j = hand_rank( i );
 
-                        j = hand_rank( i );
                         freq[ j ]++;
+                        if ( seen.find( i ) != seen.end() )
+                        {
+                            continue;
+                        }
+                        seen.insert( i );
+                        subFreq[ j ]++;
                     }
                 }
             }
         }
     }
 
-    for ( i = 1; i <= 9; i++ )
+    printf( "All Hands:\n" );
+    for ( int i = 1; i <= 9; i++ )
         printf( "%15s: %8d\n", value_str[ i ], freq[ i ] );
+    printf( "Unique Hands:\n" );
+    for ( int i = 1; i <= 9; i++ )
+        printf( "%15s: %8d\n", value_str[ i ], subFreq[ i ] );
 }
