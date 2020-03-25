@@ -64,6 +64,7 @@ CMainWindow::CMainWindow( QWidget* parent )
                        } );
     }
 
+    fImpl->handsPerSecondLabel->setHidden( true );
     loadSettings();
     showGame();
 }
@@ -119,7 +120,7 @@ void CMainWindow::showStats()
         auto seconds = NUtils::getSeconds( endTime - fStartTime.value(), true );
         auto numGames = 1.0*fGame->numGames();
         auto hps = numGames / seconds;
-        auto timeString = tr( "Hands/Second: %1" ).arg( hps );
+        auto timeString = tr( "%1 Hands/Second" ).arg( locale().toString( hps ) );
         fImpl->handsPerSecondLabel->setHidden( false );
         fImpl->handsPerSecondLabel->setText( timeString );
     }
@@ -137,6 +138,7 @@ void CMainWindow::slotAutoDeal()
 {
     fAutoDealing = !fAutoDealing;
     fImpl->autoDeal->setText( fAutoDealing ? "Stop Auto Deal" : "Auto Deal" );
+    fImpl->deal->setEnabled( !fAutoDealing );
     if ( fAutoDealing )
     {
         this->fStartTime = std::chrono::system_clock::now();
