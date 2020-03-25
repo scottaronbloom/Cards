@@ -6238,8 +6238,8 @@ uint32_t CHand::evaluateHand( const std::vector< std::shared_ptr< CCard > >& car
 
 uint32_t CHand::evaluateHand() const
 {
-    if ( fHandRank.has_value() )
-        return fHandRank.value();
+    if ( fHandData.fHandRank.has_value() )
+        return fHandData.fHandRank.value();
 
     if ( fCards.size() == 7 )
     {
@@ -6249,10 +6249,10 @@ uint32_t CHand::evaluateHand() const
         {
             best = std::min( best, evaluateHand( ii ) );
         }
-        fHandRank = best;
+        fHandData.fHandRank = best;
     }
     else
-        fHandRank = evaluateHand( fCards );
-    return fHandRank.value();
+        fHandData.fHandRank = evaluateHand( fCards );
+    return fHandData.fHandRank.value();
 }
 

@@ -147,51 +147,51 @@ enum EStraightType
 
 ECard CHand::getMaxCard() const
 {
-    if ( fMaxCard.has_value() )
-        return fMaxCard.value();
+    if ( fHandData.fMaxCard.has_value() )
+        return fHandData.fMaxCard.value();
 
     auto value = cardsOrValue() >> 16;
     if ( isStraight() && ( value == EStraightType::eWheel ) )
-        fMaxCard = ECard::eFive;
+        fHandData.fMaxCard = ECard::eFive;
     else
     {
         auto pos = NUtils::findLargestIndexInBitSet( value );
         if ( pos.has_value() )
-            fMaxCard = static_cast<ECard>( pos.value() );
+            fHandData.fMaxCard = static_cast<ECard>( pos.value() );
         else
             return ECard::eUNKNOWN;
     }
-    return fMaxCard.value();
+    return fHandData.fMaxCard.value();
 }
 
 ECard CHand::getMinCard() const
 {
-    if ( fMinCard.has_value() )
-        return fMinCard.value();
+    if ( fHandData.fMinCard.has_value() )
+        return fHandData.fMinCard.value();
 
     auto value = cardsOrValue() >> 16;
     if ( isStraight() && ( value == EStraightType::eWheel ) )
-        fMinCard = ECard::eFive;
+        fHandData.fMinCard = ECard::eFive;
     else
     {
         auto pos = NUtils::findSmallestIndexInBitSet( value );
         if ( pos.has_value() )
-            fMinCard = static_cast<ECard>( pos.value() );
+            fHandData.fMinCard = static_cast<ECard>( pos.value() );
         else
             return ECard::eUNKNOWN;
     }
-    return fMinCard.value();
+    return fHandData.fMinCard.value();
 }
 
 uint16_t CHand::get5CardValue() const
 {
-    if ( f5CardValue.has_value() )
-        return f5CardValue.value();
+    if ( fHandData.f5CardValue.has_value() )
+        return fHandData.f5CardValue.value();
 
     auto retVal = get5CardValue( fCards );
     if ( retVal == -1 )
         return retVal;
-    f5CardValue = retVal;
+    fHandData.f5CardValue = retVal;
     return retVal;
 }
 
@@ -247,15 +247,15 @@ bool CHand::isStraight() const
 
 EHand CHand::getHand() const
 {
-    if ( fHand.has_value() )
-        return std::get< 0 >( fHand.value() );
+    if ( fHandData.fHand.has_value() )
+        return std::get< 0 >( fHandData.fHand.value() );
     return computeHand();
 }
 // hand my cards kickers
 std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CHand::determineHand() const
 {
-    if ( fHand.has_value() )
-        return *fHand;
+    if ( fHandData.fHand.has_value() )
+        return *fHandData.fHand;
 
     auto emptyHand = std::make_tuple( EHand::eNoCards, std::vector< ECard >(), std::vector< ECard >() );
     if ( fCards.empty() )
@@ -307,7 +307,7 @@ std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CHand::determine
         cards.erase( ++cards.begin(), cards.end() );
     }
 
-    return *( fHand = std::make_tuple( hand, cards, kickers ) );
+    return *( fHandData.fHand = std::make_tuple( hand, cards, kickers ) );
 }
 
 EHand CHand::computeHand() const
@@ -351,13 +351,7 @@ void CHand::setCards( const std::vector< std::shared_ptr< CCard > >& cards )
 void CHand::clearCards()
 {
     fCards.clear();
-    fHand.reset();
-    f5CardValue.reset();
-    fMaxCard.reset();
-    fMinCard.reset();
-    fAndValue.reset();
-    fOrValue.reset();
-    fHandProduct.reset();
+    fHandData.reset();
 }
 
 uint64_t CHand::computeHandProduct( const std::vector < std::shared_ptr< CCard > > & cards )
@@ -375,15 +369,15 @@ uint64_t CHand::computeHandProduct( const std::vector < std::shared_ptr< CCard >
 
 uint64_t CHand::computeHandProduct() const
 {
-    if ( fHandProduct.has_value() )
-        return fHandProduct.value();
+    if ( fHandData.fHandProduct.has_value() )
+        return fHandData.fHandProduct.value();
 
     auto retVal = computeHandProduct( fCards );
     if ( retVal == -1 )
         return retVal;
 
-    fHandProduct = retVal;
-    return fHandProduct.value();
+    fHandData.fHandProduct = retVal;
+    return fHandData.fHandProduct.value();
 }
 
 TCardBitType CHand::cardsAndValue( const std::vector< std::shared_ptr< CCard > >& cards )
@@ -400,15 +394,15 @@ TCardBitType CHand::cardsAndValue( const std::vector< std::shared_ptr< CCard > >
 
 TCardBitType CHand::cardsAndValue() const
 {
-    if ( fAndValue.has_value() )
-        return fAndValue.value();
+    if ( fHandData.fAndValue.has_value() )
+        return fHandData.fAndValue.value();
 
     auto retVal = cardsAndValue( fCards );
     if ( retVal.size() == 0 )
         return retVal;
 
-    fAndValue = retVal;
-    return fAndValue.value();
+    fHandData.fAndValue = retVal;
+    return fHandData.fAndValue.value();
 }
 
 TCardBitType CHand::cardsOrValue( const std::vector< std::shared_ptr< CCard > >& cards )
@@ -425,12 +419,12 @@ TCardBitType CHand::cardsOrValue( const std::vector< std::shared_ptr< CCard > >&
 
 TCardBitType CHand::cardsOrValue() const
 {
-    if ( fOrValue.has_value() )
-        return fOrValue.value();
+    if ( fHandData.fOrValue.has_value() )
+        return fHandData.fOrValue.value();
 
     auto retVal = cardsOrValue( fCards );
     if ( retVal.size() == 0 )
         return retVal;
-    fOrValue = retVal;
-    return fOrValue.value();
+    fHandData.fOrValue = retVal;
+    return fHandData.fOrValue.value();
 }

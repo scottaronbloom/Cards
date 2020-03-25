@@ -101,14 +101,30 @@ private:
     uint64_t computeHandProduct() const;
 
     std::vector< std::shared_ptr< CCard > > fCards;
-    mutable std::optional< std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > > fHand;
-    mutable std::optional< uint16_t > f5CardValue;
-    mutable std::optional< ECard > fMaxCard;
-    mutable std::optional< ECard > fMinCard;
-    mutable std::optional< TCardBitType > fAndValue;
-    mutable std::optional< TCardBitType > fOrValue;
-    mutable std::optional< uint64_t > fHandProduct;
-    mutable std::optional< uint32_t > fHandRank;
+    struct SHandData
+    {
+        void reset()
+        {
+            fHand.reset();
+            f5CardValue.reset();
+            fMaxCard.reset();
+            fMinCard.reset();
+            fAndValue.reset();
+            fOrValue.reset();
+            fHandProduct.reset();
+            fHandRank.reset();
+        };
+        mutable std::optional< std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > > fHand;
+        mutable std::optional< uint16_t > f5CardValue;
+        mutable std::optional< ECard > fMaxCard;
+        mutable std::optional< ECard > fMinCard;
+        mutable std::optional< TCardBitType > fAndValue;
+        mutable std::optional< TCardBitType > fOrValue;
+        mutable std::optional< uint64_t > fHandProduct;
+        mutable std::optional< uint32_t > fHandRank;
+    };
+
+    SHandData fHandData;
 };
 
 #endif // _ALCULATOR_H
