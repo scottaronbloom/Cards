@@ -28,6 +28,8 @@
 #include <unordered_map>
 #include <functional>
 #include <list>
+#include <chrono>
+#include <optional>
 class CGame;
 class QLabel;
 class QLineEdit;
@@ -49,14 +51,15 @@ public slots:
 private:
     void showStats();
     void showGame();
-    void loadPlayers();
-    void savePlayers();
+    void loadSettings();
+    void saveSettings();
 
     std::unique_ptr< Ui::CMainWindow > fImpl;
     std::shared_ptr< CGame > fGame;
     bool fAutoDealing{ false };
 
     std::vector< std::pair< QLabel *, QLineEdit * > > fNameWidgets;
+    std::optional< std::chrono::system_clock::time_point > fStartTime;
 };
 
 #endif // _ALCULATOR_H

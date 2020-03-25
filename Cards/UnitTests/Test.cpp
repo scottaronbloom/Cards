@@ -60,7 +60,7 @@ namespace
             if ( ( cards[ 0 ] == ECard::eAce ) &&
                 ( cards[ 1 ] == ECard::eFive ) &&
                  ( cards[ 2 ] == ECard::eFour )&&
-                 ( cards[ 3 ] == ECard::eThree )&&
+                 ( cards[ 3 ] == ECard::eTrey )&&
                  ( cards[ 4 ] == ECard::eTwo ) )
                 return true;
             return false;
@@ -68,6 +68,77 @@ namespace
     public:
         CGame * fGame{nullptr};
     };
+
+    TEST_F( CHandTester, CheckBitValues )
+    {
+        static std::map< std::pair< ESuit, ECard >, int > map =
+        {
+             { {     ESuit::eClubs,   ECard::eTwo }, 0x00018002 }
+            ,{ {     ESuit::eClubs, ECard::eTrey }, 0x00028103 }
+            ,{ {     ESuit::eClubs,  ECard::eFour }, 0x00048205 }
+            ,{ {     ESuit::eClubs,  ECard::eFive }, 0x00088307 }
+            ,{ {     ESuit::eClubs,   ECard::eSix }, 0x0010840b }
+            ,{ {     ESuit::eClubs, ECard::eSeven }, 0x0020850d }
+            ,{ {     ESuit::eClubs, ECard::eEight }, 0x00408611 }
+            ,{ {     ESuit::eClubs,  ECard::eNine }, 0x00808713 }
+            ,{ {     ESuit::eClubs,   ECard::eTen }, 0x01008817 }
+            ,{ {     ESuit::eClubs,  ECard::eJack }, 0x0200891d }
+            ,{ {     ESuit::eClubs, ECard::eQueen }, 0x04008a1f }
+            ,{ {     ESuit::eClubs,  ECard::eKing }, 0x08008b25 }
+            ,{ {     ESuit::eClubs,   ECard::eAce }, 0x10008c29 }
+            ,{ {  ESuit::eDiamonds,   ECard::eTwo }, 0x00014002 }
+            ,{ {  ESuit::eDiamonds, ECard::eTrey }, 0x00024103 }
+            ,{ {  ESuit::eDiamonds,  ECard::eFour }, 0x00044205 }
+            ,{ {  ESuit::eDiamonds,  ECard::eFive }, 0x00084307 }
+            ,{ {  ESuit::eDiamonds,   ECard::eSix }, 0x0010440b }
+            ,{ {  ESuit::eDiamonds, ECard::eSeven }, 0x0020450d }
+            ,{ {  ESuit::eDiamonds, ECard::eEight }, 0x00404611 }
+            ,{ {  ESuit::eDiamonds,  ECard::eNine }, 0x00804713 }
+            ,{ {  ESuit::eDiamonds,   ECard::eTen }, 0x01004817 }
+            ,{ {  ESuit::eDiamonds,  ECard::eJack }, 0x0200491d }
+            ,{ {  ESuit::eDiamonds, ECard::eQueen }, 0x04004a1f }
+            ,{ {  ESuit::eDiamonds,  ECard::eKing }, 0x08004b25 }
+            ,{ {  ESuit::eDiamonds,   ECard::eAce }, 0x10004c29 }
+            ,{ {    ESuit::eHearts,   ECard::eTwo }, 0x00012002 }
+            ,{ {    ESuit::eHearts, ECard::eTrey }, 0x00022103 }
+            ,{ {    ESuit::eHearts,  ECard::eFour }, 0x00042205 }
+            ,{ {    ESuit::eHearts,  ECard::eFive }, 0x00082307 }
+            ,{ {    ESuit::eHearts,   ECard::eSix }, 0x0010240b }
+            ,{ {    ESuit::eHearts, ECard::eSeven }, 0x0020250d }
+            ,{ {    ESuit::eHearts, ECard::eEight }, 0x00402611 }
+            ,{ {    ESuit::eHearts,  ECard::eNine }, 0x00802713 }
+            ,{ {    ESuit::eHearts,   ECard::eTen }, 0x01002817 }
+            ,{ {    ESuit::eHearts,  ECard::eJack }, 0x0200291d }
+            ,{ {    ESuit::eHearts, ECard::eQueen }, 0x04002a1f }
+            ,{ {    ESuit::eHearts,  ECard::eKing }, 0x08002b25 }
+            ,{ {    ESuit::eHearts,   ECard::eAce }, 0x10002c29 }
+            ,{ {    ESuit::eSpades,   ECard::eTwo }, 0x00011002 }
+            ,{ {    ESuit::eSpades, ECard::eTrey }, 0x00021103 }
+            ,{ {    ESuit::eSpades,  ECard::eFour }, 0x00041205 }
+            ,{ {    ESuit::eSpades,  ECard::eFive }, 0x00081307 }
+            ,{ {    ESuit::eSpades,   ECard::eSix }, 0x0010140b }
+            ,{ {    ESuit::eSpades, ECard::eSeven }, 0x0020150d }
+            ,{ {    ESuit::eSpades, ECard::eEight }, 0x00401611 }
+            ,{ {    ESuit::eSpades,  ECard::eNine }, 0x00801713 }
+            ,{ {    ESuit::eSpades,   ECard::eTen }, 0x01001817 }
+            ,{ {    ESuit::eSpades,  ECard::eJack }, 0x0200191d }
+            ,{ {    ESuit::eSpades, ECard::eQueen }, 0x04001a1f }
+            ,{ {    ESuit::eSpades,  ECard::eKing }, 0x08001b25 }
+            ,{ {    ESuit::eSpades,   ECard::eAce }, 0x10001c29 }
+        };
+
+        auto allCards = getAllCards();
+        for( auto && ii : allCards )
+        {
+            auto card = ii->getCard();
+            auto suit = ii->getSuit();
+            auto bitValue = ii->bitValue();
+
+            auto pos = map.find( std::make_pair( suit, card ) );
+            ASSERT_TRUE( pos != map.end() );
+            EXPECT_EQ( (*pos).second, bitValue.to_ulong() );
+        }
+    }
 
     TEST_F(CHandTester, StraightFlushes) 
     {
@@ -86,7 +157,7 @@ namespace
                 {
                     p1->addCard( fGame->getCard( highCard, suit ) );
                     p1->addCard( fGame->getCard( ECard::eFour, suit ) ); 
-                    p1->addCard( fGame->getCard( ECard::eThree, suit ) );
+                    p1->addCard( fGame->getCard( ECard::eTrey, suit ) );
                     p1->addCard( fGame->getCard( ECard::eTwo, suit ) );
                     p1->addCard( fGame->getCard( ECard::eAce, suit ) );
                 }

@@ -121,12 +121,12 @@ QString CGame::dumpStats() const
     return retVal;
 }
 
-QString CGame::dumpGame() const
+QString CGame::dumpGame( bool details ) const
 {
     QString retVal =
         //dumpDeck( false )
         //+ dumpDeck( true )
-        dumpPlayers();
+        dumpPlayers( details );
     return retVal;
 }
 
@@ -159,7 +159,7 @@ QString CGame::dumpDeck( bool shuffled ) const
     return data;
 }
 
-QString CGame::dumpPlayers( ) const
+QString CGame::dumpPlayers( bool details ) const
 {
     QString data = 
         "=================================\n"
@@ -167,7 +167,7 @@ QString CGame::dumpPlayers( ) const
         "=================================\n";
     for( auto && ii : fPlayers )
     {
-        data += ii->toString() += "\n";
+        data += ii->toString( details ) += "\n";
     }
     return data;
 }
@@ -204,17 +204,23 @@ void CGame::dealCards()
         player->setWinner( false );
     }
 
+    if ( fDealer.expired() )
+        nextDealer();
+
     auto currCard = fShuffledCards.begin();
+
     for( auto currDeal = fNumCardsToDeal.first.begin(); ( currCard != fShuffledCards.end() ) && ( currDeal != fNumCardsToDeal.first.end() ); ++currDeal  )
     {
         for( uint8_t ii = 0; ii < *currDeal; ++ii )
         {
-            auto currPlayer = fPlayers.begin();
-            while( ( currPlayer != fPlayers.end() ) && ( currCard != fShuffledCards.end() ) )
+            auto currPlayer = fDealer.lock();
+            while( currPlayer && ( currCard != fShuffledCards.end() ) )
             {
-                (*currPlayer)->addCard( *currCard );
+                currPlayer->addCard( *currCard );
                 ++currCard;
-                ++currPlayer;
+                currPlayer = currPlayer->nextPlayer().lock();
+                if ( currPlayer == fDealer.lock() )
+                    break;
             }
         }
     }

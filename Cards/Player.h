@@ -50,7 +50,7 @@ public:
     void setWinner( bool isWinner ) { fWinner = isWinner; }
     bool isWinner() const { return fWinner; }
 
-    QString toString() const;
+    QString toString( bool details ) const;
     bool operator<( const CPlayer & rhs ) const;
 
     bool setName( const QString & name );

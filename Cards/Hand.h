@@ -61,10 +61,14 @@ public:
     CHand( const std::vector< std::shared_ptr< CCard > >& cards );
     virtual ~CHand();
 public:
-    QString toString() const;
+    QString toString( bool details ) const;
 
-    QString determineHandName() const;
+    QString determineHandName( bool details ) const;
     std::tuple< EHand, std::vector< ECard >, std::vector< ECard > >  determineHand() const; // hand, mycard, kicker cards
+
+    EHand computeHand() const;
+
+    EHand getHand() const;
 
     bool isFlush() const;
     bool isStraight() const;
@@ -79,18 +83,32 @@ public:
     bool operator==( const CHand& rhs ) const;
     QString handCards() const;
 private:
+    static uint32_t evaluateHand( const std::vector< std::shared_ptr< CCard > > & cards );
+    static uint16_t get5CardValue( const std::vector< std::shared_ptr< CCard > >& cards );
+    static bool isFlush( const std::vector< std::shared_ptr< CCard > >& cards );
+    static uint64_t computeHandProduct( const std::vector< std::shared_ptr< CCard > >& cards );
+    static TCardBitType cardsOrValue( const std::vector< std::shared_ptr< CCard > >& cards );
+    static TCardBitType cardsAndValue( const std::vector< std::shared_ptr< CCard > >& cards );
+
+    uint32_t evaluateHand() const;
+   
     uint16_t get5CardValue() const;
     QString maxCardName() const;
     ECard getMaxCard() const;
+    ECard getMinCard() const;
     TCardBitType cardsAndValue() const;
     TCardBitType cardsOrValue() const;
+    uint64_t computeHandProduct() const;
 
     std::vector< std::shared_ptr< CCard > > fCards;
     mutable std::optional< std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > > fHand;
     mutable std::optional< uint16_t > f5CardValue;
     mutable std::optional< ECard > fMaxCard;
+    mutable std::optional< ECard > fMinCard;
     mutable std::optional< TCardBitType > fAndValue;
     mutable std::optional< TCardBitType > fOrValue;
+    mutable std::optional< uint64_t > fHandProduct;
+    mutable std::optional< uint32_t > fHandRank;
 };
 
 #endif // _ALCULATOR_H

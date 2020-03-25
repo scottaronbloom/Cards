@@ -39,7 +39,7 @@ CPlayer::~CPlayer()
 }
 
 
-QString CPlayer::toString() const
+QString CPlayer::toString( bool details ) const
 {
     QString retVal = "=================================\n"
         "Player: " + fName + "\n"
@@ -47,9 +47,12 @@ QString CPlayer::toString() const
 
     retVal += QString( "Is Dealer: %1\n" ).arg( fDealer ? "Yes" : "No" );
     retVal += QString( "Is Winner: %1\n" ).arg( fWinner ? "Yes" : "No" );
-    retVal += QString( "Prev Player: %1\n" ).arg( prevPlayer().expired() ? "<NONE>" : prevPlayer().lock()->name() );
-    retVal += QString( "Next Player: %1\n" ).arg( nextPlayer().expired() ? "<NONE>" : nextPlayer().lock()->name() );
-    retVal += fHand->toString() + "\n";
+    if ( details )
+    {
+        retVal += QString( "Prev Player: %1\n" ).arg( prevPlayer().expired() ? "<NONE>" : prevPlayer().lock()->name() );
+        retVal += QString( "Next Player: %1\n" ).arg( nextPlayer().expired() ? "<NONE>" : nextPlayer().lock()->name() );
+    }
+    retVal += fHand->toString( details ) + "\n";
     return retVal;
 }
 
@@ -72,7 +75,7 @@ bool CPlayer::setName( const QString& name )
 
 EHand CPlayer::hand() const
 {
-    return std::get< 0 >( fHand->determineHand() );
+    return fHand->getHand();
 }
 
 

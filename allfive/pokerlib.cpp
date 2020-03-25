@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "arrays.h"
 #include "poker.h"
-
+#include <fstream>
 #include <random>
 // Poker hand evaluator
 //
@@ -11,22 +11,17 @@
 
 // perform a binary search on a pre-sorted array
 //
-int findit( int key )
-{
-    int low = 0, high = 4887, mid;
 
-    while ( low <= high )
+uint64_t findit( int64_t key )
+{
+    computeProductLookupTable();
+    auto pos = fProductMap.find( key );
+    if ( pos == fProductMap.end() )
     {
-        mid = ( high + low ) >> 1;      // divide by two
-        if ( key < products[ mid ] )
-            high = mid - 1;
-        else if ( key > products[ mid ] )
-            low = mid + 1;
-        else
-            return mid;
+        fprintf( stderr, "ERROR:  no match found; key = %d\n", (int)key );
+        return -1;
     }
-    fprintf( stderr, "ERROR:  no match found; key = %d\n", key );
-    return -1;
+    return (*pos).second;
 }
 
 //
@@ -54,9 +49,62 @@ init_deck( int* deck )
 {
     int i, j, n = 0, suit = 0x8000;
 
+    std::ofstream ofs( "DeckDump.cpp", std::ofstream::out | std::ofstream::trunc );
+
+    ofs << "fDeckDump = \n{\n";
+    bool first = true;
     for ( i = 0; i < 4; i++, suit >>= 1 )
+    {
         for ( j = 0; j < 13; j++, n++ )
+        {
             deck[ n ] = primes[ j ] | ( j << 8 ) | suit | ( 1 << ( 16 + j ) );
+            ofs << "    ";
+            if ( first )
+                ofs << " ";
+            else
+                ofs << ",";
+            ofs << "{ { ";
+            first = false;
+            ofs.width( 16 );
+            ofs.fill( ' ' );
+            switch( suit )
+            {
+                case 0x8000: ofs << "ESuit::eClub"; break;
+                case 0x4000: ofs << "ESuit::eDiamond"; break;
+                case 0x2000: ofs << "ESuit::eHeart"; break;
+                case 0x1000: ofs << "ESuit::eSpade"; break;
+                default:
+                    break;
+            }
+            ofs << ",";
+
+            ofs.width( 14 );
+            ofs.fill( ' ' );
+            switch( j )
+            {
+                case Deuce: ofs << "ECard::eTwo"; break;
+                case Trey:  ofs << "ECard::eThree"; break;
+                case Four:  ofs << "ECard::eFour"; break;
+                case Five:  ofs << "ECard::eFive"; break;
+                case Six:   ofs << "ECard::eSix"; break;
+                case Seven: ofs << "ECard::eSeven"; break;
+                case Eight: ofs << "ECard::eEight"; break;
+                case Nine:  ofs << "ECard::eNine"; break;
+                case Ten:   ofs << "ECard::eTen"; break;
+                case Jack:  ofs << "ECard::eJack"; break;
+                case Queen: ofs << "ECard::eQueen"; break;
+                case King:  ofs << "ECard::eKing"; break;
+                case Ace:   ofs << "ECard::eAce"; break;
+                default:
+                    break;
+            }
+            ofs << " }, 0x";
+            ofs.width( 8 );
+            ofs.fill( '0' );
+            ofs << std::hex << deck[ n ] << " }\n";
+        }
+    }
+    ofs << "}\n";
 }
 
 
@@ -134,7 +182,7 @@ hand_rank( short val )
 short
 eval_5cards( int c1, int c2, int c3, int c4, int c5 )
 {
-    int q;
+    uint64_t q;
     short s;
 
     q = ( c1 | c2 | c3 | c4 | c5 ) >> 16;

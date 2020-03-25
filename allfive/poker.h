@@ -34,6 +34,8 @@
 
 void init_deck( int* deck );
 short eval_5hand( int* hand );
+short eval_5cards( int c1, int c2, int c3, int c4, int c5 );
 int hand_rank( short val );
+int find_card( int rank, int suit, int* deck );
 
 #endif

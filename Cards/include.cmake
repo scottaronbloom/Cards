@@ -23,6 +23,7 @@
 set(qtproject_SRCS
     Card.cpp
     Hand.cpp
+    EvaluateHand.cpp
     Game.cpp
     Player.cpp
 )

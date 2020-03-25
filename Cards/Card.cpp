@@ -42,7 +42,7 @@ QString toString( ECard card, bool verbose )
     {
         case ECard::eAce: return verbose ? "Ace" : "A";
         case ECard::eTwo: return verbose ? "Two" : "2";
-        case ECard::eThree: return verbose ? "Three" : "3";
+        case ECard::eTrey: return verbose ? "Three" : "3";
         case ECard::eFour: return verbose ? "Four" : "4";
         case ECard::eFive: return verbose ? "Five" : "5";
         case ECard::eSix: return verbose ? "Six" : "6";
@@ -63,7 +63,7 @@ uint8_t toPrimeValue( ECard card )
     switch ( card )
     {
         case ECard::eTwo: return 2;
-        case ECard::eThree: return 3;
+        case ECard::eTrey: return 3;
         case ECard::eFour: return 5;
         case ECard::eFive: return 7;
         case ECard::eSix: return 11;
@@ -85,7 +85,7 @@ ECard fromBitValue( uint16_t value )
     switch ( value )
     {
         case 0b00000000000001: return ECard::eTwo;
-        case 0b00000000000010: return ECard::eThree;
+        case 0b00000000000010: return ECard::eTrey;
         case 0b00000000000100: return ECard::eFour;
         case 0b00000000001000: return ECard::eFive;
         case 0b00000000010000: return ECard::eSix;
@@ -107,7 +107,7 @@ uint16_t toBitValue( ECard card )
     switch ( card )
     {
         case ECard::eTwo:   return 0b00000000000001;
-        case ECard::eThree: return 0b00000000000010;
+        case ECard::eTrey: return 0b00000000000010;
         case ECard::eFour:  return 0b00000000000100;
         case ECard::eFive:  return 0b00000000001000;
         case ECard::eSix:   return 0b00000000010000;

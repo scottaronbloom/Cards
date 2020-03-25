@@ -30,6 +30,13 @@ int main( int argc, char** argv )
     //for ( i = 0; i < 10; i++ )
     //    freq[ i ] = 0;
 
+    auto c1 = deck[ find_card( Deuce, DIAMOND, deck ) ];
+    auto c2 = deck[ find_card( Deuce, HEART, deck ) ];
+    auto c3 = deck[ find_card( Deuce, CLUB, deck ) ];
+    auto c4 = deck[ find_card( Trey, SPADE, deck ) ];
+    auto c5 = deck[ find_card( Trey, HEART, deck ) ];
+    auto i = eval_5cards( c1, c2, c3 , c4, c5 );
+    auto j = hand_rank( i );
     std::set< int > seen;
     // loop over every possible five-card hand
     for ( int c1 = 0; c1 < 48; c1++ )

@@ -58,7 +58,7 @@ public:
 public:
     std::weak_ptr< CPlayer > currDealer() const{ return fDealer; }
 
-    QString dumpGame() const;
+    QString dumpGame( bool details ) const;
     void shuffleAndDeal();
     void nextDealer();
     void prevDealer();
@@ -72,6 +72,7 @@ public:
     std::shared_ptr< CCard > getCard( ECard card, ESuit suit ) const;
     std::vector< std::shared_ptr< CCard > > getCards( const QString & cardNames ) const;
 
+    void setNumCards( uint8_t numCards ){ fNumCardsToDeal = TCardDeal( { numCards }, {} ); }
     void setCardDeal( const TCardDeal & cards ){ fNumCardsToDeal = cards; }
     TCardDeal cardDeal() const{ return fNumCardsToDeal; }
 
@@ -88,7 +89,7 @@ private:
     void dealCards();
 
     QString dumpDeck( bool shuffled ) const;
-    QString dumpPlayers() const;
+    QString dumpPlayers( bool details ) const;
 
     std::vector< std::shared_ptr< CPlayer > > fPlayers;
     std::weak_ptr< CPlayer > fDealer;

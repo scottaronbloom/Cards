@@ -46,7 +46,7 @@ enum class ECard
 {
     eUNKNOWN=99,
     eTwo=0,
-    eThree=1,
+    eTrey=1,
     eFour=2,
     eFive=3,
     eSix=4,

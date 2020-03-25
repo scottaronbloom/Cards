@@ -22,10 +22,12 @@
 
 #include "MainWindow.h"
 #include "Cards/Game.h"
+#include "SABUtils/utils.h"
 #include "ui_MainWindow.h"
 
 #include <QSettings>
 #include <QTimer>
+
 
 CMainWindow::CMainWindow( QWidget* parent )
     : QDialog( parent ),
@@ -62,16 +64,16 @@ CMainWindow::CMainWindow( QWidget* parent )
                        } );
     }
 
-    loadPlayers();
+    loadSettings();
     showGame();
 }
 
 CMainWindow::~CMainWindow()
 {
-    savePlayers();
+    saveSettings();
 }
 
-void CMainWindow::loadPlayers()
+void CMainWindow::loadSettings()
 {
     QStringList players = { "Scott", "Craig", "Eric", "Keith" };
     
@@ -83,9 +85,13 @@ void CMainWindow::loadPlayers()
         fNameWidgets[ ii ].second->setText( players[ ii ] );
         fGame->setPlayerName( ii, players[ ii ] );
     }
+    auto numCards = settings.value( "numCards", 5 ).toInt();
+    fImpl->fiveCard->setChecked( numCards == 5 );
+    fImpl->sevenCard->setChecked( numCards == 7 );
+    fGame->setNumCards( numCards );
 }
 
-void CMainWindow::savePlayers()
+void CMainWindow::saveSettings()
 {
     QStringList players;
     for( int ii = 0; ii < fImpl->numPlayers->value(); ++ii )
@@ -94,6 +100,7 @@ void CMainWindow::savePlayers()
     }
     QSettings settings;
     settings.setValue( "Players", players );
+    settings.setValue( "NumCards", fImpl->fiveCard->isChecked() ? 5 : 7 );
 }
 
 void CMainWindow::slotDeal()
@@ -106,18 +113,34 @@ void CMainWindow::slotDeal()
 
 void CMainWindow::showStats()
 {
+    if ( fStartTime.has_value() && fGame )
+    {
+        auto endTime = std::chrono::system_clock::now();
+        auto seconds = NUtils::getSeconds( endTime - fStartTime.value(), true );
+        auto numGames = 1.0*fGame->numGames();
+        auto hps = numGames / seconds;
+        auto timeString = tr( "Hands/Second: %1" ).arg( hps );
+        fImpl->handsPerSecondLabel->setHidden( false );
+        fImpl->handsPerSecondLabel->setText( timeString );
+    }
+    else 
+        fImpl->handsPerSecondLabel->setHidden( true );
     return fImpl->stats->setPlainText( fGame->dumpStats() );
 }
 
 void CMainWindow::showGame()
 {
-    return fImpl->data->setPlainText( fGame->dumpGame() );
+    return fImpl->data->setPlainText( fGame->dumpGame( !fAutoDealing ) );
 }
 
 void CMainWindow::slotAutoDeal()
 {
     fAutoDealing = !fAutoDealing;
     fImpl->autoDeal->setText( fAutoDealing ? "Stop Auto Deal" : "Auto Deal" );
+    if ( fAutoDealing )
+    {
+        this->fStartTime = std::chrono::system_clock::now();
+    }
     slotRunAutoDeal();
 }
 

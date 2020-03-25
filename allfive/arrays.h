@@ -1,6 +1,8 @@
 #ifndef __ARRAYS_H
 #define __ARRAYS_H
 
+#include <unordered_map>
+#include <vector>
 /*
 ** this is a table lookup for all "flush" hands (e.g.  both
 ** flushes and straight-flushes.  entries containing a zero
@@ -15,7 +17,9 @@ extern short flushes[];
 ** hands).  it's similar to the above "flushes" array.
 */
 extern short unique5[];
-extern int products[];
+extern std::vector< int > products;
+extern std::unordered_map< int64_t, int64_t > fProductMap;
+extern void computeProductLookupTable();
 extern short  values[];
 
 /*
