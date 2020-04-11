@@ -519,7 +519,7 @@ namespace
         }
     }
 
-    TEST_F( CHandTester, HighCard )
+    TEST_F( CHandTester, DISABLED_HighCard )
     {
         auto p1 = fGame->addPlayer( "Scott" );
 

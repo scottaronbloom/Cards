@@ -70,19 +70,19 @@ namespace NHandUtils
                 hands.push_back( { ii } );
         }
 
-        std::function< bool( const std::vector< std::shared_ptr< CCard > >& curr, const std::shared_ptr< CCard >& obj ) > func =
+        std::function< bool( const std::vector< std::shared_ptr< CCard > >& curr, const std::shared_ptr< CCard >& obj ) > addToResult =
             []( const std::vector< std::shared_ptr< CCard > >& data, const std::shared_ptr< CCard >& obj )
         {
             for ( auto&& ii : data )
             {
                 if ( *ii == *obj )
-                    return true;
+                    return false;
             }
-            return false;
+            return true;
             //return std::find( curr.begin(), curr.end(), obj ) != curr.end();
         };
 
-        auto allHands = NUtils::cartiseanProduct( hands, func );
+        auto allHands = NUtils::cartiseanProduct( hands, addToResult );
         auto retVal = findBest( allHands );
 
         return retVal;
