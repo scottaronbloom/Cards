@@ -26,6 +26,7 @@
 #include "SABUtils/QtUtils.h"
 #include <memory>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <QString>
 
@@ -63,7 +64,7 @@ public:
     void nextDealer();
     void prevDealer();
     void autoSetDealer();
-    std::shared_ptr< CPlayer > findWinner();
+    std::list< std::shared_ptr< CPlayer > > findWinners(); // possible ties
 
     void resetGames();
     size_t numGames() const{ return fGames.size(); }
@@ -81,6 +82,9 @@ public:
     std::pair< bool, std::shared_ptr< CPlayer > > setPlayerName( size_t playerNum, const QString & playerName );
 
     void removePlayer( size_t playerNum );
+
+    void addWildCard( std::shared_ptr< CCard > card );
+    void clearWildCards();
 private:
     void recomputeNextPrev();
     void createDeck();
@@ -97,6 +101,7 @@ private:
     std::vector< std::shared_ptr< CCard > > fShuffledCards;
     std::unordered_map< QString, std::shared_ptr< CCard > > fStringCardMap;
     std::unordered_map< std::pair< ECard, ESuit >, std::shared_ptr< CCard > > fCardMap;
+    std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > > fWildCards;
 
     std::vector< std::pair< EHand, std::weak_ptr< CPlayer > > > fGames;
     std::vector< uint64_t > fWinsByHand;
@@ -106,5 +111,4 @@ private:
     TCardDeal fNumCardsToDeal{ { 5 }, {} }; // first vector is player deals (first) then last is community, default is 5 card 
 };
 
-#endif // _ALCULATOR_H
-;
+#endif 

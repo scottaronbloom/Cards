@@ -166,12 +166,6 @@ CCard::CCard( ECard card, ESuit suit) :
     computeBitValue();
 }
 
-CCard::CCard( const std::pair< ECard, ESuit >& card ) :
-    CCard( card.first, card.second )
-{
-
-}
-
 void CCard::computeBitValue()
 {
     uint32_t tmp =
@@ -188,6 +182,34 @@ CCard::~CCard()
 }
 
 
+std::vector< std::shared_ptr< CCard > > CCard::allCards()
+{
+    static std::vector< std::shared_ptr< CCard > > retVal;
+    if ( retVal.empty() )
+    {
+        for ( const auto&& currSuit : ESuit() )
+        {
+            for ( const auto&& currCard : ECard() )
+            {
+                auto card = std::make_shared< CCard >( currCard, currSuit );
+                retVal.push_back( card );
+            }
+        }
+    }
+    return retVal;
+}
+
+std::list< std::shared_ptr< CCard > > CCard::allCardsList()
+{
+    static std::list< std::shared_ptr< CCard > > retVal;
+    if ( retVal.empty() )
+    {
+        auto allCards = CCard::allCards();
+        retVal = { allCards.begin(), allCards.end() };
+    }
+    return retVal;
+}
+
 QString CCard::toString( bool verbose, bool includeBitValue ) const
 {
     auto retVal = ::toString( fCard, verbose ) + ::toString( fSuit, verbose );
@@ -201,4 +223,16 @@ bool CCard::operator<( const CCard& rhs ) const
     if ( fSuit == rhs.fSuit )
         return fCard < rhs.fCard;
     return fSuit < rhs.fSuit;
+}
+
+bool CCard::operator>( const CCard& rhs ) const
+{
+    if ( fSuit == rhs.fSuit )
+        return fCard > rhs.fCard;
+    return fSuit > rhs.fSuit;
+}
+
+bool CCard::operator==( const CCard& rhs ) const
+{
+    return ( fSuit == rhs.fSuit ) && ( fCard == rhs.fCard );
 }

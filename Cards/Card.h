@@ -25,6 +25,7 @@
 #include "SABUtils/EnumUtils.h"
 #include <bitset>
 #include <vector>
+#include <list>
 #include <QString>
 class CCard;
 
@@ -74,9 +75,10 @@ class CCard
 {
 public:
     CCard( ECard card, ESuit suit );
-    CCard( const std::pair< ECard, ESuit > & card );
     virtual ~CCard();
 
+    static std::vector< std::shared_ptr< CCard > > allCards();
+    static std::list< std::shared_ptr< CCard > > allCardsList();
     QString toString( bool verbose, bool includeBitValue ) const;
     TCardBitType bitValue() const{ return fBitValue; }
 
@@ -84,6 +86,8 @@ public:
     ECard getCard() const { return fCard; }
 public:
     bool operator<( const CCard & rhs ) const;
+    bool operator>( const CCard& rhs ) const;
+    bool operator==( const CCard& rhs ) const;
 
 private:
     void computeBitValue();
@@ -94,4 +98,5 @@ private:
     TCardBitType fBitValue;
 };
 
-#endif // _ALCULATOR_H
+#endif 
+

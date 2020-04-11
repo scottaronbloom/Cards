@@ -26,11 +26,11 @@
 
 #include <QStringList>
 
-CPlayer::CPlayer( const QString& playerName ) :
+CPlayer::CPlayer( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > > & wildCards, const QString& playerName ) :
     fName( playerName ),
     fHand( std::make_shared< CHand >() )
 {
-
+    fHand->setWildCards( wildCards );
 }
 
 CPlayer::~CPlayer()
@@ -56,12 +56,20 @@ QString CPlayer::toString( bool details ) const
     return retVal;
 }
 
+bool CPlayer::operator>( const CPlayer& rhs ) const
+{
+    return fHand->operator >( *rhs.fHand );
+}
 
 bool CPlayer::operator<( const CPlayer& rhs ) const
 {
-    return fHand->operator <( *rhs.fHand );
+    return fHand->operator<( *rhs.fHand );
 }
 
+bool CPlayer::operator==( const CPlayer& rhs ) const
+{
+    return fHand->operator==( *rhs.fHand );
+}
 
 bool CPlayer::setName( const QString& name )
 {

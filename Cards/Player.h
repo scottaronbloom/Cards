@@ -26,7 +26,7 @@
 #include <QString>
 #include <memory>
 #include <vector>
-
+#include <unordered_set>
 class CHand;
 class CCard;
 enum class ECard;
@@ -34,7 +34,7 @@ enum class EHand;
 class CPlayer 
 {
 public:
-    CPlayer( const QString & playerName=QString() );
+    CPlayer( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > > & wildCards, const QString & playerName=QString() );
     virtual ~CPlayer();
 
 public:
@@ -51,7 +51,10 @@ public:
     bool isWinner() const { return fWinner; }
 
     QString toString( bool details ) const;
-    bool operator<( const CPlayer & rhs ) const;
+
+    bool operator>( const CPlayer& rhs ) const;
+    bool operator<( const CPlayer& rhs ) const;
+    bool operator==( const CPlayer& rhs ) const;
 
     bool setName( const QString & name );
     QString name() const{ return fName; }
@@ -63,6 +66,7 @@ public:
     std::tuple< EHand, std::vector< ECard >, std::vector< ECard > >  determineHand() const;// hand, mycard, kicker cards
 
     QString handCards() const;
+    std::shared_ptr< CHand > getHand() const{ return fHand; }
 public:
     void addCard( std::shared_ptr< CCard > & card );
     void setCards( const std::vector< std::shared_ptr< CCard > > & cards );
@@ -77,4 +81,5 @@ private:
     bool fWinner{ false };
 };
 
-#endif // _ALCULATOR_H
+#endif 
+

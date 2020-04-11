@@ -23,7 +23,8 @@
 set(qtproject_SRCS
     Card.cpp
     Hand.cpp
-    EvaluateHand.cpp
+    HandImpl.cpp
+    HandUtils.cpp
     Game.cpp
     Player.cpp
 )
@@ -34,6 +35,8 @@ set(qtproject_H
 set(project_H
     Game.h
     Hand.h
+    HandImpl.h
+    HandUtils.h
     Card.h
     Player.h
 )

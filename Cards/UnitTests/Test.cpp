@@ -25,6 +25,16 @@
 #include <string>
 #include "gmock/gmock.h"
 
+std::ostream& operator<<( std::ostream& os, const QString & data )
+{
+    return os << data.toStdString();  
+}
+
+void PrintTo( const QString& data, std::ostream * os )
+{
+    *os << data.toStdString();
+}
+
 namespace
 {
     class CHandTester : public ::testing::Test
@@ -171,7 +181,7 @@ namespace
                 auto hand =p1->determineHand();
                 EXPECT_EQ( EHand::eStraightFlush, std::get< 0 >( hand ) );
                 ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
-                ASSERT_EQ( 0, std::get< 2 >( hand ).size() );
+                ASSERT_EQ( 4, std::get< 2 >( hand ).size() );
                 EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
             }
         }
@@ -288,7 +298,7 @@ namespace
                 auto hand = p1->determineHand();
                 EXPECT_EQ( EHand::eFlush, std::get< 0 >( hand ) );
                 ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
-                ASSERT_EQ( 0, std::get< 2 >( hand ).size() );
+                ASSERT_EQ( 4, std::get< 2 >( hand ).size() );
                 EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
             }
         }
@@ -319,7 +329,7 @@ namespace
                 auto hand = p1->determineHand();
                 EXPECT_EQ( EHand::eStraight, std::get< 0 >( hand ) );
                 ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
-                ASSERT_EQ( 0, std::get< 2 >( hand ).size() );
+                ASSERT_EQ( 4, std::get< 2 >( hand ).size() );
                 EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
             }
         }
@@ -631,8 +641,57 @@ namespace
         fGame->addPlayer( "Eric" )->setCards( fGame->getCards(  "9H 8S 6H 3C 2S" ) ); // 9 high, 8632
         fGame->addPlayer( "Keith" )->setCards( fGame->getCards( "KD QS 7C 6S 5C" ) ); // K high, Q765
 
-        auto winner = fGame->findWinner();
-        EXPECT_EQ( "Scott", winner->name() );
+        auto winners = fGame->findWinners();
+        EXPECT_EQ( 1, winners.size() );
+        EXPECT_EQ( "Scott", winners.front()->name() );
+    }
+
+    TEST_F( CHandTester, FindWinnerWild )
+    {
+        for( auto && suit : ESuit() )
+        {
+            fGame->addWildCard( fGame->getCard( ECard::eTwo, suit ) ); // all twos wild
+        }
+
+        fGame->addPlayer( "Scott" )->setCards( fGame->getCards( "7D AS 4D QH JC" ) ); // ace high, QJ74
+        fGame->addPlayer( "Craig" )->setCards( fGame->getCards( "9C 8C 6D 3D 2H" ) ); // Pair of 9s (9C 2H), 863
+        fGame->addPlayer( "Eric" )->setCards( fGame->getCards( "9H 8S 6H 3C 2S" ) ); // Pair of 9s (9C 2S), 863
+        fGame->addPlayer( "Keith" )->setCards( fGame->getCards( "KD QS 7C 6S 5C" ) ); // K high, Q765
+
+        auto winners = fGame->findWinners();
+        EXPECT_EQ( 2, winners.size() );
+        EXPECT_EQ( "Craig", winners.back()->name() );
+        EXPECT_EQ( "Pair of 'Nine' - 'Eight, Six, Three' kicker", winners.back()->getHand()->determineHandName( true ) );
+
+        EXPECT_EQ( "Eric", winners.front()->name() );
+        EXPECT_EQ( "Pair of 'Nine' - 'Eight, Six, Three' kicker", winners.front()->getHand()->determineHandName( true ) );
+    }
+
+    TEST_F( CHandTester, DetermineHandWild )
+    {
+        auto hand = std::make_shared< CHand >( fGame->getCards( "7H KH 4H 2C 2H" ) ); // Ace H flush
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
+
+        EHand handValue;
+        std::vector< ECard > card;
+        std::vector< ECard > kickers;
+        std::tie( handValue, card, kickers ) = hand->determineHand();
+        EXPECT_EQ( EHand::eFlush, handValue );
+        EXPECT_EQ( ECard::eAce, *card.begin() );
+
+        hand = std::make_shared< CHand >( fGame->getCards( "7H KH 4H 2H 2H" ) ); // Invalid hand
+        std::tie( handValue, card, kickers ) = hand->determineHand();
+        EXPECT_EQ( EHand::eNoCards, handValue );
+
+        hand = std::make_shared< CHand >( fGame->getCards( "7H KH 4H 2C 2D" ) ); // Pair of kings
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) ); // 2 clubs and hearts wild
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) ); 
+        std::tie( handValue, card, kickers ) = hand->determineHand();
+        EXPECT_EQ( EHand::ePair, handValue );
+        EXPECT_EQ( ECard::eKing, *card.begin() );
+        EXPECT_EQ( ECard::eSeven, *kickers.begin() );
+        EXPECT_EQ( ECard::eTwo, *kickers.rbegin() );
     }
 
     TEST_F( CHandTester, AllHands )
@@ -660,7 +719,7 @@ namespace
         }
 
         std::sort( allHands.begin(), allHands.end(), []( const std::shared_ptr< CHand > &lhs, const std::shared_ptr< CHand > & rhs ) 
-                   { return lhs->operator >( *rhs ); } 
+                   { return lhs->operator>( *rhs ); } 
         );
 
         EXPECT_EQ( 2598960, numHands );
@@ -670,7 +729,7 @@ namespace
         std::shared_ptr< CHand > prevHand;
         for( size_t ii = 0; ii < allHands.size(); ++ii )
         {
-            if ( prevHand && ( prevHand->operator ==( *allHands[ ii ] ) ) )
+            if ( prevHand && ( prevHand->operator==( *allHands[ ii ] ) ) )
                 continue;
             prevHand = allHands[ ii ];
             uniqueHands.push_back( prevHand );

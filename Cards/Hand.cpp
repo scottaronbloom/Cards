@@ -21,17 +21,21 @@
 // SOFTWARE.
 
 #include "Hand.h"
+#include "HandUtils.h"
+#include "HandImpl.h"
 #include "Card.h"
 #include "SABUtils/utils.h"
 #include <unordered_set>
 #include <QStringList>
 
-CHand::CHand()
+CHand::CHand() :
+    fHandImpl( std::make_unique< CHandImpl >() )
 {
 
 }
 
-CHand::CHand( const std::vector< std::shared_ptr< CCard > >& cards )
+CHand::CHand( const std::vector< std::shared_ptr< CCard > >& cards ) :
+    CHand()
 {
     setCards( cards );
 }
@@ -65,21 +69,21 @@ std::ostream & operator<<( std::ostream& oss, EHand value )
     return oss;
 }
 
-bool CHand::operator>( const CHand& rhs ) const
+bool CHand::operator >( const CHand & rhs ) const
 {
     auto rank = evaluateHand();
     auto rhsRank = rhs.evaluateHand();
     return rank > rhsRank;
 }
 
-bool CHand::operator<( const CHand& rhs ) const
+bool CHand::operator <( const CHand & rhs) const
 {
     auto rank = evaluateHand();
     auto rhsRank = rhs.evaluateHand();
     return rank > rhsRank;  // lower the rank, the better the hand
 }
 
-bool CHand::operator==( const CHand& rhs ) const
+bool CHand::operator ==( const CHand & rhs ) const
 {
     auto rank = evaluateHand();
     auto rhsRank = rhs.evaluateHand();
@@ -88,343 +92,78 @@ bool CHand::operator==( const CHand& rhs ) const
 
 QString CHand::handCards() const
 {
-    QString retVal;
-    bool first = true;
-    for ( auto&& ii : fCards )
-    {
-        if ( !first )
-            retVal += " ";
-        retVal += ii->toString( false, false );
-    }
-    return retVal;
+    return fHandImpl->handCards();
+}
+
+std::vector< std::shared_ptr< CCard > > CHand::getCards() const
+{
+    return fHandImpl->fCards;
 }
 
 QString CHand::toString( bool details ) const
 {
-    QString retVal;
-    if ( details )
-    {
-        retVal += "Cards:\n";
-        for ( auto&& ii : fCards )
-        {
-            retVal += ii->toString( false, details ) + "\n";
-        }
-    }
-    retVal += "HAND: " + determineHandName( details );
-    return retVal;
-}
-
-QString CHand::determineHandName( bool details ) const
-{
-    if ( details )
-    {
-        auto hand = determineHand();
-        QString retVal = ::toString( std::get< 0 >( hand ), true );
-        for ( auto&& ii : std::get< 1 >( hand ) )
-            retVal = retVal.arg( ::toString( ii, true ) );
-        for ( auto&& ii : std::get< 2 >( hand ) )
-            retVal = retVal.arg( ::toString( ii, true ) );
-        return retVal;
-    }
-    else
-        return ::toString( computeHand(), false );
-}
-
-enum EStraightType
-{
-    eAce   = 0b01111100000000, // AKQJT
-    eKing  = 0b00111110000000, // KQJT9
-    eQueen = 0b00011111000000, // QJT98
-    eJack  = 0b00001111100000, // JT987
-    eTen   = 0b00000111110000, // T9876
-    eNine  = 0b00000011111000, // 98765
-    eEight = 0b00000001111100, // 87654
-    eSeven = 0b00000000111110, // 76543
-    eSix   = 0b00000000011111, // 65432
-    eWheel = 0b01000000001111
-};
-
-
-ECard CHand::getMaxCard() const
-{
-    if ( fHandData.fMaxCard.has_value() )
-        return fHandData.fMaxCard.value();
-
-    auto value = cardsOrValue() >> 16;
-    if ( isStraight() && ( value == EStraightType::eWheel ) )
-        fHandData.fMaxCard = ECard::eFive;
-    else
-    {
-        auto pos = NUtils::findLargestIndexInBitSet( value );
-        if ( pos.has_value() )
-            fHandData.fMaxCard = static_cast<ECard>( pos.value() );
-        else
-            return ECard::eUNKNOWN;
-    }
-    return fHandData.fMaxCard.value();
-}
-
-ECard CHand::getMinCard() const
-{
-    if ( fHandData.fMinCard.has_value() )
-        return fHandData.fMinCard.value();
-
-    auto value = cardsOrValue() >> 16;
-    if ( isStraight() && ( value == EStraightType::eWheel ) )
-        fHandData.fMinCard = ECard::eFive;
-    else
-    {
-        auto pos = NUtils::findSmallestIndexInBitSet( value );
-        if ( pos.has_value() )
-            fHandData.fMinCard = static_cast<ECard>( pos.value() );
-        else
-            return ECard::eUNKNOWN;
-    }
-    return fHandData.fMinCard.value();
-}
-
-uint16_t CHand::get5CardValue() const
-{
-    if ( fHandData.f5CardValue.has_value() )
-        return fHandData.f5CardValue.value();
-
-    auto retVal = get5CardValue( fCards );
-    if ( retVal == -1 )
-        return retVal;
-    fHandData.f5CardValue = retVal;
-    return retVal;
-}
-
-uint16_t CHand::get5CardValue( const std::vector< std::shared_ptr< CCard > > & cards )
-{
-    if ( cards.empty() )
-        return -1;
-    return static_cast<uint16_t>( ( cardsOrValue( cards ) >> 16 ).to_ulong() );
-}
-
-QString CHand::maxCardName() const
-{
-    auto maxCard = getMaxCard();
-    return ::toString( maxCard, true );
-}
-
-bool CHand::isFlush( const std::vector< std::shared_ptr< CCard > > & cards )
-{
-    if ( cards.empty() )
-        return false;
-
-    auto value = cardsAndValue( cards );
-    value &= 0x0F000;
-    return value.to_ulong() != 0;
+    return fHandImpl->toString( details );
 }
 
 bool CHand::isFlush() const
 {
-    return isFlush( fCards );
+    return fHandImpl->isFlush();
 }
 
 bool CHand::isStraight() const
 {
-    static std::unordered_set< uint16_t > sStraights =
-    {
-        EStraightType::eAce, // AKQJT
-        EStraightType::eKing, // KQJT9
-        EStraightType::eQueen, // QJT98
-        EStraightType::eJack, // JT987
-        EStraightType::eTen, // T9876
-        EStraightType::eNine, // 98765
-        EStraightType::eEight, // 87654
-        EStraightType::eSeven, // 76543
-        EStraightType::eSix, // 65432
-        EStraightType::eWheel  // 5432A
-    };
-    if ( fCards.empty() )
-        return false;
-
-    auto value = get5CardValue();
-    return sStraights.find( value ) != sStraights.end();
+    return fHandImpl->isStraight();
 }
 
 EHand CHand::getHand() const
 {
-    if ( fHandData.fHand.has_value() )
-        return std::get< 0 >( fHandData.fHand.value() );
-    return computeHand();
+    return fHandImpl->getHand();
 }
+
 // hand my cards kickers
 std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CHand::determineHand() const
 {
-    if ( fHandData.fHand.has_value() )
-        return *fHandData.fHand;
+    return fHandImpl->determineHand();
+}
 
-    auto emptyHand = std::make_tuple( EHand::eNoCards, std::vector< ECard >(), std::vector< ECard >() );
-    if ( fCards.empty() )
-        return emptyHand;
+QString CHand::determineHandName( bool details ) const
+{
+    return fHandImpl->determineHandName( details );
+}
 
-    auto hand = computeHand();
+void CHand::setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards )
+{
+    fHandImpl->setWildCards( wildCards );
+}
 
-    std::vector< ECard > cards;
-    std::vector< ECard > kickers;
-    switch( hand )
-    {
-        case EHand::eStraightFlush:
-        case EHand::eFlush:
-        case EHand::eStraight:
-            cards = std::vector< ECard >( { getMaxCard() } );
-            break;
-
-        case EHand::eFourOfAKind:
-        case EHand::eFullHouse:
-        case EHand::eThreeOfAKind:
-        case EHand::eTwoPair:
-        case EHand::ePair:
-        case EHand::eHighCard:
-            {
-                std::map< ECard, uint8_t > cardHits;
-                for ( auto&& card : fCards )
-                    cardHits[ card->getCard() ]++;
-
-                for ( auto&& ii : cardHits )
-                {
-                    
-                    if ( ( ( hand == EHand::eFullHouse ) && ( ii.second == 3 ) ) || ( ( hand != EHand::eFullHouse ) && ( ( ii.second > 1 ) || ( hand == EHand::eHighCard ) ) ) )
-                        cards.push_back( ii.first );
-                    else 
-                        kickers.push_back( ii.first );
-                }
-            }
-            break;
-        default:
-            return emptyHand;
-    }
-
-    std::sort( kickers.begin(), kickers.end(), []( ECard lhs, ECard rhs ){ return lhs > rhs; } );
-    std::sort( cards.begin(), cards.end(), []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
-    if ( hand == EHand::eHighCard )
-    {
-        kickers = cards;
-        kickers.erase( kickers.begin(), ++kickers.begin() );
-        cards.erase( ++cards.begin(), cards.end() );
-    }
-
-    return *( fHandData.fHand = std::make_tuple( hand, cards, kickers ) );
+void CHand::addWildCard( const std::shared_ptr< CCard >& card )
+{
+    fHandImpl->addWildCard( card );
 }
 
 EHand CHand::computeHand() const
 {
-    if ( fCards.empty() )
-        return EHand::eNoCards;
-    auto rank = evaluateHand();
-    EHand hand;
-    if ( rank > 6185 )
-        hand = EHand::eHighCard;
-    else if ( rank > 3325 )
-        hand = EHand::ePair;
-    else if ( rank > 2467 )
-        hand = EHand::eTwoPair;
-    else if ( rank > 1609 )
-        hand = EHand::eThreeOfAKind;
-    else if ( rank > 1599 )
-        hand = EHand::eStraight;
-    else if ( rank > 322 )
-        hand = EHand::eFlush;
-    else if ( rank > 166 )
-        hand = EHand::eFullHouse;
-    else if ( rank > 10 )
-        hand = EHand::eFourOfAKind;
-    else
-        hand = EHand::eStraightFlush;
-    return hand;
+    return fHandImpl->computeHand();
 }
 
 void CHand::addCard( std::shared_ptr< CCard >& card )
 {
-    Q_ASSERT( card );
-    fCards.push_back( card );
+    fHandImpl->addCard( card );
 }
 
 void CHand::setCards( const std::vector< std::shared_ptr< CCard > >& cards )
 {
-    fCards = cards;
+    fHandImpl->setCards( cards );
 }
 
 void CHand::clearCards()
 {
-    fCards.clear();
-    fHandData.reset();
+    fHandImpl->clearCards();
 }
 
-uint64_t CHand::computeHandProduct( const std::vector < std::shared_ptr< CCard > > & cards )
+
+uint32_t CHand::evaluateHand() const
 {
-    if ( cards.empty() )
-        return -1;
-
-    uint64_t retVal = 1;
-    TCardBitType value( std::numeric_limits< int64_t >::max() );
-    for ( auto&& ii : cards )
-        retVal *= ( ii->bitValue().to_ulong() & 0x00FF );
-
-    return retVal;
+    return fHandImpl->evaluateHand();
 }
 
-uint64_t CHand::computeHandProduct() const
-{
-    if ( fHandData.fHandProduct.has_value() )
-        return fHandData.fHandProduct.value();
-
-    auto retVal = computeHandProduct( fCards );
-    if ( retVal == -1 )
-        return retVal;
-
-    fHandData.fHandProduct = retVal;
-    return fHandData.fHandProduct.value();
-}
-
-TCardBitType CHand::cardsAndValue( const std::vector< std::shared_ptr< CCard > >& cards )
-{
-    if ( cards.empty() )
-        return TCardBitType();
-
-    TCardBitType value( std::numeric_limits< int64_t >::max() );
-    for ( auto&& ii : cards )
-        value &= ii->bitValue();
-
-    return value;
-}
-
-TCardBitType CHand::cardsAndValue() const
-{
-    if ( fHandData.fAndValue.has_value() )
-        return fHandData.fAndValue.value();
-
-    auto retVal = cardsAndValue( fCards );
-    if ( retVal.size() == 0 )
-        return retVal;
-
-    fHandData.fAndValue = retVal;
-    return fHandData.fAndValue.value();
-}
-
-TCardBitType CHand::cardsOrValue( const std::vector< std::shared_ptr< CCard > >& cards )
-{
-    if ( cards.empty() )
-        return TCardBitType();
-
-
-    TCardBitType value;
-    for ( auto&& ii : cards )
-        value |= ii->bitValue();
-    return value;
-}
-
-TCardBitType CHand::cardsOrValue() const
-{
-    if ( fHandData.fOrValue.has_value() )
-        return fHandData.fOrValue.value();
-
-    auto retVal = cardsOrValue( fCards );
-    if ( retVal.size() == 0 )
-        return retVal;
-    fHandData.fOrValue = retVal;
-    return fHandData.fOrValue.value();
-}
