@@ -66,26 +66,12 @@ void CHandImpl::addWildCard( const std::shared_ptr< CCard >& card )
     if ( !fWildCards )
         fWildCards = std::make_shared< std::unordered_set< std::shared_ptr< CCard > > >();
     fWildCards->insert( card );
+    reset();
 }
 
-QString CHandImpl::toString( bool details ) const
+QString CHandImpl::toString() const
 {
-    QString retVal;
-    if ( details )
-    {
-        retVal += "Cards:\n";
-        for ( auto&& ii : fCards )
-        {
-            retVal += ii->toString( false, details ) + "\n";
-        }
-    }
-    retVal += "HAND: " + determineHandName( details );
-    return retVal;
-}
-
-QString CHandImpl::handCards() const
-{
-    QString retVal;
+    QString retVal = "Cards: ";
     bool first = true;
     for ( auto&& ii : fCards )
     {
@@ -93,6 +79,11 @@ QString CHandImpl::handCards() const
             retVal += " ";
         first = false;
         retVal += ii->toString( false, false );
+    }
+
+    if ( fBestHand.has_value() )
+    {
+        retVal += " - Best Hand: " + fBestHand.value().second->toString() + " - " + determineHandName( true );
     }
     return retVal;
 }

@@ -61,7 +61,7 @@ public:
     CHand( const std::vector< std::shared_ptr< CCard > >& cards );
     virtual ~CHand();
 public:
-    QString toString( bool details ) const;
+    QString toString() const;
 
     QString determineHandName( bool details ) const;
     std::tuple< EHand, std::vector< ECard >, std::vector< ECard > >  determineHand() const; // hand, mycard, kicker cards
@@ -82,12 +82,18 @@ public:
     bool operator<( const CHand& rhs ) const;
     bool operator==( const CHand& rhs ) const;
 
-    QString handCards() const;
     std::vector< std::shared_ptr< CCard > > getCards() const;
+
+    const std::optional< std::pair< uint32_t, std::unique_ptr< CHand > > >& bestHand() const;
 private:
     uint32_t evaluateHand() const;
    
     mutable std::unique_ptr< CHandImpl > fHandImpl;
 };
+inline std::ostream & operator<<( std::ostream & oss, const CHand & value )
+{
+    oss << value.toString().toStdString();
+    return oss;
+}
 #endif 
 

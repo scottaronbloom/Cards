@@ -52,7 +52,7 @@ QString CPlayer::toString( bool details ) const
         retVal += QString( "Prev Player: %1\n" ).arg( prevPlayer().expired() ? "<NONE>" : prevPlayer().lock()->name() );
         retVal += QString( "Next Player: %1\n" ).arg( nextPlayer().expired() ? "<NONE>" : nextPlayer().lock()->name() );
     }
-    retVal += fHand->toString( details ) + "\n";
+    retVal += fHand->toString() + "\n";
     return retVal;
 }
 
@@ -90,11 +90,6 @@ EHand CPlayer::hand() const
 std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CPlayer::determineHand() const// hand, mycard, kicker cards
 {
     return fHand->determineHand();
-}
-
-QString CPlayer::handCards() const
-{
-    return fHand->handCards();
 }
 
 void CPlayer::addCard( std::shared_ptr< CCard >& card )

@@ -42,11 +42,23 @@ namespace NHandUtils
         for ( size_t ii = 0; ii < allHands.size(); ++ii )
         {
             auto&& currHand = allHands[ ii ];
-            auto currHandValue = evaluateHand( currHand );
-            if ( currHandValue < best.first )
+            if ( currHand.size() > 5 )
             {
-                best.first = currHandValue;
-                best.second = std::make_unique< CHand >( currHand );
+                auto bestFive = findBest( currHand, 5 );
+                if ( bestFive.first < best.first )
+                {
+                    best.first = bestFive.first;
+                    best.second.swap( bestFive.second );
+                }
+            }
+            else
+            {
+                auto currHandValue = evaluateHand( currHand );
+                if ( currHandValue < best.first )
+                {
+                    best.first = currHandValue;
+                    best.second = std::make_unique< CHand >( currHand );
+                }
             }
         }
         return best;

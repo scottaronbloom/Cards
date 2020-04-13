@@ -65,7 +65,6 @@ public:
     EHand hand() const;
     std::tuple< EHand, std::vector< ECard >, std::vector< ECard > >  determineHand() const;// hand, mycard, kicker cards
 
-    QString handCards() const;
     std::shared_ptr< CHand > getHand() const{ return fHand; }
 public:
     void addCard( std::shared_ptr< CCard > & card );

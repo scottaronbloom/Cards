@@ -90,19 +90,19 @@ bool CHand::operator ==( const CHand & rhs ) const
     return rank == rhsRank;
 }
 
-QString CHand::handCards() const
-{
-    return fHandImpl->handCards();
-}
-
 std::vector< std::shared_ptr< CCard > > CHand::getCards() const
 {
     return fHandImpl->fCards;
 }
 
-QString CHand::toString( bool details ) const
+const std::optional< std::pair< uint32_t, std::unique_ptr< CHand > > > & CHand::bestHand() const
 {
-    return fHandImpl->toString( details );
+    return fHandImpl->fBestHand;
+}
+
+QString CHand::toString() const
+{
+    return fHandImpl->toString();
 }
 
 bool CHand::isFlush() const

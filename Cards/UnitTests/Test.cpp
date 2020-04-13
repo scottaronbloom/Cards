@@ -12,9 +12,6 @@
  * remains in all copies of this software.
  *
  *
- * $Author: scott $ - $Revision: 55850 $ - $Date: 2019-11-02 02:25:36 -0700 (Sat, 02 Nov 2019) $
- * $HeadURL: http://bpsvn/svn/trunk/CoreApp/dr/UnitTests/TestAndGatingTree.cpp $
- *
  *
 */
 #include "Cards/Game.h"
@@ -692,6 +689,44 @@ namespace
         EXPECT_EQ( ECard::eKing, *card.begin() );
         EXPECT_EQ( ECard::eSeven, *kickers.begin() );
         EXPECT_EQ( ECard::eTwo, *kickers.rbegin() );
+    }
+
+    TEST_F( CHandTester, FindWinner7Card )
+    {
+        fGame->addPlayer( "Scott" )->setCards( fGame->getCards( "7D AS 4D QH JC 3C 2C" ) ); // ace high, QJ74
+        fGame->addPlayer( "Craig" )->setCards( fGame->getCards( "JC TC 8D 5D 4H 3H 2H" ) ); // J high, T854
+        fGame->addPlayer( "Eric" )->setCards( fGame->getCards( "JH TS 8H 5C 4S 3D 2D" ) ); // J high, T854
+        fGame->addPlayer( "Keith" )->setCards( fGame->getCards( "KD QS 8C 7S 5C 4C 3S 2S" ) ); // K high, Q875
+
+        auto winners = fGame->findWinners();
+        EXPECT_EQ( 1, winners.size() );
+        EXPECT_EQ( "Scott", winners.front()->name() );
+        ASSERT_TRUE( winners.front()->getHand()->bestHand().has_value() );
+        EXPECT_EQ( "Cards: 7D AS 4D QH JC", winners.front()->getHand()->bestHand().value().second->toString() );
+        EXPECT_EQ( "High Card 'Ace' : Queen, Jack, Seven, Four kickers", winners.front()->getHand()->bestHand().value().second->determineHandName( true ) );
+    }
+
+    TEST_F( CHandTester, Determine7CHandWild )
+    {
+        auto hand = std::make_shared< CHand >( fGame->getCards( "3C 4D 7H KH 4H 2C 2H" ) ); // Ace H flush
+        //hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
+        //hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
+
+        EHand handValue;
+        std::vector< ECard > card;
+        std::vector< ECard > kickers;
+        std::tie( handValue, card, kickers ) = hand->determineHand();
+        EXPECT_EQ( EHand::eTwoPair, handValue );
+        EXPECT_EQ( ECard::eFour, *card.begin() );
+        EXPECT_EQ( ECard::eTwo, *card.rbegin() );
+        EXPECT_EQ( ECard::eKing, *kickers.begin() );
+
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
+        std::tie( handValue, card, kickers ) = hand->determineHand();
+        EXPECT_EQ( EHand::eFourOfAKind, handValue );
+        EXPECT_EQ( ECard::eFour, *card.begin() );
+        EXPECT_EQ( ECard::eKing, *kickers.begin() );
     }
 
     TEST_F( CHandTester, AllHands )

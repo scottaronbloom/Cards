@@ -46,8 +46,7 @@ public:
     void setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
     void addWildCard( const std::shared_ptr< CCard >& card );
 
-    QString toString( bool details ) const;
-    QString handCards() const;
+    QString toString() const;
     QString determineHandName( bool details ) const;
     QString maxCardName() const;
 

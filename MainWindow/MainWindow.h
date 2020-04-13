@@ -41,7 +41,7 @@ class CMainWindow : public QDialog
 public:
     CMainWindow(QWidget *parent = 0);
     ~CMainWindow();
-public slots:
+public Q_SLOTS:
     void slotDeal();
     void slotAutoDeal();
     void slotRunAutoDeal();

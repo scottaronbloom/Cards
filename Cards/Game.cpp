@@ -246,7 +246,7 @@ std::list< std::shared_ptr< CPlayer > > CGame::findWinners()
     //qDebug() << "==============================";
     //for( auto && ii : currGame )
     //{
-    //    qDebug() << "Player: " << ii->name() << " Hand: " << ii->handCards();
+    //    qDebug() << "Player: " << ii->name() << ii->getHand()->toString();
     //}
 
     std::stable_sort( currGame.begin(), currGame.end(),
@@ -260,7 +260,7 @@ std::list< std::shared_ptr< CPlayer > > CGame::findWinners()
     //qDebug() << "==============================";
     //for ( auto&& ii : currGame )
     //{
-    //    qDebug() << "Player: " << ii->name() << " Hand: " << ii->handCards();
+    //    qDebug() << "Player: " << ii->name() << ii->getHand()->toString();
     //}
 
     std::list< std::shared_ptr< CPlayer > > winners;
