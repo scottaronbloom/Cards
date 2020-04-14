@@ -174,9 +174,9 @@ void CGame::resetGames()
 {
     fGames.clear(); 
     fHandCount.clear(); 
-    fHandCount.resize( static_cast< size_t >( EHand::eStraightFlush ) + 1);
+    fHandCount.resize( static_cast< size_t >( EHand::eFiveOfAKind ) + 1);
     fWinsByHand.clear();
-    fWinsByHand.resize( static_cast<size_t>( EHand::eStraightFlush ) + 1 );
+    fWinsByHand.resize( static_cast<size_t>( EHand::eFiveOfAKind ) + 1 );
     fWinsByPlayer.clear();
     fWinsByPlayer.resize( fPlayers.size() );
 }

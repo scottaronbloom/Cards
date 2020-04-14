@@ -44,10 +44,11 @@ enum class EHand
     eFlush = 5,
     eFullHouse = 6,
     eFourOfAKind = 7,
-    eStraightFlush = 8
+    eStraightFlush = 8,
+    eFiveOfAKind = 9
 };
 DECLARE_ENUM_FUNCS_ARITHMETIC( EHand );
-DECLARE_ENUM_ITERATORS( EHand, EHand::eHighCard, EHand::eStraightFlush );
+DECLARE_ENUM_ITERATORS( EHand, EHand::eHighCard, EHand::eFiveOfAKind );
 QString toString( EHand hand, bool format );
 std::ostream& operator<<( std::ostream& oss, EHand value );
 
@@ -70,9 +71,6 @@ public:
     void addWildCard( const std::shared_ptr< CCard > & card );
     EHand computeHand() const;
     EHand getHand() const;
-
-    bool isFlush() const;
-    bool isStraight() const;
 
     void addCard( std::shared_ptr< CCard > & card );
     void setCards( const std::vector< std::shared_ptr< CCard > > & cards );

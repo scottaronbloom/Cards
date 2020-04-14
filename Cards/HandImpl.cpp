@@ -196,6 +196,7 @@ std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CHandImpl::deter
     std::vector< ECard > kickers;
     switch( hand )
     {
+        case EHand::eFiveOfAKind:
         case EHand::eStraightFlush:
         case EHand::eFlush:
         case EHand::eStraight:
@@ -251,17 +252,7 @@ EHand CHandImpl::computeHand() const
     if ( fCards.empty() )
         return EHand::eNoCards;
     auto rank = evaluateHand();
-    return NHandUtils::rankToHand( rank );
-}
-
-bool CHandImpl::isStraight() const
-{
-    return NHandUtils::isStraight( fCards );
-}
-
-bool CHandImpl::isFlush() const
-{
-    return NHandUtils::isFlush( fCards );
+    return NHandUtils::rankToHand( rank, fWildCards && !fWildCards->empty() );
 }
 
 EHand CHandImpl::getHand() const

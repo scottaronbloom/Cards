@@ -20,7 +20,7 @@ extern short unique5[];
 extern std::vector< int > products;
 extern std::unordered_map< int64_t, int64_t > fProductMap;
 extern void computeProductLookupTable();
-extern short  values[];
+extern std::vector< short > sValues;
 
 /*
 ** each of the thirteen card ranks has its own prime number

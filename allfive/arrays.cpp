@@ -6379,34 +6379,8 @@ std::unordered_map< int64_t, int64_t > fProductMap =
 };
 
 
-void computeProductLookupTable()
+std::vector< short > sValues = 
 {
-    if ( !fProductMap.empty() )
-        return;
-
-    auto num = products.size();
-    for ( auto ii = 0; ii < products.size(); ++ii )
-    {
-        fProductMap[ products[ ii ] ] = ii;
-    }
-
-    std::ofstream ofs( "TableDump.cpp", std::ofstream::out | std::ofstream::trunc );
-    ofs << "std::unordered_map< int64_t, int64_t > fProductMap =\n{\n";
-    for ( auto ii = 0; ii < products.size(); ++ii )
-    {
-        ofs << "    ";
-        if ( ii == 0 )
-            ofs << " ";
-        else
-            ofs << ",";
-        ofs << "{ " << products[ ii ] << ", " << ii << " }\n";
-    }
-    ofs << "}\n";
-}
-
-
-
-short  values[] = {
 166, 322, 165, 310, 164, 2467, 154, 2466, 163,  3325,  321,  162,
 3324,  2464,  2401,  161,  2465, 3314, 160, 2461, 159, 2400, 320,
 3323, 153, 2457, 6185, 2463, 3303, 2452,  158,  3322,  157,  298,
@@ -6853,6 +6827,32 @@ short  values[] = {
 1676, 14, 168, 2469, 2468, 1611, 23, 1610, 13, 179, 12, 167, 11
 };
 
+void computeProductLookupTable()
+{
+    if ( !fProductMap.empty() )
+        return;
+
+    std::ofstream ofs( "TableDump.cpp", std::ofstream::out | std::ofstream::trunc );
+    ofs << "std::unordered_map< int64_t, short > fProductMap =\n{\n";
+    for ( auto ii = 0; ii < products.size(); ++ii )
+    {
+        ofs << "    ";
+        if ( ii == 0 )
+            ofs << " ";
+        else
+            ofs << ",";
+        auto product = products[ ii ];
+        auto rankValue = sValues[ ii ];
+        ofs << "{ " << product << ", " << rankValue << " }\n";
+    }
+    ofs << "}\n";
+
+    auto num = products.size();
+    for ( auto ii = 0; ii < products.size(); ++ii )
+    {
+        fProductMap[ products[ ii ] ] = ii;
+    }
+}
 
 /*
 ** each of the thirteen card ranks has its own prime number

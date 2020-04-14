@@ -691,6 +691,53 @@ namespace
         EXPECT_EQ( ECard::eTwo, *kickers.rbegin() );
     }
 
+    TEST_F( CHandTester, DetermineHand5OfAKind )
+    {
+        auto hand = std::make_shared< CHand >( fGame->getCards( "2S 2D 4H 2C 2H" ) ); // 5 of a kind 4s
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eDiamonds ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eSpades ) );
+
+        EHand handValue;
+        std::vector< ECard > card;
+        std::vector< ECard > kickers;
+        std::tie( handValue, card, kickers ) = hand->determineHand();
+        EXPECT_EQ( EHand::eFiveOfAKind, handValue );
+        EXPECT_EQ( ECard::eFour, *card.begin() );
+        EXPECT_EQ( "Five of a Kind 'Four'", hand->bestHand().value().second->determineHandName( true ) );
+
+        hand = std::make_shared< CHand >( fGame->getCards( "2S 4C 4H 2C 2H" ) ); // 5 of a kind 4s
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eDiamonds ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eSpades ) );
+
+        std::tie( handValue, card, kickers ) = hand->determineHand();
+        EXPECT_EQ( EHand::eFiveOfAKind, handValue );
+        EXPECT_EQ( ECard::eFour, *card.begin() );
+
+        hand = std::make_shared< CHand >( fGame->getCards( "2S 4C 4H 4D 2H" ) ); // 5 of a kind 4s
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eDiamonds ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eSpades ) );
+
+        std::tie( handValue, card, kickers ) = hand->determineHand();
+        EXPECT_EQ( EHand::eFiveOfAKind, handValue );
+        EXPECT_EQ( ECard::eFour, *card.begin() );
+
+        hand = std::make_shared< CHand >( fGame->getCards( "4S 4C 4H 4D 2H" ) ); // 5 of a kind 4s
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eDiamonds ) );
+        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eSpades ) );
+
+        std::tie( handValue, card, kickers ) = hand->determineHand();
+        EXPECT_EQ( EHand::eFiveOfAKind, handValue );
+        EXPECT_EQ( ECard::eFour, *card.begin() );
+    }
+
     TEST_F( CHandTester, FindWinner7Card )
     {
         fGame->addPlayer( "Scott" )->setCards( fGame->getCards( "7D AS 4D QH JC 3C 2C" ) ); // ace high, QJ74

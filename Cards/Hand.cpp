@@ -49,6 +49,7 @@ QString toString( EHand hand, bool format )
 {
     switch ( hand )
     {
+        case EHand::eFiveOfAKind: return format ? "Five of a Kind '%1'" : "Five of a Kind";
         case EHand::eStraightFlush: return format ? "Straight Flush to the '%1'" : "Straight Flush";
         case EHand::eFourOfAKind: return format ? "Four of a Kind '%1' - '%2' kicker" : "Four of a Kind";
         case EHand::eFullHouse: return format ? "Full House '%1' over '%2'" : "Full House";
@@ -103,16 +104,6 @@ const std::optional< std::pair< uint32_t, std::unique_ptr< CHand > > > & CHand::
 QString CHand::toString() const
 {
     return fHandImpl->toString();
-}
-
-bool CHand::isFlush() const
-{
-    return fHandImpl->isFlush();
-}
-
-bool CHand::isStraight() const
-{
-    return fHandImpl->isStraight();
 }
 
 EHand CHand::getHand() const

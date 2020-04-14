@@ -58,8 +58,6 @@ public:
     uint64_t computeHandProduct() const;
     std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > determineHand() const;
     EHand computeHand() const;
-    bool isStraight() const;
-    bool isFlush() const;
     EHand getHand() const;
 
     uint32_t evaluateHand() const;

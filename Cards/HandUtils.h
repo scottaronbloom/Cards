@@ -35,10 +35,12 @@ namespace NHandUtils
     using TCardBitType = std::bitset< 29 >;
 
     bool isWild( const std::shared_ptr< CCard >& card, const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
-    std::pair< uint32_t, std::unique_ptr< CHand > > findBest( const std::vector< std::shared_ptr< CCard > >& cards, int numCards );
-    std::pair< uint32_t, std::unique_ptr< CHand > > findBest( const std::vector< std::vector< std::shared_ptr< CCard > > >& allHands );
+    std::pair< uint32_t, std::unique_ptr< CHand > > findBest( const std::vector< std::shared_ptr< CCard > >& cards, int numCards, bool allowWildcards );
+    std::pair< uint32_t, std::unique_ptr< CHand > > findBest( const std::vector< std::vector< std::shared_ptr< CCard > > >& allHands, bool allowWildcards );
     std::pair< uint32_t, std::unique_ptr< CHand > > evaluateHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
-    uint32_t evaluateHand( const std::vector< std::shared_ptr< CCard > >& cards );
+
+    uint32_t evaluateHand( const std::vector< std::shared_ptr< CCard > >& cards, bool allowWildCards );  // adds 13 to every calculated number, allowing for the "13 5 of a kinds"
+
     bool isFlush( const std::vector< std::shared_ptr< CCard > >& cards );
     bool isStraight( const std::vector< std::shared_ptr< CCard > >& cards );
     uint64_t computeHandProduct( const std::vector< std::shared_ptr< CCard > >& cards );
@@ -49,7 +51,7 @@ namespace NHandUtils
     ECard getMaxCard( const std::vector< std::shared_ptr< CCard > > & cards );
     ECard getMinCard( const std::vector< std::shared_ptr< CCard > >& cards );
 
-    EHand rankToHand( uint32_t rank );
+    EHand rankToHand( uint32_t rank, bool allowWildCards );
 }
 #endif 
 

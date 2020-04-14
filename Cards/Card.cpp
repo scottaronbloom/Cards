@@ -181,7 +181,6 @@ CCard::~CCard()
 
 }
 
-
 std::vector< std::shared_ptr< CCard > > CCard::allCards()
 {
     static std::vector< std::shared_ptr< CCard > > retVal;
