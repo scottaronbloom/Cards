@@ -28,9 +28,8 @@
 
 CPlayer::CPlayer( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > > & wildCards, const QString& playerName ) :
     fName( playerName ),
-    fHand( std::make_shared< CHand >() )
+    fHand( std::make_shared< CHand >( wildCards ) )
 {
-    fHand->setWildCards( wildCards );
 }
 
 CPlayer::~CPlayer()
@@ -90,6 +89,16 @@ EHand CPlayer::hand() const
 std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > CPlayer::determineHand() const// hand, mycard, kicker cards
 {
     return fHand->determineHand();
+}
+
+bool CPlayer::hasCards() const
+{
+    return fHand->hasCards();
+}
+
+void CPlayer::resetHandAnalysis()
+{
+    fHand->resetHandAnalysis();
 }
 
 void CPlayer::addCard( std::shared_ptr< CCard >& card )

@@ -57,7 +57,7 @@ namespace NHandUtils
                 if ( currHandValue < best.first )
                 {
                     best.first = currHandValue;
-                    best.second = std::make_unique< CHand >( currHand );
+                    best.second = std::make_unique< CHand >( currHand, nullptr );
                 }
             }
         }
@@ -84,7 +84,7 @@ namespace NHandUtils
         ,{ECard::eFive  ,  9 }
         ,{ECard::eFour  , 10 }
         ,{ECard::eTrey  , 11 }
-        ,{ECard::eTwo   , 12 }
+        ,{ECard::eDeuce   , 12 }
     };
 
     std::pair< uint32_t, std::unique_ptr< CHand > > evaluateHand( const std::vector< std::shared_ptr< CCard > >& inputCards, const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards )
@@ -143,8 +143,7 @@ namespace NHandUtils
             // hand should have 4 cards....
             while( hand.size() != 5 )
                 hand.push_back( *hand.begin() );
-            auto retVal = std::make_pair( rank, std::make_unique< CHand >( hand ) );
-            retVal.second->setWildCards( wildCards );
+            auto retVal = std::make_pair( rank, std::make_unique< CHand >( hand, wildCards ) );
             return retVal;
         }
 

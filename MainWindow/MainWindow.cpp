@@ -34,8 +34,7 @@ CMainWindow::CMainWindow( QWidget* parent )
     fImpl( new Ui::CMainWindow )
 {
     fImpl->setupUi( this );
-    using nameWidgetVector = std::vector< std::pair< QLabel*, QLineEdit* > >;
-    fNameWidgets = nameWidgetVector( 
+    fNameWidgets = TPlayerWidgetVector(
                 { 
                       { fImpl->playerLabel1, fImpl->playerName1 }
                     , { fImpl->playerLabel2, fImpl->playerName2 }
@@ -49,10 +48,29 @@ CMainWindow::CMainWindow( QWidget* parent )
                     , { fImpl->playerLabel10, fImpl->playerName10 }
         }
                 );
+
+    fWCWidgets = TWildCardWidgetVector(
+        {
+             { fImpl->wcLabel1,  fImpl->wcCard1,  fImpl->wcSuit1 }
+            ,{ fImpl->wcLabel2,  fImpl->wcCard2,  fImpl->wcSuit2 }
+            ,{ fImpl->wcLabel3,  fImpl->wcCard3,  fImpl->wcSuit3 }
+            ,{ fImpl->wcLabel4,  fImpl->wcCard4,  fImpl->wcSuit4 }
+            ,{ fImpl->wcLabel5,  fImpl->wcCard5,  fImpl->wcSuit5 }
+            ,{ fImpl->wcLabel6,  fImpl->wcCard6,  fImpl->wcSuit6 }
+            ,{ fImpl->wcLabel7,  fImpl->wcCard7,  fImpl->wcSuit7 }
+            ,{ fImpl->wcLabel8,  fImpl->wcCard8,  fImpl->wcSuit8 }
+            ,{ fImpl->wcLabel9,  fImpl->wcCard9,  fImpl->wcSuit9 }
+            ,{ fImpl->wcLabel10, fImpl->wcCard10, fImpl->wcSuit10 }
+            ,{ fImpl->wcLabel11, fImpl->wcCard11, fImpl->wcSuit11 }
+            ,{ fImpl->wcLabel12, fImpl->wcCard12, fImpl->wcSuit12 }
+        }
+    );
+
     fGame = std::make_shared< CGame >();
 
     (void)connect( fImpl->deal, &QPushButton::clicked, this, &CMainWindow::slotDeal );
     (void)connect( fImpl->autoDeal, &QPushButton::clicked, this, &CMainWindow::slotAutoDeal );
+    (void)connect( fImpl->reanalyzeHand, &QPushButton::clicked, this, &CMainWindow::slotReanalyzeHand );
     (void)connect( fImpl->numPlayers, static_cast< void( QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &CMainWindow::slotNumPlayersChanged );
     for( size_t ii = 0; ii < fNameWidgets.size(); ++ii )
     {
@@ -64,7 +82,15 @@ CMainWindow::CMainWindow( QWidget* parent )
                        } );
     }
 
+    (void)connect( fImpl->numWildCards, static_cast<void( QSpinBox::* )( int )>( &QSpinBox::valueChanged ), this, &CMainWindow::slotNumWildCardsChanged );
+    for ( size_t ii = 0; ii < fWCWidgets.size(); ++ii )
+    {
+        (void)connect( std::get< 1 >( fWCWidgets[ ii ] ), static_cast<void( QComboBox::* )( int )>( &QComboBox::currentIndexChanged ), this, &CMainWindow::slotWildCardsChanged );
+        (void)connect( std::get< 2 >( fWCWidgets[ ii ] ), static_cast<void( QComboBox::* )( int )>( &QComboBox::currentIndexChanged ), this, &CMainWindow::slotWildCardsChanged );
+    }
+
     fImpl->handsPerSecondLabel->setHidden( true );
+    fImpl->reanalyzeHand->setEnabled( false );
     loadSettings();
     showGame();
 }
@@ -76,32 +102,69 @@ CMainWindow::~CMainWindow()
 
 void CMainWindow::loadSettings()
 {
-    QStringList players = { "Scott", "Craig", "Eric", "Keith" };
-    
     QSettings settings;
-    players = settings.value( "Players", players ).toStringList();
-    fImpl->numPlayers->setValue( players.count() );
-    for( int ii = 0; ii < players.count(); ++ii )
-    {
-        fNameWidgets[ ii ].second->setText( players[ ii ] );
-        fGame->setPlayerName( ii, players[ ii ] );
-    }
+
     auto numCards = settings.value( "numCards", 5 ).toInt();
     fImpl->fiveCard->setChecked( numCards == 5 );
     fImpl->sevenCard->setChecked( numCards == 7 );
     fGame->setNumCards( numCards );
+
+    int size = settings.beginReadArray( "Players" );
+    if ( size == 0 )
+    {
+        QStringList players = { "Scott", "Craig", "Eric", "Keith" };
+        for( int ii = 0; ii < players.size(); ++ii )
+        {
+            fNameWidgets[ ii ].second->setText( players[ ii ] );
+            fGame->setPlayerName( ii, players[ ii ] );
+        }
+    }
+    else
+    {
+        fImpl->numPlayers->setValue( std::max( 1, std::min( 10, size ) ) );
+        for ( int ii = 0; ii < size; ++ii )
+        {
+            settings.setArrayIndex( ii );
+            fNameWidgets[ ii ].second->setText( settings.value( "Name" ).toString() );
+            fGame->setPlayerName( ii, settings.value( "Name" ).toString() );
+        }
+    }
+
+    settings.endArray();
+    size = settings.beginReadArray( "WildCards" );
+    fImpl->numWildCards->setValue( std::min( 12, size ) );
+    for ( int ii = 0; ii < size; ++ii )
+    {
+        settings.setArrayIndex( ii );
+        std::get< 1 >( fWCWidgets[ ii ] )->setCurrentIndex( std::get< 1 >( fWCWidgets[ ii ] )->findText( settings.value( "Card" ).toString() ) );
+        std::get< 2 >( fWCWidgets[ ii ] )->setCurrentIndex( std::get< 2 >( fWCWidgets[ ii ] )->findText( settings.value( "Suit" ).toString() ) );
+    }
+    settings.endArray();
+    slotNumPlayersChanged();
+    slotNumWildCardsChanged();
 }
 
 void CMainWindow::saveSettings()
 {
-    QStringList players;
-    for( int ii = 0; ii < fImpl->numPlayers->value(); ++ii )
-    {
-        players << fNameWidgets[ ii ].second->text();
-    }
     QSettings settings;
-    settings.setValue( "Players", players );
     settings.setValue( "NumCards", fImpl->fiveCard->isChecked() ? 5 : 7 );
+
+    settings.beginWriteArray( "Players" );
+    for ( int ii = 0; ii < fImpl->numPlayers->value(); ++ii )
+    {
+        settings.setArrayIndex( ii );
+        settings.setValue( "Name", fNameWidgets[ ii ].second->text() );
+    }
+    settings.endArray();
+
+    settings.beginWriteArray( "WildCards" );
+    for ( int ii = 0; ii < fImpl->numWildCards->value(); ++ii )
+    {
+        settings.setArrayIndex( ii );
+        settings.setValue( "Card", std::get< 1 >( fWCWidgets[ ii ] )->currentText() );
+        settings.setValue( "Suit", std::get< 2 >( fWCWidgets[ ii ] )->currentText() );
+    }
+    settings.endArray();
 }
 
 void CMainWindow::slotDeal()
@@ -110,6 +173,12 @@ void CMainWindow::slotDeal()
     fGame->shuffleAndDeal();
     showGame();
     showStats();
+    fImpl->reanalyzeHand->setEnabled( true );
+}
+
+void CMainWindow::slotReanalyzeHand()
+{
+    fGame->analyzeHand( false );
 }
 
 void CMainWindow::showStats()
@@ -139,6 +208,7 @@ void CMainWindow::slotAutoDeal()
     fAutoDealing = !fAutoDealing;
     fImpl->autoDeal->setText( fAutoDealing ? "Stop Auto Deal" : "Auto Deal" );
     fImpl->deal->setEnabled( !fAutoDealing );
+    fImpl->reanalyzeHand->setEnabled( !fAutoDealing );
     if ( fAutoDealing )
     {
         this->fStartTime = std::chrono::system_clock::now();
@@ -196,3 +266,33 @@ void CMainWindow::slotNumPlayersChanged()
     showGame();
 }
 
+void CMainWindow::slotNumWildCardsChanged()
+{
+    auto num = fImpl->numWildCards->value();
+    for ( int ii = 0; ii < num; ++ii )
+    {
+        std::get< 0 >( fWCWidgets[ ii ] )->setVisible( true );
+        std::get< 1 >( fWCWidgets[ ii ] )->setVisible( true );
+        std::get< 2 >( fWCWidgets[ ii ] )->setVisible( true );
+    }
+    for ( size_t ii = num; ii < fWCWidgets.size(); ++ii )
+    {
+        std::get< 0 >( fWCWidgets[ ii ] )->setVisible( false );
+        std::get< 1 >( fWCWidgets[ ii ] )->setVisible( false );
+        std::get< 2 >( fWCWidgets[ ii ] )->setVisible( false );
+    }
+    slotWildCardsChanged( false );
+    showGame();
+}
+
+void CMainWindow::slotWildCardsChanged( bool showGame )
+{
+    auto numWildCards = fImpl->numWildCards->value();
+    fGame->clearWildCards();
+    for( int ii = 0; ii < numWildCards; ++ii )
+    {
+        fGame->addWildCards( fGame->getCards( std::get< 1 >( fWCWidgets[ ii ] )->currentText(), std::get< 2 >( fWCWidgets[ ii ] )->currentText(), false ) );
+    }
+    if ( showGame )
+        this->showGame();
+}

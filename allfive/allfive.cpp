@@ -16,7 +16,7 @@
 /*                                               */
 /*************************************************/
 
-int main( int argc, char** argv )
+int main( int /*argc*/, char** /*argv*/ )
 {
     int deck[ 52 ] = {0};
     init_deck( deck );

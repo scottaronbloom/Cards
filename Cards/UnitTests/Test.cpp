@@ -68,7 +68,7 @@ namespace
                 ( cards[ 1 ] == ECard::eFive ) &&
                  ( cards[ 2 ] == ECard::eFour )&&
                  ( cards[ 3 ] == ECard::eTrey )&&
-                 ( cards[ 4 ] == ECard::eTwo ) )
+                 ( cards[ 4 ] == ECard::eDeuce ) )
                 return true;
             return false;
         }
@@ -80,7 +80,7 @@ namespace
     {
         static std::map< std::pair< ESuit, ECard >, int > map =
         {
-             { {     ESuit::eClubs,   ECard::eTwo }, 0x00018002 }
+             { {     ESuit::eClubs,   ECard::eDeuce }, 0x00018002 }
             ,{ {     ESuit::eClubs, ECard::eTrey }, 0x00028103 }
             ,{ {     ESuit::eClubs,  ECard::eFour }, 0x00048205 }
             ,{ {     ESuit::eClubs,  ECard::eFive }, 0x00088307 }
@@ -93,7 +93,7 @@ namespace
             ,{ {     ESuit::eClubs, ECard::eQueen }, 0x04008a1f }
             ,{ {     ESuit::eClubs,  ECard::eKing }, 0x08008b25 }
             ,{ {     ESuit::eClubs,   ECard::eAce }, 0x10008c29 }
-            ,{ {  ESuit::eDiamonds,   ECard::eTwo }, 0x00014002 }
+            ,{ {  ESuit::eDiamonds,   ECard::eDeuce }, 0x00014002 }
             ,{ {  ESuit::eDiamonds, ECard::eTrey }, 0x00024103 }
             ,{ {  ESuit::eDiamonds,  ECard::eFour }, 0x00044205 }
             ,{ {  ESuit::eDiamonds,  ECard::eFive }, 0x00084307 }
@@ -106,7 +106,7 @@ namespace
             ,{ {  ESuit::eDiamonds, ECard::eQueen }, 0x04004a1f }
             ,{ {  ESuit::eDiamonds,  ECard::eKing }, 0x08004b25 }
             ,{ {  ESuit::eDiamonds,   ECard::eAce }, 0x10004c29 }
-            ,{ {    ESuit::eHearts,   ECard::eTwo }, 0x00012002 }
+            ,{ {    ESuit::eHearts,   ECard::eDeuce }, 0x00012002 }
             ,{ {    ESuit::eHearts, ECard::eTrey }, 0x00022103 }
             ,{ {    ESuit::eHearts,  ECard::eFour }, 0x00042205 }
             ,{ {    ESuit::eHearts,  ECard::eFive }, 0x00082307 }
@@ -119,7 +119,7 @@ namespace
             ,{ {    ESuit::eHearts, ECard::eQueen }, 0x04002a1f }
             ,{ {    ESuit::eHearts,  ECard::eKing }, 0x08002b25 }
             ,{ {    ESuit::eHearts,   ECard::eAce }, 0x10002c29 }
-            ,{ {    ESuit::eSpades,   ECard::eTwo }, 0x00011002 }
+            ,{ {    ESuit::eSpades,   ECard::eDeuce }, 0x00011002 }
             ,{ {    ESuit::eSpades, ECard::eTrey }, 0x00021103 }
             ,{ {    ESuit::eSpades,  ECard::eFour }, 0x00041205 }
             ,{ {    ESuit::eSpades,  ECard::eFive }, 0x00081307 }
@@ -165,7 +165,7 @@ namespace
                     p1->addCard( fGame->getCard( highCard, suit ) );
                     p1->addCard( fGame->getCard( ECard::eFour, suit ) ); 
                     p1->addCard( fGame->getCard( ECard::eTrey, suit ) );
-                    p1->addCard( fGame->getCard( ECard::eTwo, suit ) );
+                    p1->addCard( fGame->getCard( ECard::eDeuce, suit ) );
                     p1->addCard( fGame->getCard( ECard::eAce, suit ) );
                 }
                 else
@@ -647,7 +647,7 @@ namespace
     {
         for( auto && suit : ESuit() )
         {
-            fGame->addWildCard( fGame->getCard( ECard::eTwo, suit ) ); // all twos wild
+            fGame->addWildCard( fGame->getCard( ECard::eDeuce, suit ) ); // all twos wild
         }
 
         fGame->addPlayer( "Scott" )->setCards( fGame->getCards( "7D AS 4D QH JC" ) ); // ace high, QJ74
@@ -667,8 +667,8 @@ namespace
     TEST_F( CHandTester, DetermineHandWild )
     {
         auto hand = std::make_shared< CHand >( fGame->getCards( "7H KH 4H 2C 2H" ) ); // Ace H flush
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
 
         EHand handValue;
         std::vector< ECard > card;
@@ -682,22 +682,22 @@ namespace
         EXPECT_EQ( EHand::eNoCards, handValue );
 
         hand = std::make_shared< CHand >( fGame->getCards( "7H KH 4H 2C 2D" ) ); // Pair of kings
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) ); // 2 clubs and hearts wild
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) ); 
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) ); // 2 clubs and hearts wild
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) ); 
         std::tie( handValue, card, kickers ) = hand->determineHand();
         EXPECT_EQ( EHand::ePair, handValue );
         EXPECT_EQ( ECard::eKing, *card.begin() );
         EXPECT_EQ( ECard::eSeven, *kickers.begin() );
-        EXPECT_EQ( ECard::eTwo, *kickers.rbegin() );
+        EXPECT_EQ( ECard::eDeuce, *kickers.rbegin() );
     }
 
     TEST_F( CHandTester, DetermineHand5OfAKind )
     {
         auto hand = std::make_shared< CHand >( fGame->getCards( "2S 2D 4H 2C 2H" ) ); // 5 of a kind 4s
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eDiamonds ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eSpades ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eDiamonds ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eSpades ) );
 
         EHand handValue;
         std::vector< ECard > card;
@@ -708,30 +708,30 @@ namespace
         EXPECT_EQ( "Five of a Kind 'Four'", hand->bestHand().value().second->determineHandName( true ) );
 
         hand = std::make_shared< CHand >( fGame->getCards( "2S 4C 4H 2C 2H" ) ); // 5 of a kind 4s
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eDiamonds ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eSpades ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eDiamonds ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eSpades ) );
 
         std::tie( handValue, card, kickers ) = hand->determineHand();
         EXPECT_EQ( EHand::eFiveOfAKind, handValue );
         EXPECT_EQ( ECard::eFour, *card.begin() );
 
         hand = std::make_shared< CHand >( fGame->getCards( "2S 4C 4H 4D 2H" ) ); // 5 of a kind 4s
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eDiamonds ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eSpades ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eDiamonds ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eSpades ) );
 
         std::tie( handValue, card, kickers ) = hand->determineHand();
         EXPECT_EQ( EHand::eFiveOfAKind, handValue );
         EXPECT_EQ( ECard::eFour, *card.begin() );
 
         hand = std::make_shared< CHand >( fGame->getCards( "4S 4C 4H 4D 2H" ) ); // 5 of a kind 4s
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eDiamonds ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eSpades ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eDiamonds ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eSpades ) );
 
         std::tie( handValue, card, kickers ) = hand->determineHand();
         EXPECT_EQ( EHand::eFiveOfAKind, handValue );
@@ -765,11 +765,11 @@ namespace
         std::tie( handValue, card, kickers ) = hand->determineHand();
         EXPECT_EQ( EHand::eTwoPair, handValue );
         EXPECT_EQ( ECard::eFour, *card.begin() );
-        EXPECT_EQ( ECard::eTwo, *card.rbegin() );
+        EXPECT_EQ( ECard::eDeuce, *card.rbegin() );
         EXPECT_EQ( ECard::eKing, *kickers.begin() );
 
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
-        hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
+        hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
         std::tie( handValue, card, kickers ) = hand->determineHand();
         EXPECT_EQ( EHand::eFourOfAKind, handValue );
         EXPECT_EQ( ECard::eFour, *card.begin() );

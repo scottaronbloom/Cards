@@ -25,7 +25,13 @@
 #include "Hand.h"
 #include "SABUtils/utils.h"
 
-void CHandImpl::reset()
+CHandImpl::CHandImpl( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards ) :
+    fWildCards( wildCards )
+{
+
+}
+
+void CHandImpl::resetHandAnalysis()
 {
     fHand.reset();
     f5CardValue.reset();
@@ -40,8 +46,7 @@ void CHandImpl::reset()
 void CHandImpl::clearCards()
 {
     fCards.clear();
-    fWildCards->clear();
-    reset();
+    resetHandAnalysis();
 }
 
 void CHandImpl::setCards( const std::vector< std::shared_ptr< CCard > >& cards )
@@ -55,19 +60,19 @@ void CHandImpl::addCard( std::shared_ptr< CCard >& card )
     fCards.push_back( card );
 }
 
-void CHandImpl::setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards )
-{
-    fWildCards = wildCards;
-    reset();
-}
-
-void CHandImpl::addWildCard( const std::shared_ptr< CCard >& card )
-{
-    if ( !fWildCards )
-        fWildCards = std::make_shared< std::unordered_set< std::shared_ptr< CCard > > >();
-    fWildCards->insert( card );
-    reset();
-}
+//void CHandImpl::setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards )
+//{
+//    fWildCards = wildCards;
+//    resetHandAnalysis();
+//}
+//
+//void CHandImpl::addWildCard( const std::shared_ptr< CCard >& card )
+//{
+//    if ( !fWildCards )
+//        fWildCards = std::make_shared< std::unordered_set< std::shared_ptr< CCard > > >();
+//    fWildCards->insert( card );
+//    resetHandAnalysis();
+//}
 
 QString CHandImpl::toString() const
 {

@@ -31,6 +31,7 @@
 #include <chrono>
 #include <optional>
 class CGame;
+class QComboBox;
 class QLabel;
 class QLineEdit;
 namespace Ui {class CMainWindow;};
@@ -43,11 +44,14 @@ public:
     ~CMainWindow();
 public Q_SLOTS:
     void slotDeal();
+    void slotReanalyzeHand();
     void slotAutoDeal();
     void slotRunAutoDeal();
     void slotNextDealer();
     void slotPrevDealer();
     void slotNumPlayersChanged();
+    void slotNumWildCardsChanged();
+    void slotWildCardsChanged( bool showGame );
 private:
     void showStats();
     void showGame();
@@ -58,7 +62,10 @@ private:
     std::shared_ptr< CGame > fGame;
     bool fAutoDealing{ false };
 
-    std::vector< std::pair< QLabel *, QLineEdit * > > fNameWidgets;
+    using TWildCardWidgetVector = std::vector< std::tuple< QLabel*, QComboBox*, QComboBox* > >;
+    using TPlayerWidgetVector = std::vector< std::pair< QLabel*, QLineEdit* > >;
+    TPlayerWidgetVector fNameWidgets;
+    TWildCardWidgetVector fWCWidgets;
     std::optional< std::chrono::system_clock::time_point > fStartTime;
 };
 

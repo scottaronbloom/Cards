@@ -28,14 +28,14 @@
 #include <unordered_set>
 #include <QStringList>
 
-CHand::CHand() :
-    fHandImpl( std::make_unique< CHandImpl >() )
+CHand::CHand( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards ) :
+    fHandImpl( std::make_unique< CHandImpl >( wildCards ) )
 {
 
 }
 
-CHand::CHand( const std::vector< std::shared_ptr< CCard > >& cards ) :
-    CHand()
+CHand::CHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards ) :
+    CHand( wildCards )
 {
     setCards( cards );
 }
@@ -101,6 +101,16 @@ const std::optional< std::pair< uint32_t, std::unique_ptr< CHand > > > & CHand::
     return fHandImpl->fBestHand;
 }
 
+bool CHand::hasCards() const
+{
+    return fHandImpl->hasCards();
+}
+
+void CHand::resetHandAnalysis()
+{
+    fHandImpl->resetHandAnalysis();
+}
+
 QString CHand::toString() const
 {
     return fHandImpl->toString();
@@ -122,15 +132,15 @@ QString CHand::determineHandName( bool details ) const
     return fHandImpl->determineHandName( details );
 }
 
-void CHand::setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards )
-{
-    fHandImpl->setWildCards( wildCards );
-}
+//void CHand::setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards )
+//{
+//    fHandImpl->setWildCards( wildCards );
+//}
 
-void CHand::addWildCard( const std::shared_ptr< CCard >& card )
-{
-    fHandImpl->addWildCard( card );
-}
+//void CHand::addWildCard( const std::shared_ptr< CCard >& card )
+//{
+//    fHandImpl->addWildCard( card );
+//}
 
 EHand CHand::computeHand() const
 {

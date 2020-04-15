@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>622</width>
-    <height>665</height>
+    <width>719</width>
+    <height>830</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -24,29 +24,55 @@
     <normaloff>:/resources/cards.png</normaloff>:/resources/cards.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="6">
+   <item row="2" column="0" colspan="7">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <widget class="QWidget" name="layoutWidget1">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Game:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="data">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget2">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Stats:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTextEdit" name="stats">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="7">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Players</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Number of Players:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QSpinBox" name="numPlayers">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="playerLabel1">
         <property name="text">
@@ -160,7 +186,555 @@
       <item row="5" column="3">
        <widget class="QLineEdit" name="playerName10"/>
       </item>
-      <item row="0" column="2" colspan="3">
+      <item row="0" column="0" colspan="5">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="text">
+           <string>Number of Players:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="numPlayers">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>10</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_6">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="6">
+    <widget class="QPushButton" name="deal">
+     <property name="text">
+      <string>Deal</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="3">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>708</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="0" colspan="3">
+    <widget class="QLabel" name="handsPerSecondLabel">
+     <property name="text">
+      <string>Hands/Second: </string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="4">
+    <widget class="QPushButton" name="autoDeal">
+     <property name="text">
+      <string>Auto Deal</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="7">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Game Rules:</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="6" column="2">
+       <widget class="QComboBox" name="wcSuit7">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QComboBox" name="wcSuit9">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="wcLabel7">
+        <property name="text">
+         <string>Wild Card 7:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QComboBox" name="wcCard9">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QComboBox" name="wcCard7">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="4">
+       <widget class="QComboBox" name="wcCard2">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="5">
+       <widget class="QComboBox" name="wcSuit2">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="7" column="4">
+       <widget class="QComboBox" name="wcCard10">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="8" column="2">
+       <widget class="QComboBox" name="wcSuit11">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="7" column="3">
+       <widget class="QLabel" name="wcLabel10">
+        <property name="text">
+         <string>Wild Card 10:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="3">
+       <widget class="QLabel" name="wcLabel4">
+        <property name="text">
+         <string>Wild Card 4:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="7">
+       <layout class="QHBoxLayout" name="horizontalLayout_13">
+        <item>
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>Number of Wild Cards:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="numWildCards">
+          <property name="maximum">
+           <number>12</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="wcLabel9">
+        <property name="text">
+         <string>Wild Card 9:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="7">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QLabel" name="label_4">
@@ -198,83 +772,906 @@
         </item>
        </layout>
       </item>
+      <item row="4" column="4">
+       <widget class="QComboBox" name="wcCard4">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="4" column="5">
+       <widget class="QComboBox" name="wcSuit4">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="6" column="4">
+       <widget class="QComboBox" name="wcCard8">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="5" column="3">
+       <widget class="QLabel" name="wcLabel6">
+        <property name="text">
+         <string>Wild Card 6:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="wcLabel5">
+        <property name="text">
+         <string>Wild Card 5:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="5">
+       <widget class="QComboBox" name="wcSuit10">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="5" column="4">
+       <widget class="QComboBox" name="wcCard6">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="8" column="3">
+       <widget class="QLabel" name="wcLabel12">
+        <property name="text">
+         <string>Wild Card 12:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="5">
+       <widget class="QComboBox" name="wcSuit6">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QComboBox" name="wcCard5">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QComboBox" name="wcSuit5">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="6" column="5">
+       <widget class="QComboBox" name="wcSuit8">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="wcCard1">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QComboBox" name="wcSuit1">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="wcLabel11">
+        <property name="text">
+         <string>Wild Card 11:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="3">
+       <widget class="QLabel" name="wcLabel8">
+        <property name="text">
+         <string>Wild Card 8:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="5">
+       <widget class="QComboBox" name="wcSuit12">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QComboBox" name="wcCard11">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="8" column="4">
+       <widget class="QComboBox" name="wcCard12">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="wcLabel3">
+        <property name="text">
+         <string>Wild Card 3:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QComboBox" name="wcSuit3">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Spades</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Hearts</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Diamonds</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Clubs</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QComboBox" name="wcCard3">
+        <item>
+         <property name="text">
+          <string>All</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ace</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Duece</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Trey</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Four</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Five</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Six</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Seven</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Eight</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Nine</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Ten</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Jack</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Queen</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>King</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QLabel" name="wcLabel2">
+        <property name="text">
+         <string>Wild Card 2:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="wcLabel1">
+        <property name="text">
+         <string>Wild Card 1:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="6">
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0" colspan="6">
-    <widget class="QSplitter" name="splitter">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <widget class="QWidget" name="layoutWidget1">
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Game:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTextEdit" name="data">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="layoutWidget2">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Stats:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTextEdit" name="stats">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-   </item>
-   <item row="2" column="5">
-    <widget class="QPushButton" name="deal">
+   <item row="4" column="5">
+    <widget class="QPushButton" name="reanalyzeHand">
      <property name="text">
-      <string>Deal</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="4">
-    <widget class="QPushButton" name="autoDeal">
-     <property name="text">
-      <string>Auto Deal</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>708</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="2" column="0" colspan="3">
-    <widget class="QLabel" name="handsPerSecondLabel">
-     <property name="text">
-      <string>Hands/Second: </string>
+      <string>Re-Analyze Hand</string>
      </property>
     </widget>
    </item>
@@ -283,8 +1680,6 @@
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
   <tabstop>numPlayers</tabstop>
-  <tabstop>fiveCard</tabstop>
-  <tabstop>sevenCard</tabstop>
   <tabstop>playerName1</tabstop>
   <tabstop>playerName2</tabstop>
   <tabstop>playerName3</tabstop>
@@ -295,9 +1690,37 @@
   <tabstop>playerName8</tabstop>
   <tabstop>playerName9</tabstop>
   <tabstop>playerName10</tabstop>
+  <tabstop>fiveCard</tabstop>
+  <tabstop>sevenCard</tabstop>
+  <tabstop>numWildCards</tabstop>
+  <tabstop>wcCard1</tabstop>
+  <tabstop>wcSuit1</tabstop>
+  <tabstop>wcCard2</tabstop>
+  <tabstop>wcSuit2</tabstop>
+  <tabstop>wcCard3</tabstop>
+  <tabstop>wcSuit3</tabstop>
+  <tabstop>wcCard4</tabstop>
+  <tabstop>wcSuit4</tabstop>
+  <tabstop>wcCard5</tabstop>
+  <tabstop>wcSuit5</tabstop>
+  <tabstop>wcCard6</tabstop>
+  <tabstop>wcSuit6</tabstop>
+  <tabstop>wcCard7</tabstop>
+  <tabstop>wcSuit7</tabstop>
+  <tabstop>wcCard8</tabstop>
+  <tabstop>wcSuit8</tabstop>
+  <tabstop>wcCard9</tabstop>
+  <tabstop>wcSuit9</tabstop>
+  <tabstop>wcCard10</tabstop>
+  <tabstop>wcSuit10</tabstop>
+  <tabstop>wcCard11</tabstop>
+  <tabstop>wcSuit11</tabstop>
+  <tabstop>wcCard12</tabstop>
+  <tabstop>wcSuit12</tabstop>
   <tabstop>data</tabstop>
   <tabstop>stats</tabstop>
   <tabstop>autoDeal</tabstop>
+  <tabstop>reanalyzeHand</tabstop>
   <tabstop>deal</tabstop>
  </tabstops>
  <resources>

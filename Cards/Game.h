@@ -36,7 +36,7 @@ enum class EHand;
 enum class ECard;
 enum class ESuit : uint8_t;
 
-using TCardDeal = std::pair< std::vector< uint8_t >, std::vector< uint8_t > >;
+using TCardDeal = std::vector< uint8_t >;
 namespace std
 {
     template <>
@@ -64,6 +64,7 @@ public:
     void nextDealer();
     void prevDealer();
     void autoSetDealer();
+    void analyzeHand( bool updateStatistics );
     std::list< std::shared_ptr< CPlayer > > findWinners(); // possible ties
 
     void resetGames();
@@ -72,9 +73,9 @@ public:
     std::shared_ptr< CCard > getCard( const QString & cardName ) const;
     std::shared_ptr< CCard > getCard( ECard card, ESuit suit ) const;
     std::vector< std::shared_ptr< CCard > > getCards( const QString & cardNames ) const;
+    std::vector< std::shared_ptr< CCard > > getCards( const QString& cards, const QString & suits, bool allowAll ) const; // all means all cards or suits, all for both returns empty if allow all = false
 
-    void setNumCards( uint8_t numCards ){ fNumCardsToDeal = TCardDeal( { numCards }, {} ); }
-    void setCardDeal( const TCardDeal & cards ){ fNumCardsToDeal = cards; }
+    void setNumCards( uint8_t numCards ){ fNumCardsToDeal = TCardDeal( { numCards } ); }
     TCardDeal cardDeal() const{ return fNumCardsToDeal; }
 
     size_t setNumPlayers( size_t numPlayers );
@@ -84,6 +85,7 @@ public:
     void removePlayer( size_t playerNum );
 
     void addWildCard( std::shared_ptr< CCard > card );
+    void addWildCards( const std::vector< std::shared_ptr< CCard > > & cards );
     void clearWildCards();
 private:
     void recomputeNextPrev();
@@ -94,6 +96,7 @@ private:
 
     QString dumpDeck( bool shuffled ) const;
     QString dumpPlayers( bool details ) const;
+    QString dumpGameDetails( bool details ) const;
 
     std::vector< std::shared_ptr< CPlayer > > fPlayers;
     std::weak_ptr< CPlayer > fDealer;
@@ -108,7 +111,7 @@ private:
     std::vector< uint64_t > fHandCount;
     std::vector< uint64_t > fWinsByPlayer;
 
-    TCardDeal fNumCardsToDeal{ { 5 }, {} }; // first vector is player deals (first) then last is community, default is 5 card 
+    TCardDeal fNumCardsToDeal{ 5 }; // first vector is player deals (first) then last is community, default is 5 card 
 };
 
 #endif 

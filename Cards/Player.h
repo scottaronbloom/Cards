@@ -66,6 +66,8 @@ public:
     std::tuple< EHand, std::vector< ECard >, std::vector< ECard > >  determineHand() const;// hand, mycard, kicker cards
 
     std::shared_ptr< CHand > getHand() const{ return fHand; }
+    bool hasCards() const;
+    void resetHandAnalysis();
 public:
     void addCard( std::shared_ptr< CCard > & card );
     void setCards( const std::vector< std::shared_ptr< CCard > > & cards );

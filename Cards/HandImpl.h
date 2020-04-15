@@ -36,15 +36,18 @@ class CCard;
 class CHandImpl
 {
 public:
-    void reset();
+    CHandImpl( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
+    void resetHandAnalysis();
 
     void clearCards();
 
     void setCards( const std::vector< std::shared_ptr< CCard > >& cards );
     void addCard( std::shared_ptr< CCard >& card );
 
-    void setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
-    void addWildCard( const std::shared_ptr< CCard >& card );
+    bool hasCards() const{ return !fCards.empty(); }
+
+    //void setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
+    //void addWildCard( const std::shared_ptr< CCard >& card );
 
     QString toString() const;
     QString determineHandName( bool details ) const;

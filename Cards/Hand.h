@@ -58,8 +58,9 @@ class CHandImpl;
 class CHand
 {
 public:
-    CHand();
-    CHand( const std::vector< std::shared_ptr< CCard > >& cards );
+    CHand() = delete;
+    CHand( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
+    CHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
     virtual ~CHand();
 public:
     QString toString() const;
@@ -67,8 +68,8 @@ public:
     QString determineHandName( bool details ) const;
     std::tuple< EHand, std::vector< ECard >, std::vector< ECard > >  determineHand() const; // hand, mycard, kicker cards
 
-    void setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > > & wildCards );
-    void addWildCard( const std::shared_ptr< CCard > & card );
+    //void setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > > & wildCards );
+    //void addWildCard( const std::shared_ptr< CCard > & card );
     EHand computeHand() const;
     EHand getHand() const;
 
@@ -83,6 +84,8 @@ public:
     std::vector< std::shared_ptr< CCard > > getCards() const;
 
     const std::optional< std::pair< uint32_t, std::unique_ptr< CHand > > >& bestHand() const;
+    bool hasCards() const;
+    void resetHandAnalysis();
 private:
     uint32_t evaluateHand() const;
    
