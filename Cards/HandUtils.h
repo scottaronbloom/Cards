@@ -25,6 +25,7 @@
 #include <memory>
 #include <bitset>
 #include <unordered_set>
+#include <vector>
 
 class CHand;
 class CCard;
