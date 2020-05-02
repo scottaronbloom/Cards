@@ -45,9 +45,9 @@ set_target_properties( CardGame PROPERTIES FOLDER Apps )
 target_link_libraries( CardGame 
                  Qt5::Widgets
                  Qt5::Core
-                 SABUtils
                  MainWindow
                  Cards
+                 SABUtils
           )
 DeployQt( CardGame . )
 DeploySystem( CardGame )

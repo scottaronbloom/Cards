@@ -6848,7 +6848,7 @@ void computeProductLookupTable()
     ofs << "}\n";
 
     auto num = products.size();
-    for ( auto ii = 0; ii < products.size(); ++ii )
+    for ( auto ii = 0U; ii < num; ++ii )
     {
         fProductMap[ products[ ii ] ] = ii;
     }
@@ -6867,7 +6867,8 @@ void computeProductLookupTable()
 */
 int primes[] = { 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41 };
 
-int perm7[ 21 ][ 5 ] = {
+int perm7[ 21 ][ 5 ] = 
+{
   { 0, 1, 2, 3, 4 },
   { 0, 1, 2, 3, 5 },
   { 0, 1, 2, 3, 6 },
@@ -6892,7 +6893,8 @@ int perm7[ 21 ][ 5 ] = {
 };
 
 
-char* value_str[] = {
+const char* value_str[] = 
+{
     "",
     "Straight Flush",
     "Four of a Kind",

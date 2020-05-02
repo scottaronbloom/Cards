@@ -37,6 +37,6 @@ extern int primes[];
 extern int perm7[21][5];
 
 
-extern char* value_str[];
+extern const char* value_str[];
 #endif
 

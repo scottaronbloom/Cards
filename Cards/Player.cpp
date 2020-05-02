@@ -111,7 +111,7 @@ bool CPlayer::isStraight() const
     return fHand->isStraight();
 }
 
-void CPlayer::addCard( std::shared_ptr< CCard >& card )
+void CPlayer::addCard( const std::shared_ptr< CCard > card )
 {
     fHand->addCard( card );
 }

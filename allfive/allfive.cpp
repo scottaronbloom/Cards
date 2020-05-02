@@ -16,31 +16,6 @@
 /*                                               */
 /*************************************************/
 
-void generate2CardFlushTable()
-{
-    //std::vector< 
-}
-
-void generate3CardFlushTable()
-{
-    //std::vector< 
-}
-void generate4CardFlushTable()
-{
-    //std::vector< 
-}
-void generate5CardFlushTable()
-{
-    //std::vector< 
-}
-void generateFlushTable()
-{
-    generate2CardFlushTable();
-    generate3CardFlushTable();
-    generate4CardFlushTable();
-    generate5CardFlushTable();
-}
-
 int main( int /*argc*/, char** /*argv*/ )
 {
     int deck[ 52 ] = {0};
@@ -62,6 +37,7 @@ int main( int /*argc*/, char** /*argv*/ )
     auto c5 = deck[ find_card( Trey, HEART, deck ) ];
     auto i = eval_5cards( c1, c2, c3 , c4, c5 );
     auto j = hand_rank( i );
+    (void)j;
     std::set< int > seen;
     // loop over every possible five-card hand
     for ( int c1 = 0; c1 < 48; c1++ )

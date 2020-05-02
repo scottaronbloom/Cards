@@ -71,11 +71,11 @@ public:
 
     void setStraightsFlushesCountForSmallHands( bool straightsFlushesCountForSmallHands );
     void setLowHandWins( bool lowHandWins );
-    void addWildCard( const std::shared_ptr< CCard > & card ); // needed for unit testing
+    void addWildCard( std::shared_ptr< CCard > card ); // needed for unit testing
     EHand computeHand() const;
     EHand getHand() const;
 
-    void addCard( std::shared_ptr< CCard > & card );
+    void addCard( std::shared_ptr< CCard > card );
     void setCards( const std::vector< std::shared_ptr< CCard > > & cards );
     void clearCards();
 

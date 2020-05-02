@@ -56,13 +56,13 @@ void CHandImpl::setCards( const std::vector< std::shared_ptr< CCard > >& cards )
     fCards = cards;
 }
 
-void CHandImpl::addCard( std::shared_ptr< CCard >& card )
+void CHandImpl::addCard( std::shared_ptr< CCard > card )
 {
     Q_ASSERT( card );
     fCards.push_back( card );
 }
 
-void CHandImpl::addWildCard( const std::shared_ptr< CCard >& card )
+void CHandImpl::addWildCard( std::shared_ptr< CCard > card )
 {
     fPlayInfo->fWildCards.insert( card );
     resetHandAnalysis();

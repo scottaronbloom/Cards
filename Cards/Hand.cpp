@@ -142,12 +142,7 @@ QString CHand::determineHandName( bool details ) const
     return fHandImpl->determineHandName( details );
 }
 
-//void CHand::setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards )
-//{
-//    fHandImpl->setWildCards( wildCards );
-//}
-
-void CHand::addWildCard( const std::shared_ptr< CCard >& card )
+void CHand::addWildCard( std::shared_ptr< CCard > card )
 {
     fHandImpl->addWildCard( card );
 }
@@ -157,7 +152,7 @@ EHand CHand::computeHand() const
     return fHandImpl->computeHand();
 }
 
-void CHand::addCard( std::shared_ptr< CCard >& card )
+void CHand::addCard( std::shared_ptr< CCard > card )
 {
     fHandImpl->addCard( card );
 }

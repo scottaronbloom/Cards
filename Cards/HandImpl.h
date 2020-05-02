@@ -24,6 +24,7 @@
 #define _HANDIMPL_H
 
 #include <QString>
+#include <vector>
 
 #include "HandUtils.h"
 
@@ -44,11 +45,11 @@ public:
     void clearCards();
 
     void setCards( const std::vector< std::shared_ptr< CCard > >& cards );
-    void addCard( std::shared_ptr< CCard >& card );
+    void addCard( std::shared_ptr< CCard > card );
 
     bool hasCards() const{ return !fCards.empty(); }
 
-    void addWildCard( const std::shared_ptr< CCard >& card );
+    void addWildCard( std::shared_ptr< CCard > card );
 
     QString toString() const;
     QString determineHandName( bool details ) const;

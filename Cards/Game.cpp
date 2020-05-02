@@ -99,27 +99,36 @@ QString CGame::dumpStats() const
 {
     QLocale locale;
     QString retVal = 
-        QString( "Number of Games: %1\n" ).arg( locale.toString( fGames.size() ) ) +
+        QString( "Number of Games: %1\n" ).arg( locale.toString( static_cast< qulonglong >( fGames.size() ) ) ) +
         "=================================\n";
 
     retVal += QString( "Games Won by Player:\n" );
     for ( size_t ii = 0; ii < fPlayers.size(); ++ii )
     {
-        retVal += QString( "\t%1 - %2 (%3%)\n" ).arg( fPlayers[ ii ]->name() ).arg( locale.toString( fWinsByPlayer[ static_cast<size_t>( ii ) ] ) ).arg( locale.toString( ( 100.0 * fWinsByPlayer[ static_cast<size_t>( ii ) ] ) / fGames.size(), 'g', 3 ) );
+        retVal += QString( "\t%1 - %2 (%3%)\n" )
+            .arg( fPlayers[ ii ]->name() )
+            .arg( locale.toString( static_cast< qulonglong >( fWinsByPlayer[ static_cast<size_t>( ii ) ] ) ) )
+            .arg( locale.toString( ( 100.0 * fWinsByPlayer[ static_cast<size_t>( ii ) ] ) / fGames.size(), 'g', 3 ) );
     }
     retVal += "=================================\n";
 
     retVal += QString( "Games Won by Hand:\n" );
     for ( auto&& ii : EHand() )
     {
-        retVal += QString( "\t%1 - %2 (%3%)\n" ).arg( ::toString( ii, false ) ).arg( locale.toString( fWinsByHand[ static_cast< size_t >( ii ) ] ) ).arg( locale.toString( (100.0* fWinsByHand[ static_cast<size_t>( ii ) ] )/fGames.size(), 'g', 3 ) );
+        retVal += QString( "\t%1 - %2 (%3%)\n" )
+            .arg( ::toString( ii, false ) )
+            .arg( locale.toString( static_cast< qulonglong >( fWinsByHand[ static_cast< size_t >( ii ) ] ) ) )
+            .arg( locale.toString( (100.0* fWinsByHand[ static_cast<size_t>( ii ) ] )/fGames.size(), 'g', 3 ) );
     }
     retVal += "=================================\n";
 
     retVal += QString( "Hand Count:\n" );
     for ( auto&& ii : EHand() )
     {
-        retVal += QString( "\t%1 - %2 (%3%)\n" ).arg( ::toString( ii, false ) ).arg( locale.toString( fHandCount[ static_cast<size_t>( ii ) ] ) ).arg( locale.toString( ( 100.0 * fHandCount[ static_cast<size_t>( ii ) ] ) / fGames.size(), 'g', 3 ) );
+        retVal += QString( "\t%1 - %2 (%3%)\n" )
+            .arg( ::toString( ii, false ) )
+            .arg( locale.toString( static_cast< qulonglong >( fHandCount[ static_cast<size_t>( ii ) ] ) ) )
+            .arg( locale.toString( ( 100.0 * fHandCount[ static_cast<size_t>( ii ) ] ) / fGames.size(), 'g', 3 ) );
     }
 
     return retVal;

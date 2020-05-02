@@ -59,7 +59,6 @@ namespace NHandUtils
     EHand rankToHand( uint32_t rank, size_t numCards, const std::shared_ptr< SPlayInfo > & playInfo );
 
     TCardBitType computeBitValue( ECard card, ESuit suit );
-
 }
 #endif 
 

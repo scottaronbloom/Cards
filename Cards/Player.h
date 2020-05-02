@@ -74,7 +74,7 @@ public:
     bool isFlush() const; // used for unittesting
     bool isStraight() const; // used for unittesting
 public:
-    void addCard( std::shared_ptr< CCard > & card );
+    void addCard( std::shared_ptr< CCard > card );
     void setCards( const std::vector< std::shared_ptr< CCard > > & cards );
     void clearCards();
 private:

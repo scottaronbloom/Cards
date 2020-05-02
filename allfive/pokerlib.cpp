@@ -3,6 +3,7 @@
 #include "poker.h"
 #include <fstream>
 #include <random>
+#include <algorithm>
 // Poker hand evaluator
 //
 // Kevin L. Suffecool
@@ -144,7 +145,7 @@ void print_hand( int* hand, int n )
 {
     int i, r;
     char suit;
-    static char* rank = "23456789TJQKA";
+    static const char* rank = "23456789TJQKA";
 
     for ( i = 0; i < n; i++ )
     {

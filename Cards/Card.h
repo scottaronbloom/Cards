@@ -26,6 +26,7 @@
 #include <bitset>
 #include <vector>
 #include <list>
+#include <memory>
 #include <QString>
 class CCard;
 
