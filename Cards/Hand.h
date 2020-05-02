@@ -55,12 +55,13 @@ std::ostream& operator<<( std::ostream& oss, EHand value );
 enum class ECard;
 class CCard;
 class CHandImpl;
+struct SPlayInfo;
 class CHand
 {
 public:
     CHand() = delete;
-    CHand( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
-    CHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
+    CHand( const std::shared_ptr< SPlayInfo > & playInfo );
+    CHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo > & playInfo );
     virtual ~CHand();
 public:
     QString toString() const;
@@ -68,8 +69,9 @@ public:
     QString determineHandName( bool details ) const;
     std::tuple< EHand, std::vector< ECard >, std::vector< ECard > >  determineHand() const; // hand, mycard, kicker cards
 
-    //void setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > > & wildCards );
-    //void addWildCard( const std::shared_ptr< CCard > & card );
+    void setStraightsFlushesCountForSmallHands( bool straightsFlushesCountForSmallHands );
+    void setLowHandWins( bool lowHandWins );
+    void addWildCard( const std::shared_ptr< CCard > & card ); // needed for unit testing
     EHand computeHand() const;
     EHand getHand() const;
 
@@ -81,11 +83,14 @@ public:
     bool operator<( const CHand& rhs ) const;
     bool operator==( const CHand& rhs ) const;
 
-    std::vector< std::shared_ptr< CCard > > getCards() const;
+    const std::vector< std::shared_ptr< CCard > > & getCards() const;
 
     const std::optional< std::pair< uint32_t, std::unique_ptr< CHand > > >& bestHand() const;
     bool hasCards() const;
     void resetHandAnalysis();
+
+    bool isFlush() const; // used for unittesting
+    bool isStraight() const; // used for unittesting
 private:
     uint32_t evaluateHand() const;
    

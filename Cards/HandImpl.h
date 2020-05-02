@@ -33,10 +33,12 @@
 enum class ECard;
 enum class EHand;
 class CCard;
+struct SPlayInfo;
+
 class CHandImpl
 {
 public:
-    CHandImpl( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
+    CHandImpl( const std::shared_ptr< SPlayInfo >& playInfo );
     void resetHandAnalysis();
 
     void clearCards();
@@ -46,31 +48,27 @@ public:
 
     bool hasCards() const{ return !fCards.empty(); }
 
-    //void setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
-    //void addWildCard( const std::shared_ptr< CCard >& card );
+    void addWildCard( const std::shared_ptr< CCard >& card );
 
     QString toString() const;
     QString determineHandName( bool details ) const;
-    QString maxCardName() const;
-
-    uint16_t get5CardValue() const;
-    ECard getMaxCard() const;
-    ECard getMinCard() const;
-    NHandUtils::TCardBitType cardsAndValue() const;
-    NHandUtils::TCardBitType cardsOrValue() const;
-    uint64_t computeHandProduct() const;
     std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > determineHand() const;
     EHand computeHand() const;
     EHand getHand() const;
+    const std::vector< std::shared_ptr< CCard > > & getCards() const{ return fCards; }
+    const std::optional< std::pair< uint32_t, std::unique_ptr< CHand > > >& bestHand() const{ return fBestHand; }
 
     uint32_t evaluateHand() const;
 
+    bool isStraight() const;
+    bool isFlush() const;
+private:
     std::vector< std::shared_ptr< CCard > > fCards;
-    std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > > fWildCards;
+    std::shared_ptr< SPlayInfo > fPlayInfo;
 
     // these values get cached for speed, but are called via const functions, hence the mutable nature
     mutable std::optional< std::tuple< EHand, std::vector< ECard >, std::vector< ECard > > > fHand;
-    mutable std::optional< uint16_t > f5CardValue;
+    mutable std::optional< uint16_t > fCardsValue;
     mutable std::optional< ECard > fMaxCard;
     mutable std::optional< ECard > fMinCard;
     mutable std::optional< NHandUtils::TCardBitType > fAndValue;

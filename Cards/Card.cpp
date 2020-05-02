@@ -21,7 +21,7 @@
 // SOFTWARE.
 
 #include "Card.h"
-
+#include "HandUtils.h"
 
 QString toString( ESuit suit, bool verbose )
 {
@@ -35,6 +35,21 @@ QString toString( ESuit suit, bool verbose )
             return "Unknown";
     }
 }
+
+QString asEnum( ESuit suit )
+{
+    switch ( suit )
+    {
+        case ESuit::eHearts: return "ESuit::eHearts";
+        case ESuit::eSpades: return "ESuit::eSpades";
+        case ESuit::eDiamonds: return "ESuit::eDiamonds";
+        case ESuit::eClubs: return "ESuit::eClubs";
+        default:
+            return "ESuit::eUNKNOWN";
+    }
+}
+
+
 
 bool fromString( ESuit& suit, const QString& suitName )
 {
@@ -73,6 +88,29 @@ QString toString( ECard card, bool verbose )
             return "Unknown";
     }
 }
+
+QString asEnum( ECard card )
+{
+    switch ( card )
+    {
+        case ECard::eAce: return "ECard::eAce";
+        case ECard::eDeuce: return "ECard::eDeuce";
+        case ECard::eTrey: return "ECard::eTrey";
+        case ECard::eFour: return "ECard::eFour";
+        case ECard::eFive: return "ECard::eFive";
+        case ECard::eSix: return "ECard::eSix";
+        case ECard::eSeven: return "ECard::eSeven";
+        case ECard::eEight: return "ECard::eEight";
+        case ECard::eNine: return "ECard::eNine";
+        case ECard::eTen: return "ECard::eTen";
+        case ECard::eJack: return "ECard::eJack";
+        case ECard::eQueen: return "ECard::eQueen";
+        case ECard::eKing: return "ECard::eKing";
+        default:
+            return "ECard::eUNKNOWN";
+    }
+}
+
 
 bool fromString( ECard & card, const QString & cardName )
 {
@@ -138,8 +176,8 @@ uint16_t toBitValue( ECard card )
 {
     switch ( card )
     {
-        case ECard::eDeuce:   return 0b00000000000001;
-        case ECard::eTrey: return 0b00000000000010;
+        case ECard::eDeuce: return 0b00000000000001;
+        case ECard::eTrey:  return 0b00000000000010;
         case ECard::eFour:  return 0b00000000000100;
         case ECard::eFive:  return 0b00000000001000;
         case ECard::eSix:   return 0b00000000010000;
@@ -195,17 +233,7 @@ CCard::CCard( ECard card, ESuit suit) :
     fCard( card ),
     fSuit( suit )
 {
-    computeBitValue();
-}
-
-void CCard::computeBitValue()
-{
-    uint32_t tmp =
-        ( toBitValue( fCard ) << 16 )
-        | ( ( ( toBitValue( fSuit ) << 4 ) | toRankValue( fCard ) ) << 8 )
-        | toPrimeValue( fCard );
-
-    fBitValue = tmp;
+    fBitValue = NHandUtils::computeBitValue( fCard, fSuit );
 }
 
 CCard::~CCard()

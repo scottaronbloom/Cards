@@ -38,6 +38,7 @@ add_executable( CardGame WIN32
                  ${qtproject_QRC_SOURCES}
                  ${_CMAKE_FILES}
                  ${_CMAKE_MODULE_FILES}
+                application.rc
           )
 set_target_properties( CardGame PROPERTIES FOLDER Apps )
           

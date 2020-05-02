@@ -21,6 +21,8 @@
 # SOFTWARE.
 
 set(qtproject_SRCS
+    Evaluate2CardHand.cpp
+    Evaluate5CardHand.cpp
     Card.cpp
     Hand.cpp
     HandImpl.cpp
@@ -33,12 +35,15 @@ set(qtproject_H
 )
 
 set(project_H
+    Evaluate2CardHand.h
+    Evaluate5CardHand.h
     Game.h
     Hand.h
     HandImpl.h
     HandUtils.h
     Card.h
     Player.h
+    PlayInfo.h
 )
 
 set(qtproject_UIS

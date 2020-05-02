@@ -24,6 +24,8 @@
 #include "Card.h"
 #include "Player.h"
 #include "Hand.h"
+#include "PlayInfo.h"
+
 #include <random>
 #include <unordered_set>
 
@@ -32,7 +34,7 @@
 
 CGame::CGame()
 {
-    fWildCards = std::make_shared< std::unordered_set< std::shared_ptr< CCard > > >();
+    fPlayInfo = std::make_shared< SPlayInfo >();
 
     createDeck();
     resetGames();
@@ -170,11 +172,13 @@ QString CGame::dumpGameDetails( bool /*details*/ ) const
 
     data += QString( "Number of Cards: %1\n" ).arg( cards.join( "," ) );
     cards.clear();
-    for( auto && ii : *fWildCards )
+    for( auto && ii : fPlayInfo->fWildCards )
     {
         cards << ii->toString( false, false );
     }
     data += QString( "Wild Cards: %1\n" ).arg( cards.join( "," ) );
+    data += QString( "Sub 5 Card Poker Straights/Flushes Count: %1\n" ).arg( fPlayInfo->fStraightsFlushesCountForSmallHands ? "Yes" : "No" );
+    data += QString( "Lowball/Razz: %1\n" ).arg( fPlayInfo->fLowBall ? "Yes" : "No" );
     return data;
 }
 
@@ -409,7 +413,7 @@ size_t CGame::setNumPlayers( size_t numPlayers )
 {
     while( numPlayers > fPlayers.size() )
     {
-        fPlayers.push_back( std::make_shared< CPlayer >( fWildCards ) );
+        fPlayers.push_back( std::make_shared< CPlayer >( fPlayInfo ) );
     }
     while( numPlayers < fPlayers.size() )
         fPlayers.pop_back();
@@ -474,17 +478,37 @@ void CGame::removePlayer( size_t playerNum )
         next->setPrevPlayer( prev );
 }
 
+void CGame::setStraightsFlushesCountForSmallHands( bool straightsFlushesCountForSmallHands )
+{
+    fPlayInfo->fStraightsFlushesCountForSmallHands = straightsFlushesCountForSmallHands;
+}
+
+bool CGame::straightsFlushesCountForSmallHands() const
+{
+    return fPlayInfo->fStraightsFlushesCountForSmallHands;
+}
+
+void CGame::setLowHandWins( bool lowBall )
+{
+    fPlayInfo->fLowBall = lowBall;
+}
+
+bool CGame::lowHandWins() const
+{
+    return fPlayInfo->fLowBall;
+}
+
 void CGame::addWildCard( std::shared_ptr< CCard > card )
 {
-    fWildCards->insert( card );
+    fPlayInfo->fWildCards.insert( card );
 }
 
 void CGame::addWildCards( const std::vector< std::shared_ptr< CCard > > & cards )
 {
-    fWildCards->insert( cards.begin(), cards.end() );
+    fPlayInfo->fWildCards.insert( cards.begin(), cards.end() );
 }
 
 void CGame::clearWildCards()
 {
-    fWildCards->clear();
+    fPlayInfo->fWildCards.clear();
 }

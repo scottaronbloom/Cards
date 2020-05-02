@@ -28,30 +28,38 @@
 
 class CHand;
 class CCard;
+struct SPlayInfo;
 enum class ECard;
 enum class EHand;
+enum class ESuit : uint8_t;
 namespace NHandUtils
 {
     using TCardBitType = std::bitset< 29 >;
 
-    bool isWild( const std::shared_ptr< CCard >& card, const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
-    std::pair< uint32_t, std::unique_ptr< CHand > > findBest( const std::vector< std::shared_ptr< CCard > >& cards, int numCards, bool allowWildcards );
-    std::pair< uint32_t, std::unique_ptr< CHand > > findBest( const std::vector< std::vector< std::shared_ptr< CCard > > >& allHands, bool allowWildcards );
-    std::pair< uint32_t, std::unique_ptr< CHand > > evaluateHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards );
-
-    uint32_t evaluateHand( const std::vector< std::shared_ptr< CCard > >& cards, bool allowWildCards );  // adds 13 to every calculated number, allowing for the "13 5 of a kinds"
+    std::pair< uint32_t, std::unique_ptr< CHand > > findBest( const std::vector< std::shared_ptr< CCard > >& cards, int numCards, const std::shared_ptr< SPlayInfo > & playInfo );
+    std::pair< uint32_t, std::unique_ptr< CHand > > findBest( const std::vector< std::vector< std::shared_ptr< CCard > > >& allHands, const std::shared_ptr< SPlayInfo >& playInfo );
+    std::pair< uint32_t, std::unique_ptr< CHand > > evaluateHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo );
 
     bool isFlush( const std::vector< std::shared_ptr< CCard > >& cards );
     bool isStraight( const std::vector< std::shared_ptr< CCard > >& cards );
+
     uint64_t computeHandProduct( const std::vector< std::shared_ptr< CCard > >& cards );
     TCardBitType cardsOrValue( const std::vector< std::shared_ptr< CCard > >& cards );
     TCardBitType cardsAndValue( const std::vector< std::shared_ptr< CCard > >& cards );
-    uint16_t get5CardValue( const std::vector< std::shared_ptr< CCard > >& cards );
+    uint16_t getCardsValue( const std::vector< std::shared_ptr< CCard > >& cards );
+
+    uint64_t computeHandProduct( const std::vector< TCardBitType > & cards );
+    TCardBitType cardsOrValue( const std::vector< TCardBitType > & cards );
+    TCardBitType cardsAndValue( const std::vector< TCardBitType > & cards );
+    uint16_t getCardsValue( const std::vector< TCardBitType > & cards );
 
     ECard getMaxCard( const std::vector< std::shared_ptr< CCard > > & cards );
     ECard getMinCard( const std::vector< std::shared_ptr< CCard > >& cards );
 
-    EHand rankToHand( uint32_t rank, bool allowWildCards );
+    EHand rankToHand( uint32_t rank, size_t numCards, const std::shared_ptr< SPlayInfo > & playInfo );
+
+    TCardBitType computeBitValue( ECard card, ESuit suit );
+
 }
 #endif 
 

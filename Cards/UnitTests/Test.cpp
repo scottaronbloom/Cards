@@ -631,7 +631,121 @@ namespace
         }
     }
 
-    TEST_F( CHandTester, FindWinner )
+    TEST_F( CHandTester, All3CardHands )
+    {
+        std::vector< std::shared_ptr< CHand > > allHands;
+        size_t numHands = 0;
+        auto allCards = getAllCards();
+        for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
+        {
+            for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
+            {
+                for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
+                {
+                    for ( size_t c4 = c3 + 1; c4 < allCards.size(); ++c4 )
+                    {
+                        for ( size_t c5 = c4 + 1; c5 < allCards.size(); ++c5 )
+                        {
+                            auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ], allCards[ c4 ], allCards[ c5 ] } ), nullptr );
+                            allHands.push_back( hand );
+                            numHands++;
+                        }
+                    }
+                }
+            }
+        }
+
+        std::sort( allHands.begin(), allHands.end(), []( const std::shared_ptr< CHand >& lhs, const std::shared_ptr< CHand >& rhs )
+                   { return lhs->operator>( *rhs ); }
+        );
+
+        EXPECT_EQ( 2598960, numHands );
+        EXPECT_EQ( 2598960, allHands.size() );
+
+        std::vector< std::shared_ptr< CHand > > uniqueHands;
+        std::shared_ptr< CHand > prevHand;
+        for ( size_t ii = 0; ii < allHands.size(); ++ii )
+        {
+            if ( prevHand && ( prevHand->operator==( *allHands[ ii ] ) ) )
+                continue;
+            prevHand = allHands[ ii ];
+            uniqueHands.push_back( prevHand );
+        }
+        EXPECT_EQ( 7462, uniqueHands.size() );
+
+        std::map< EHand, size_t > freq;
+        for ( auto&& ii : allHands )
+        {
+            auto hand = ii->determineHand();
+            freq[ std::get< 0 >( hand ) ]++;
+        }
+        EXPECT_EQ( 40, freq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 624, freq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 3744, freq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 5108, freq[ EHand::eFlush ] );
+        EXPECT_EQ( 10200, freq[ EHand::eStraight ] );
+        EXPECT_EQ( 54912, freq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 123552, freq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 1098240, freq[ EHand::ePair ] );
+        EXPECT_EQ( 1302540, freq[ EHand::eHighCard ] );
+
+        std::map< EHand, size_t > subFreq;
+        for ( auto&& ii : uniqueHands )
+        {
+            auto hand = ii->determineHand();
+            subFreq[ std::get< 0 >( hand ) ]++;
+        }
+        EXPECT_EQ( 10, subFreq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 156, subFreq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 156, subFreq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 1277, subFreq[ EHand::eFlush ] );
+        EXPECT_EQ( 10, subFreq[ EHand::eStraight ] );
+        EXPECT_EQ( 858, subFreq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 858, subFreq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 2860, subFreq[ EHand::ePair ] );
+        EXPECT_EQ( 1277, subFreq[ EHand::eHighCard ] );
+    }
+
+    //TEST_F( CHandTester, Find3CardWinner )
+    //{
+    //    fGame->addPlayer( "Scott" )->setCards( fGame->getCards( "7D AS 4D QH JC 3C 2C" ) ); // ace high, QJ74
+    //    fGame->addPlayer( "Craig" )->setCards( fGame->getCards( "JC TC 8D 5D 4H 3H 2H" ) ); // J high, T854
+    //    fGame->addPlayer( "Eric" )->setCards( fGame->getCards( "JH TS 8H 5C 4S 3D 2D" ) ); // J high, T854
+    //    fGame->addPlayer( "Keith" )->setCards( fGame->getCards( "KD QS 8C 7S 5C 4C 3S 2S" ) ); // K high, Q875
+
+    //    auto winners = fGame->findWinners();
+    //    EXPECT_EQ( 1, winners.size() );
+    //    EXPECT_EQ( "Scott", winners.front()->name() );
+    //    ASSERT_TRUE( winners.front()->getHand()->bestHand().has_value() );
+    //    EXPECT_EQ( "Cards: 7D AS 4D QH JC", winners.front()->getHand()->bestHand().value().second->toString() );
+    //    EXPECT_EQ( "High Card 'Ace' : Queen, Jack, Seven, Four kickers", winners.front()->getHand()->bestHand().value().second->determineHandName( true ) );
+    //}
+
+    //TEST_F( CHandTester, Find3CardHandWild )
+    //{
+    //    auto hand = std::make_shared< CHand >( fGame->getCards( "3C 4D 7H KH 4H 2C 2H" ), nullptr ); // Ace H flush
+    //    //hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
+    //    //hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
+
+    //    EHand handValue;
+    //    std::vector< ECard > card;
+    //    std::vector< ECard > kickers;
+    //    std::tie( handValue, card, kickers ) = hand->determineHand();
+    //    EXPECT_EQ( EHand::eTwoPair, handValue );
+    //    EXPECT_EQ( ECard::eFour, *card.begin() );
+    //    EXPECT_EQ( ECard::eDeuce, *card.rbegin() );
+    //    EXPECT_EQ( ECard::eKing, *kickers.begin() );
+
+    //    hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
+    //    hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
+    //    std::tie( handValue, card, kickers ) = hand->determineHand();
+    //    EXPECT_EQ( EHand::eFourOfAKind, handValue );
+    //    EXPECT_EQ( ECard::eFour, *card.begin() );
+    //    EXPECT_EQ( ECard::eKing, *kickers.begin() );
+    //}
+
+
+    TEST_F( CHandTester, Find5CardWinner )
     {
         fGame->addPlayer( "Scott" )->setCards( fGame->getCards( "7D AS 4D QH JC" ) ); // ace high, QJ74
         fGame->addPlayer( "Craig" )->setCards( fGame->getCards( "9C 8C 6D 3D 2H" ) ); // 9 high, 8632
@@ -643,7 +757,7 @@ namespace
         EXPECT_EQ( "Scott", winners.front()->name() );
     }
 
-    TEST_F( CHandTester, FindWinnerWild )
+    TEST_F( CHandTester, Find5CardWinnerWild )
     {
         for( auto && suit : ESuit() )
         {
@@ -658,15 +772,17 @@ namespace
         auto winners = fGame->findWinners();
         EXPECT_EQ( 2, winners.size() );
         EXPECT_EQ( "Craig", winners.back()->name() );
-        EXPECT_EQ( "Pair of 'Nine' - 'Eight, Six, Three' kicker", winners.back()->getHand()->determineHandName( true ) );
+        auto winningHandName = winners.back()->getHand()->determineHandName( true );
+        EXPECT_EQ( "Pair of 'Nine' - 'Eight, Six, Trey' kicker", winners.back()->getHand()->determineHandName( true ) );
 
+        winningHandName = winners.front()->getHand()->determineHandName( true );
         EXPECT_EQ( "Eric", winners.front()->name() );
-        EXPECT_EQ( "Pair of 'Nine' - 'Eight, Six, Three' kicker", winners.front()->getHand()->determineHandName( true ) );
+        EXPECT_EQ( "Pair of 'Nine' - 'Eight, Six, Trey' kicker", winners.front()->getHand()->determineHandName( true ) );
     }
 
     TEST_F( CHandTester, DetermineHandWild )
     {
-        auto hand = std::make_shared< CHand >( fGame->getCards( "7H KH 4H 2C 2H" ) ); // Ace H flush
+        auto hand = std::make_shared< CHand >( fGame->getCards( "7H KH 4H 2C 2H" ), nullptr ); // Ace H flush
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
 
@@ -677,11 +793,11 @@ namespace
         EXPECT_EQ( EHand::eFlush, handValue );
         EXPECT_EQ( ECard::eAce, *card.begin() );
 
-        hand = std::make_shared< CHand >( fGame->getCards( "7H KH 4H 2H 2H" ) ); // Invalid hand
+        hand = std::make_shared< CHand >( fGame->getCards( "7H KH 4H 2H 2H" ), nullptr ); // Invalid hand
         std::tie( handValue, card, kickers ) = hand->determineHand();
         EXPECT_EQ( EHand::eNoCards, handValue );
 
-        hand = std::make_shared< CHand >( fGame->getCards( "7H KH 4H 2C 2D" ) ); // Pair of kings
+        hand = std::make_shared< CHand >( fGame->getCards( "7H KH 4H 2C 2D" ), nullptr ); // Pair of kings
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) ); // 2 clubs and hearts wild
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) ); 
         std::tie( handValue, card, kickers ) = hand->determineHand();
@@ -693,7 +809,7 @@ namespace
 
     TEST_F( CHandTester, DetermineHand5OfAKind )
     {
-        auto hand = std::make_shared< CHand >( fGame->getCards( "2S 2D 4H 2C 2H" ) ); // 5 of a kind 4s
+        auto hand = std::make_shared< CHand >( fGame->getCards( "2S 2D 4H 2C 2H" ), nullptr ); // 5 of a kind 4s
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eDiamonds ) );
@@ -707,7 +823,7 @@ namespace
         EXPECT_EQ( ECard::eFour, *card.begin() );
         EXPECT_EQ( "Five of a Kind 'Four'", hand->bestHand().value().second->determineHandName( true ) );
 
-        hand = std::make_shared< CHand >( fGame->getCards( "2S 4C 4H 2C 2H" ) ); // 5 of a kind 4s
+        hand = std::make_shared< CHand >( fGame->getCards( "2S 4C 4H 2C 2H" ), nullptr ); // 5 of a kind 4s
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eDiamonds ) );
@@ -717,7 +833,7 @@ namespace
         EXPECT_EQ( EHand::eFiveOfAKind, handValue );
         EXPECT_EQ( ECard::eFour, *card.begin() );
 
-        hand = std::make_shared< CHand >( fGame->getCards( "2S 4C 4H 4D 2H" ) ); // 5 of a kind 4s
+        hand = std::make_shared< CHand >( fGame->getCards( "2S 4C 4H 4D 2H" ), nullptr ); // 5 of a kind 4s
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eDiamonds ) );
@@ -727,7 +843,7 @@ namespace
         EXPECT_EQ( EHand::eFiveOfAKind, handValue );
         EXPECT_EQ( ECard::eFour, *card.begin() );
 
-        hand = std::make_shared< CHand >( fGame->getCards( "4S 4C 4H 4D 2H" ) ); // 5 of a kind 4s
+        hand = std::make_shared< CHand >( fGame->getCards( "4S 4C 4H 4D 2H" ), nullptr ); // 5 of a kind 4s
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
         hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eDiamonds ) );
@@ -738,7 +854,7 @@ namespace
         EXPECT_EQ( ECard::eFour, *card.begin() );
     }
 
-    TEST_F( CHandTester, FindWinner7Card )
+    TEST_F( CHandTester, Find7CardWinner )
     {
         fGame->addPlayer( "Scott" )->setCards( fGame->getCards( "7D AS 4D QH JC 3C 2C" ) ); // ace high, QJ74
         fGame->addPlayer( "Craig" )->setCards( fGame->getCards( "JC TC 8D 5D 4H 3H 2H" ) ); // J high, T854
@@ -753,9 +869,9 @@ namespace
         EXPECT_EQ( "High Card 'Ace' : Queen, Jack, Seven, Four kickers", winners.front()->getHand()->bestHand().value().second->determineHandName( true ) );
     }
 
-    TEST_F( CHandTester, Determine7CHandWild )
+    TEST_F( CHandTester, Find7CardHandWild )
     {
-        auto hand = std::make_shared< CHand >( fGame->getCards( "3C 4D 7H KH 4H 2C 2H" ) ); // Ace H flush
+        auto hand = std::make_shared< CHand >( fGame->getCards( "3C 4D 7H KH 4H 2C 2H" ), nullptr ); // Ace H flush
         //hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
         //hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
 
@@ -776,7 +892,7 @@ namespace
         EXPECT_EQ( ECard::eKing, *kickers.begin() );
     }
 
-    TEST_F( CHandTester, AllHands )
+    TEST_F( CHandTester, All5CardHands )
     {
         std::vector< std::shared_ptr< CHand > > allHands;
         size_t numHands = 0;
@@ -791,7 +907,7 @@ namespace
                     {
                         for ( size_t c5 = c4 + 1; c5 < allCards.size(); ++c5 )
                         {
-                            auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ], allCards[ c4 ], allCards[ c5 ] } ) );
+                            auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ], allCards[ c4 ], allCards[ c5 ] } ), nullptr );
                             allHands.push_back( hand );
                             numHands++;
                         }

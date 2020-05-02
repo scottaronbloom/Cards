@@ -31,10 +31,12 @@ class CHand;
 class CCard;
 enum class ECard;
 enum class EHand;
+struct SPlayInfo;
+
 class CPlayer 
 {
 public:
-    CPlayer( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > > & wildCards, const QString & playerName=QString() );
+    CPlayer( const std::shared_ptr< SPlayInfo > & playInfo, const QString & playerName=QString() );
     virtual ~CPlayer();
 
 public:
@@ -68,6 +70,9 @@ public:
     std::shared_ptr< CHand > getHand() const{ return fHand; }
     bool hasCards() const;
     void resetHandAnalysis();
+
+    bool isFlush() const; // used for unittesting
+    bool isStraight() const; // used for unittesting
 public:
     void addCard( std::shared_ptr< CCard > & card );
     void setCards( const std::vector< std::shared_ptr< CCard > > & cards );

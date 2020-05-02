@@ -32,6 +32,7 @@
 
 class CCard;
 class CPlayer;
+struct SPlayInfo;
 enum class EHand;
 enum class ECard;
 enum class ESuit : uint8_t;
@@ -58,6 +59,7 @@ public:
     virtual ~CGame();
 public:
     std::weak_ptr< CPlayer > currDealer() const{ return fDealer; }
+    std::shared_ptr< SPlayInfo > playInfo() const { return fPlayInfo; }
 
     QString dumpGame( bool details ) const;
     void shuffleAndDeal();
@@ -84,6 +86,12 @@ public:
 
     void removePlayer( size_t playerNum );
 
+    void setStraightsFlushesCountForSmallHands( bool straightsFlushesCountForSmallHands );
+    bool straightsFlushesCountForSmallHands() const;
+
+    void setLowHandWins( bool lowBall );
+    bool lowHandWins() const;
+
     void addWildCard( std::shared_ptr< CCard > card );
     void addWildCards( const std::vector< std::shared_ptr< CCard > > & cards );
     void clearWildCards();
@@ -104,7 +112,6 @@ private:
     std::vector< std::shared_ptr< CCard > > fShuffledCards;
     std::unordered_map< QString, std::shared_ptr< CCard > > fStringCardMap;
     std::unordered_map< std::pair< ECard, ESuit >, std::shared_ptr< CCard > > fCardMap;
-    std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > > fWildCards;
 
     std::vector< std::pair< EHand, std::weak_ptr< CPlayer > > > fGames;
     std::vector< uint64_t > fWinsByHand;
@@ -112,6 +119,8 @@ private:
     std::vector< uint64_t > fWinsByPlayer;
 
     TCardDeal fNumCardsToDeal{ 5 }; // first vector is player deals (first) then last is community, default is 5 card 
+
+    std::shared_ptr< SPlayInfo > fPlayInfo;
 };
 
 #endif 

@@ -52,10 +52,16 @@ public Q_SLOTS:
     void slotNumPlayersChanged();
     void slotNumWildCardsChanged();
     void slotWildCardsChanged( bool showGame );
+    void slotStraightsFlushesCountForSmallHandsChanged();
+    void slotLowHandWinsChanged();
 private:
     void showStats();
     void showGame();
     void loadSettings();
+
+    void setNumCards( int numCards );
+    int numCards() const;
+
     void saveSettings();
 
     std::unique_ptr< Ui::CMainWindow > fImpl;

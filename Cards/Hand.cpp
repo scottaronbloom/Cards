@@ -28,14 +28,14 @@
 #include <unordered_set>
 #include <QStringList>
 
-CHand::CHand( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards ) :
-    fHandImpl( std::make_unique< CHandImpl >( wildCards ) )
+CHand::CHand( const std::shared_ptr< SPlayInfo >& playInfo ) :
+    fHandImpl( std::make_unique< CHandImpl >( playInfo ) )
 {
 
 }
 
-CHand::CHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards ) :
-    CHand( wildCards )
+CHand::CHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo ) :
+    CHand( playInfo )
 {
     setCards( cards );
 }
@@ -91,14 +91,14 @@ bool CHand::operator ==( const CHand & rhs ) const
     return rank == rhsRank;
 }
 
-std::vector< std::shared_ptr< CCard > > CHand::getCards() const
+const std::vector< std::shared_ptr< CCard > > & CHand::getCards() const
 {
-    return fHandImpl->fCards;
+    return fHandImpl->getCards();
 }
 
 const std::optional< std::pair< uint32_t, std::unique_ptr< CHand > > > & CHand::bestHand() const
 {
-    return fHandImpl->fBestHand;
+    return fHandImpl->bestHand();
 }
 
 bool CHand::hasCards() const
@@ -109,6 +109,16 @@ bool CHand::hasCards() const
 void CHand::resetHandAnalysis()
 {
     fHandImpl->resetHandAnalysis();
+}
+
+bool CHand::isFlush() const
+{
+    return fHandImpl->isFlush();
+}
+
+bool CHand::isStraight() const
+{
+    return fHandImpl->isStraight();
 }
 
 QString CHand::toString() const
@@ -137,10 +147,10 @@ QString CHand::determineHandName( bool details ) const
 //    fHandImpl->setWildCards( wildCards );
 //}
 
-//void CHand::addWildCard( const std::shared_ptr< CCard >& card )
-//{
-//    fHandImpl->addWildCard( card );
-//}
+void CHand::addWildCard( const std::shared_ptr< CCard >& card )
+{
+    fHandImpl->addWildCard( card );
+}
 
 EHand CHand::computeHand() const
 {

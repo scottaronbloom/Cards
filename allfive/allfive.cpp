@@ -16,6 +16,31 @@
 /*                                               */
 /*************************************************/
 
+void generate2CardFlushTable()
+{
+    //std::vector< 
+}
+
+void generate3CardFlushTable()
+{
+    //std::vector< 
+}
+void generate4CardFlushTable()
+{
+    //std::vector< 
+}
+void generate5CardFlushTable()
+{
+    //std::vector< 
+}
+void generateFlushTable()
+{
+    generate2CardFlushTable();
+    generate3CardFlushTable();
+    generate4CardFlushTable();
+    generate5CardFlushTable();
+}
+
 int main( int /*argc*/, char** /*argv*/ )
 {
     int deck[ 52 ] = {0};

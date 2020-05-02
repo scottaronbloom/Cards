@@ -40,6 +40,7 @@ enum class ESuit : uint8_t
 DECLARE_ENUM_FUNCS_ARITHMETIC_ONEHOT( ESuit );
 DECLARE_ENUM_ITERATORS( ESuit, ESuit::eSpades, ESuit::eClubs );
 QString toString( ESuit suit, bool verbose );
+QString asEnum( ESuit suit );
 bool fromString( ESuit& suit, const QString& suitName );
 uint8_t toBitValue( ESuit suit );
 std::ostream & operator<<( std::ostream & oss, ESuit suit );
@@ -64,6 +65,7 @@ enum class ECard
 DECLARE_ENUM_FUNCS_ARITHMETIC( ECard );
 DECLARE_ENUM_ITERATORS( ECard, ECard::eDeuce, ECard::eAce );
 QString toString( ECard card, bool verbose );
+QString asEnum( ECard suit );
 bool fromString( ECard & card, const QString& cardName );
 uint8_t toPrimeValue( ECard card );
 uint16_t toBitValue( ECard card );
@@ -92,8 +94,6 @@ public:
     bool operator==( const CCard& rhs ) const;
 
 private:
-    void computeBitValue();
-
     ECard fCard{ ECard::eUNKNOWN };
     ESuit fSuit{ ESuit::eUNKNOWN };
 

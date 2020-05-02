@@ -26,7 +26,7 @@
 
 #include <QStringList>
 
-CPlayer::CPlayer( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > > & wildCards, const QString& playerName ) :
+CPlayer::CPlayer( const std::shared_ptr< SPlayInfo > & wildCards, const QString& playerName ) :
     fName( playerName ),
     fHand( std::make_shared< CHand >( wildCards ) )
 {
@@ -99,6 +99,16 @@ bool CPlayer::hasCards() const
 void CPlayer::resetHandAnalysis()
 {
     fHand->resetHandAnalysis();
+}
+
+bool CPlayer::isFlush() const
+{
+    return fHand->isFlush();
+}
+
+bool CPlayer::isStraight() const
+{
+    return fHand->isStraight();
 }
 
 void CPlayer::addCard( std::shared_ptr< CCard >& card )

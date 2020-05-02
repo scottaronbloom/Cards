@@ -23,18 +23,20 @@
 #include "HandImpl.h"
 #include "Card.h"
 #include "Hand.h"
+#include "PlayInfo.h"
 #include "SABUtils/utils.h"
 
-CHandImpl::CHandImpl( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards ) :
-    fWildCards( wildCards )
+CHandImpl::CHandImpl( const std::shared_ptr< SPlayInfo >& playInfo ) :
+    fPlayInfo( playInfo )
 {
-
+    if ( !fPlayInfo )
+        fPlayInfo = std::make_shared< SPlayInfo >();
 }
 
 void CHandImpl::resetHandAnalysis()
 {
     fHand.reset();
-    f5CardValue.reset();
+    fCardsValue.reset();
     fMaxCard.reset();
     fMinCard.reset();
     fAndValue.reset();
@@ -60,19 +62,11 @@ void CHandImpl::addCard( std::shared_ptr< CCard >& card )
     fCards.push_back( card );
 }
 
-//void CHandImpl::setWildCards( const std::shared_ptr< std::unordered_set< std::shared_ptr< CCard > > >& wildCards )
-//{
-//    fWildCards = wildCards;
-//    resetHandAnalysis();
-//}
-//
-//void CHandImpl::addWildCard( const std::shared_ptr< CCard >& card )
-//{
-//    if ( !fWildCards )
-//        fWildCards = std::make_shared< std::unordered_set< std::shared_ptr< CCard > > >();
-//    fWildCards->insert( card );
-//    resetHandAnalysis();
-//}
+void CHandImpl::addWildCard( const std::shared_ptr< CCard >& card )
+{
+    fPlayInfo->fWildCards.insert( card );
+    resetHandAnalysis();
+}
 
 QString CHandImpl::toString() const
 {
@@ -107,80 +101,6 @@ QString CHandImpl::determineHandName( bool details ) const
     }
     else
         return ::toString( computeHand(), false );
-}
-
-QString CHandImpl::maxCardName() const
-{
-    auto maxCard = getMaxCard();
-    return ::toString( maxCard, true );
-}
-
-uint16_t CHandImpl::get5CardValue() const
-{
-    if ( f5CardValue.has_value() )
-        return f5CardValue.value();
-
-    auto retVal = NHandUtils::get5CardValue( fCards );
-    if ( retVal == -1 )
-        return retVal;
-    f5CardValue = retVal;
-    return retVal;
-}
-
-ECard CHandImpl::getMaxCard() const
-{
-    if ( fMaxCard.has_value() )
-        return fMaxCard.value();
-
-    fMaxCard = NHandUtils::getMaxCard( fCards );
-    return fMaxCard.value();
-}
-
-ECard CHandImpl::getMinCard() const
-{
-    if ( fMinCard.has_value() )
-        return fMinCard.value();
-
-    fMinCard = NHandUtils::getMinCard( fCards );
-    return fMinCard.value();
-}
-
-TCardBitType CHandImpl::cardsAndValue() const
-{
-    if ( fAndValue.has_value() )
-        return fAndValue.value();
-
-    auto retVal = NHandUtils::cardsAndValue( fCards );
-    if ( retVal.size() == 0 )
-        return retVal;
-
-    fAndValue = retVal;
-    return fAndValue.value();
-}
-
-TCardBitType CHandImpl::cardsOrValue() const
-{
-    if ( fOrValue.has_value() )
-        return fOrValue.value();
-
-    auto retVal = NHandUtils::cardsOrValue( fCards );
-    if ( retVal.size() == 0 )
-        return retVal;
-    fOrValue = retVal;
-    return fOrValue.value();
-}
-
-uint64_t CHandImpl::computeHandProduct() const
-{
-    if ( fHandProduct.has_value() )
-        return fHandProduct.value();
-
-    auto retVal = NHandUtils::computeHandProduct( fCards );
-    if ( retVal == -1 )
-        return retVal;
-
-    fHandProduct = retVal;
-    return fHandProduct.value();
 }
 
 // hand my cards kickers
@@ -257,7 +177,7 @@ EHand CHandImpl::computeHand() const
     if ( fCards.empty() )
         return EHand::eNoCards;
     auto rank = evaluateHand();
-    return NHandUtils::rankToHand( rank, fWildCards && !fWildCards->empty() );
+    return NHandUtils::rankToHand( rank, fCards.size(), fPlayInfo );
 }
 
 EHand CHandImpl::getHand() const
@@ -271,7 +191,7 @@ uint32_t CHandImpl::evaluateHand() const
 {
     if ( !fBestHand.has_value() )
     {
-        fBestHand = NHandUtils::evaluateHand( fCards, fWildCards );
+        fBestHand = NHandUtils::evaluateHand( fCards, fPlayInfo );
         if ( !fBestHand->second )
         {
             fBestHand.reset();
@@ -280,4 +200,16 @@ uint32_t CHandImpl::evaluateHand() const
     }
 
     return fBestHand.value().first;
+}
+
+bool CHandImpl::isFlush() const
+{
+    auto hand = determineHand();
+    return ( std::get< 0 >( hand ) == EHand::eFlush ) || ( std::get< 0 >( hand ) == EHand::eStraightFlush );
+}
+
+bool CHandImpl::isStraight() const
+{
+    auto hand = determineHand();
+    return std::get< 0 >( hand ) == EHand::eStraight || ( std::get< 0 >( hand ) == EHand::eStraightFlush );
 }
