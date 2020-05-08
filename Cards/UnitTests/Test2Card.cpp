@@ -73,7 +73,6 @@ namespace NHandTester
             flushesAndStraightsCount.insert( std::make_pair( h1, -1 ) );
             auto pos = flushesAndStraightsCount.find( h2 );
             EXPECT_TRUE( pos == flushesAndStraightsCount.end() );
-
         }
     }
 
@@ -314,7 +313,12 @@ namespace NHandTester
                     p1->addCard( fGame->getCard( highCard, highSuit2 ) );
 
                     auto hand = p1->determineHand();
-                    EXPECT_EQ( EHand::ePair, std::get< 0 >( hand ) );
+                    EXPECT_EQ( EHand::ePair, std::get< 0 >( hand ) )
+                        << "Cards: "
+                        << highCard<< highSuit1 << " "
+                        << highCard << highSuit2 << " "
+                        ;
+
                     ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
 
                     EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );

@@ -22,6 +22,8 @@
 
 set(qtproject_SRCS
     Evaluate2CardHand.cpp
+    Evaluate3CardHand.cpp
+    Evaluate4CardHand.cpp
     Evaluate5CardHand.cpp
     Card.cpp
     Hand.cpp
@@ -36,6 +38,8 @@ set(qtproject_H
 
 set(project_H
     Evaluate2CardHand.h
+    Evaluate3CardHand.h
+    Evaluate4CardHand.h
     Evaluate5CardHand.h
     Game.h
     Hand.h

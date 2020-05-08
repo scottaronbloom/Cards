@@ -1,5 +1,5 @@
-#ifndef __EVALUATE2CARDHAND_H
-#define __EVALUATE2CARDHAND_H
+#ifndef __EVALUATE3CARDHAND_H
+#define __EVALUATE3CARDHAND_H
 
 // The MIT License( MIT )
 //
@@ -31,14 +31,14 @@ struct SPlayInfo;
 
 namespace NHandUtils
 {
-    struct S2CardInfo
+    struct S3CardInfo
     {
-        using THand = std::tuple< TCard, TCard >;
-        S2CardInfo();
-        S2CardInfo( const THand & cards );
-        S2CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2 );
+        using THand = std::tuple< TCard, TCard, TCard >;
+        S3CardInfo();
+        S3CardInfo( const THand& cards );
+        S3CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2, ECard c3, ESuit s3 );
 
-        bool compareJustCards( bool flushStraightCount, const S2CardInfo& rhs ) const;
+        bool compareJustCards( bool flushStraightCount, const S3CardInfo& rhs ) const;
         uint16_t getCardsValue() const;
         uint64_t handProduct() const;
         // 2 card ranking
@@ -46,29 +46,31 @@ namespace NHandUtils
         // straight AK -> A2
         // flush AK -> A2
         // high card -> AK -> A2
-        bool lessThan( bool flushStraightCount, const S2CardInfo& rhs ) const;
-        bool greaterThan( bool flushStraightCount, const S2CardInfo& rhs ) const
+        bool lessThan( bool flushStraightCount, const S3CardInfo& rhs ) const;
+        bool greaterThan( bool flushStraightCount, const S3CardInfo& rhs ) const
         {
             return !lessThan( flushStraightCount, rhs ) && !equalTo( flushStraightCount, rhs );
         }
-        bool equalTo( bool flushStraightCount, const S2CardInfo& rhs ) const;
+        bool equalTo( bool flushStraightCount, const S3CardInfo& rhs ) const;
 
-        bool isWheel() const{ return ( fHighCard == ECard::eAce ) && ( fKicker == ECard::eDeuce ); }
+        bool isWheel() const{ return ( fHighCard == ECard::eAce ) && ( fKicker1 == ECard::eDeuce ) && ( fKicker1 == ECard::eTrey ); }
 
         bool fIsFlush{ false };
         bool fIsStraight{ false };
         bool fIsPair{ false };
         ECard fHighCard{ ECard::eUNKNOWN };
-        ECard fKicker{ ECard::eUNKNOWN };
+        ECard fKicker1{ ECard::eUNKNOWN };
+        ECard fKicker2{ ECard::eUNKNOWN };
         TCard fCard1;
         TCard fCard2;
+        TCard fCard3;
 
         std::vector< TCardBitType > fBitValues;
     };
-    std::ostream& operator<<( std::ostream& oss, const S2CardInfo& obj );
+    std::ostream& operator<<( std::ostream& oss, const S3CardInfo& obj );
 
-    uint32_t evaluate2CardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo );
-    EHand rankTo2CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
+    uint32_t evaluate3CardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo );
+    EHand rankTo3CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
 }
 
 #endif

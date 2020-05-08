@@ -24,6 +24,8 @@
 #include "Hand.h"
 #include "Card.h"
 #include "Evaluate2CardHand.h"
+#include "Evaluate3CardHand.h"
+#include "Evaluate4CardHand.h"
 #include "Evaluate5CardHand.h"
 #include "PlayInfo.h"
 
@@ -84,7 +86,7 @@ namespace NHandUtils
         ,{ECard::eFive  ,  9 }
         ,{ECard::eFour  , 10 }
         ,{ECard::eTrey  , 11 }
-        ,{ECard::eDeuce   , 12 }
+        ,{ECard::eDeuce , 12 }
     };
 
     std::pair< uint32_t, std::unique_ptr< CHand > > evaluateHand( const std::vector< std::shared_ptr< CCard > >& inputCards, const std::shared_ptr< SPlayInfo >& playInfo )
@@ -92,7 +94,7 @@ namespace NHandUtils
         auto&& allCards = CCard::allCardsList();
         std::vector< std::list< std::shared_ptr< CCard > > > hands;
 
-        if ( playInfo && playInfo->hasWildCards() )
+        if ( !playInfo || !playInfo->hasWildCards() )
         {
             for ( auto&& ii : inputCards )
             {
@@ -175,22 +177,6 @@ namespace NHandUtils
         return retVal;
     }
 
-    uint32_t evaluate3CardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo )
-    {
-        if ( cards.size() != 3 )
-            return -1;
-        (void)playInfo;
-        return -1;
-    }
-
-    uint32_t evaluate4CardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo )
-    {
-        if ( cards.size() != 4 )
-            return -1;
-        (void)playInfo;
-        return -1;
-    }
-
     uint32_t evaluateHandInternal( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo > & playInfo )
     {
         if ( cards.size() == 2 )
@@ -214,6 +200,14 @@ namespace NHandUtils
         auto value = cardsAndValue( cards );
         value &= 0x0F000;
         return value.to_ulong() != 0;
+    }
+
+    uint32_t getCardRank( ECard card )
+    {
+        auto pos = sFiveOfAKindMap.find( card );
+        if ( pos == sFiveOfAKindMap.end() )
+            return -1;
+        return ( *pos ).second;
     }
 
     enum EStraightType
@@ -274,7 +268,10 @@ namespace NHandUtils
         uint64_t retVal = 1;
         TCardBitType value( std::numeric_limits< int64_t >::max() );
         for ( auto&& ii : cards )
-            retVal *= ( ii.to_ulong() & 0x00FF );
+        {
+            auto currPrime = ( ii.to_ulong() & 0x00FF );
+            retVal *= currPrime;
+        }
 
         return retVal;
     }
@@ -373,12 +370,14 @@ namespace NHandUtils
     {
         if ( numCards == 2 )
             return rankTo2CardHand( rank, playInfo );
-        //if ( numCards == 3 )
-        //    return rankTo3CardHand( rank, playInfo );
-        //if ( numCards == 4 )
-        //    return rankTo4CardHand( rank, playInfo );
-        //if ( numCards == 5 )
-        return rankTo5CardHand( rank, playInfo );
+        else if ( numCards == 3 )
+            return rankTo3CardHand( rank, playInfo );
+        else if ( numCards == 4 )
+            return rankTo4CardHand( rank, playInfo );
+        else if ( numCards == 5 )
+            return rankTo5CardHand( rank, playInfo );
+        else
+            return EHand::eNoCards;
     }
 
     TCardBitType computeBitValue( ECard card, ESuit suit )

@@ -36,26 +36,22 @@
 namespace NHandUtils
 {
     S2CardInfo::S2CardInfo() :
-        S2CardInfo( std::make_pair(
-            std::make_pair( ECard::eUNKNOWN, ESuit::eUNKNOWN ),
-            std::make_pair( ECard::eUNKNOWN, ESuit::eUNKNOWN )
-        )
-        )
+        S2CardInfo( THand( TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ) ) )
     {
 
     }
 
     S2CardInfo::S2CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2 ) :
-        S2CardInfo( std::make_pair( std::make_pair( c1, s1 ), std::make_pair( c2, s2 ) ) )
+        S2CardInfo( THand( TCard( c1, s1 ), TCard( c2, s2 ) ) )
     {
 
     }
 
-    S2CardInfo::S2CardInfo( const std::pair< std::pair< ECard, ESuit >, std::pair< ECard, ESuit > >& cards ) :
-        fCard1( cards.first ),
-        fCard2( cards.second )
+    S2CardInfo::S2CardInfo( const THand& cards ) :
+        fCard1( std::get< 0 >( cards ) ),
+        fCard2( std::get< 1 >( cards ) )
     {
-        fIsFlush = ( fCard1.second == fCard2.second );
+        fIsFlush = NHandUtils::isFlush( fCard1, fCard2 );
         fIsPair = ( fCard1.first == fCard2.first );
         fHighCard = std::max( fCard1.first, fCard2.first );
         fKicker = std::min( fCard1.first, fCard2.first );
@@ -165,7 +161,7 @@ namespace NHandUtils
         return oss;
     }
 
-    static std::map< std::pair< std::pair< ECard, ESuit >, std::pair< ECard, ESuit > >, uint32_t > s2CardMap =
+    static std::map< S2CardInfo::THand, uint32_t > s2CardMap =
     {
          { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 1 } // pairs
         ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 2 }
@@ -273,7 +269,7 @@ namespace NHandUtils
     };
 
     // Flushes/Straights
-    static std::map< std::pair< std::pair< ECard, ESuit >, std::pair< ECard, ESuit > >, uint32_t > s2CardMapStraightsAndFlushesCount =
+    static std::map< S2CardInfo::THand, uint32_t > s2CardMapStraightsAndFlushesCount =
     {
          { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 1 } // pairs
         ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 2 }
@@ -1325,22 +1321,23 @@ namespace NHandUtils
 
     static std::unordered_map< int64_t, int16_t > sProductMap =
     {
-         { 4, 1 }
-        ,{ 9, 2 }
-        ,{ 25, 4 }
-        ,{ 49, 8 }
-        ,{ 121, 16 }
-        ,{ 169, 32 }
-        ,{ 289, 64 }
-        ,{ 361, 128 }
-        ,{ 529, 256 }
-        ,{ 841, 512 }
-        ,{ 961, 1024 }
-        ,{ 1369, 2048 }
-        ,{ 1681, 4096 }
+         { 4, 12 }
+        ,{ 9, 11 }
+        ,{ 25, 10 }
+        ,{ 49, 9 }
+        ,{ 121, 8 }
+        ,{ 169, 7 }
+        ,{ 289, 6 }
+        ,{ 361, 5 }
+        ,{ 529, 4 }
+        ,{ 841, 3 }
+        ,{ 961, 2 }
+        ,{ 1369, 1 }
+        ,{ 1681, 0 }
     };
 
-    void dumpMap( std::ostream& oss, const std::map< uint64_t, uint16_t > & values, const std::string& varName )
+
+    static void dumpMap( std::ostream& oss, const std::map< uint64_t, uint16_t > & values, const std::string& varName )
     {
         oss
             << "    " << "static std::unordered_map< int64_t, int16_t > " << varName << " = \n"
@@ -1361,7 +1358,7 @@ namespace NHandUtils
         oss << "    };\n\n";
     }
 
-    void dumpTable( std::ostream& oss, const std::vector< uint32_t >& values, const std::string & varName )
+    static void dumpTable( std::ostream& oss, const std::vector< uint32_t >& values, const std::string & varName )
     {
         oss 
             << "    " << "static std::vector< uint32_t > " << varName << " = \n"
@@ -1406,7 +1403,7 @@ namespace NHandUtils
 
         oss
             << "// " << header << "\n"
-            << "static std::map< std::pair< std::pair< ECard, ESuit >, std::pair< ECard, ESuit > >, uint32_t > " << varName << " = \n"
+            << "static std::map< THand, uint32_t > " << varName << " = \n"
             << "{\n"
             ;
 
@@ -1430,7 +1427,7 @@ namespace NHandUtils
 
     uint32_t evaluate2CardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo )
     {
-        using TCardToInfoMap = std::map< std::pair< std::pair< ECard, ESuit >, std::pair< ECard, ESuit > >, S2CardInfo >;
+        using TCardToInfoMap = std::map< S2CardInfo::THand, S2CardInfo >;
         auto gFlushStraightsCount = []( const S2CardInfo& lhs, const S2CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
         auto gJustCardsCount = []( const S2CardInfo& lhs, const S2CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
 
@@ -1456,7 +1453,7 @@ namespace NHandUtils
                     if ( *c1 == *c2 )
                         continue;
 
-                    auto curr = std::make_pair( std::make_pair( c1->getCard(), c1->getSuit()), std::make_pair( c2->getCard(), c2->getSuit() ) );
+                    auto curr = S2CardInfo::THand( TCard( c1->getCard(), c1->getSuit()), TCard( c2->getCard(), c2->getSuit() ) );
                     S2CardInfo cardInfo( curr );
                     allHands[ curr ] = cardInfo;
                     justCardsCount.insert( std::make_pair( cardInfo, -1 ) );
@@ -1505,7 +1502,9 @@ namespace NHandUtils
                 }
                 else
                 {
+                    // pairs only..
                     auto productValue = ii.second.handProduct();
+                    cardValue = getCardRank( ii.second.fHighCard );
                     productMap[ productValue ] = cardValue;
                 }
             }
