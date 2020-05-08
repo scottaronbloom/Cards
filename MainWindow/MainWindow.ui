@@ -1608,7 +1608,7 @@
         <item>
          <widget class="QCheckBox" name="lowHandWins">
           <property name="text">
-           <string>Low/Razz</string>
+           <string>Lowball/Razz</string>
           </property>
          </widget>
         </item>
