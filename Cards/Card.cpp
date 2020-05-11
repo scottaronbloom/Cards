@@ -211,6 +211,12 @@ std::ostream & operator<<( std::ostream& oss, ECard suit )
     return oss;
 }
 
+std::ostream& operator<<( std::ostream& oss, const CCard& card )
+{
+    oss << qPrintable( card.toString( false, false ) );
+    return oss;
+}
+
 std::vector< std::shared_ptr< CCard > > getAllCards()
 {
     std::vector< std::shared_ptr< CCard > > retVal;

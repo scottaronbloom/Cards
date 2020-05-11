@@ -54,18 +54,18 @@ namespace NHandUtils
         fCard4( std::get< 3 >( cards ) )
     {
         fIsFlush = NHandUtils::isFlush( fCard1, fCard2 ) && NHandUtils::isFlush( fCard1, fCard3 ) && NHandUtils::isFlush( fCard1, fCard4 );
-        fIsPair = ( fCard1.first == fCard2.first );
-        fHighCard = std::max( fCard1.first, fCard2.first );
-        fKicker1 = std::min( fCard1.first, fCard2.first );
-        if ( ( fHighCard == ECard::eAce ) && ( fKicker1 == ECard::eDeuce ) )
-            std::swap( fHighCard, fKicker1 );
-        if ( fHighCard == ECard::eDeuce )
+        fIsPair = NHandUtils::isCount( std::vector< TCard >( { fCard1, fCard2 } ), 2 );
+        fCards.push_back( std::max( fCard1.first, fCard2.first ) );
+        fKickers.push_back( std::min( fCard1.first, fCard2.first ) );
+        if ( ( *(fCards.begin()) == ECard::eAce ) && ( *(fKickers.begin()) == ECard::eDeuce ) )
+            std::swap( *(fCards.begin()), *(fKickers.begin()) );
+        if ( *(fCards.begin()) == ECard::eDeuce )
         {
-            fIsStraight = ( fKicker1 == ECard::eAce );
+            fIsStraight = ( *(fKickers.begin()) == ECard::eAce );
         }
         else
         {
-            fIsStraight = ( static_cast<int>( fHighCard ) - static_cast<int>( fKicker1 ) ) == 1;
+            fIsStraight = ( static_cast<int>( *(fCards.begin()) ) - static_cast<int>( *(fKickers.begin()) ) ) == 1;
         }
         fBitValues.resize( 2 );
         fBitValues[ 0 ] = NHandUtils::computeBitValue( fCard1.first, fCard1.second );
@@ -75,17 +75,17 @@ namespace NHandUtils
     bool S4CardInfo::compareJustCards( bool flushStraightCount, const S4CardInfo& rhs ) const
     {
         if ( fIsPair && rhs.fIsPair )
-            return fHighCard < rhs.fHighCard;
+            return *(fCards.begin()) < *(fCards.begin());
         if ( !fIsPair && rhs.fIsPair )
             return true;
         if ( fIsPair && !rhs.fIsPair )
             return false;
 
-        auto high1 = ( !flushStraightCount && ( fHighCard == ECard::eDeuce && fKicker1 == ECard::eAce ) ) ? fKicker1 : fHighCard;
-        auto kick1 = ( !flushStraightCount && ( fHighCard == ECard::eDeuce && fKicker1 == ECard::eAce ) ) ? fHighCard : fKicker1;
+        auto high1 = ( !flushStraightCount && ( *(fCards.begin()) == ECard::eDeuce && *(fKickers.begin()) == ECard::eAce ) ) ? *(fKickers.begin()) : *(fCards.begin());
+        auto kick1 = ( !flushStraightCount && ( *(fCards.begin()) == ECard::eDeuce && *(fKickers.begin()) == ECard::eAce ) ) ? *(fCards.begin()) : *(fKickers.begin());
 
-        auto high2 = ( !flushStraightCount && ( rhs.fHighCard == ECard::eDeuce && rhs.fKicker1 == ECard::eAce ) ) ? rhs.fKicker1 : rhs.fHighCard;
-        auto kick2 = ( !flushStraightCount && ( rhs.fHighCard == ECard::eDeuce && rhs.fKicker1 == ECard::eAce ) ) ? rhs.fHighCard : rhs.fKicker1;
+        auto high2 = ( !flushStraightCount && ( *(fCards.begin()) == ECard::eDeuce && *(rhs.fKickers.begin()) == ECard::eAce ) ) ? *(rhs.fKickers.begin()) : *(fCards.begin());
+        auto kick2 = ( !flushStraightCount && ( *(fCards.begin()) == ECard::eDeuce && *(rhs.fKickers.begin()) == ECard::eAce ) ) ? *(fCards.begin()) : *(rhs.fKickers.begin());
 
         if ( high1 != high2 )
             return ( high1 < high2 );
@@ -133,7 +133,7 @@ namespace NHandUtils
     bool S4CardInfo::equalTo( bool flushStraightCount, const S4CardInfo& rhs ) const
     {
         if ( fIsPair && rhs.fIsPair )
-            return fKicker1 == rhs.fKicker1;
+            return *(fKickers.begin()) == *(rhs.fKickers.begin());
         if ( flushStraightCount )
         {
             if ( fIsFlush != rhs.fIsFlush )
@@ -141,7 +141,12 @@ namespace NHandUtils
             if ( fIsStraight != rhs.fIsStraight )
                 return false;
         }
-        return ( fHighCard == rhs.fHighCard ) && ( fKicker1 == rhs.fKicker1 );
+        return ( *(fCards.begin()) == *(fCards.begin()) ) && ( *(fKickers.begin()) == *(rhs.fKickers.begin()) );
+    }
+
+    bool S4CardInfo::isWheel() const
+    {
+        return ( *(fCards.begin()) == ECard::eAce ) && ( *(fKickers.begin()) == ECard::eDeuce );
     }
 
     uint16_t S4CardInfo::getCardsValue() const
@@ -229,7 +234,7 @@ namespace NHandUtils
 
         oss
             << "// " << header << "\n"
-            << "static std::map< THand, uint32_t > " << varName << " = \n"
+            << "static std::map< S4CardInfo::THand, uint32_t > " << varName << " = \n"
             << "{\n"
             ;
 
@@ -264,7 +269,7 @@ namespace NHandUtils
         static TCardsCountMap justCardsCount( gJustCardsCount );
         static TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
 
-        if ( allHands.empty() )
+        if ( NHandUtils::gComputeAllHands && allHands.empty() )
         {
             std::ofstream ofs( "CardDump.cpp" );
             std::ostream* oss = &ofs; //&std::cout;

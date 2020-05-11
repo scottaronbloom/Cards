@@ -210,6 +210,24 @@ namespace NHandUtils
         return ( *pos ).second;
     }
 
+    bool isCount( const std::vector< TCard >& cards, uint8_t count )
+    {
+        std::map< ECard, uint8_t > cardHits;
+        for ( auto && card : cards )
+            cardHits[ card.first ]++;
+
+        int numAtCount = 0;
+        for ( auto&& ii : cardHits )
+        {
+            if ( ii.second == 1 )
+                continue;
+            if ( ii.second != count ) // looking for a two, got a 3
+                return false;
+            numAtCount++;
+        }
+        return numAtCount == 1;
+    }
+
     enum EStraightType
     {
         eAce = 0b01111100000000, // AKQJT
@@ -246,6 +264,37 @@ namespace NHandUtils
         return sStraights.find( value ) != sStraights.end();
     }
 
+
+    bool isStraight( const std::vector< TCard >& cards )
+    {
+        if ( cards.size() < 2 )
+            return false;
+
+        auto sortedCards = cards;
+        std::sort( sortedCards.begin(), sortedCards.end(), []( TCard lhs, TCard rhs ) { return lhs.first > rhs.first; } );
+
+        if ( ( sortedCards[ 0 ].first == ECard::eAce ) && ( (*sortedCards.rbegin()).first == ECard::eDeuce ) )
+        {
+            auto prevCard = *sortedCards.rbegin(); // 2
+            for ( size_t ii = sortedCards.size() - 2; ii >= 1; --ii )
+            {
+
+                if ( ( static_cast<int>( sortedCards[ ii ].first ) - static_cast<int>( prevCard.first ) ) != 1 )
+                    return false;
+                prevCard = sortedCards[ ii ];
+            }
+            return true;
+        }
+
+        auto prevCard = sortedCards[ 0 ];
+        for ( size_t ii = 1; ii < sortedCards.size(); ++ii )
+        {
+            if ( ( static_cast<int>( prevCard.first ) - static_cast<int>( sortedCards[ ii ].first ) ) != 1 )
+                return false;
+            prevCard = sortedCards[ ii ];
+        }
+        return true;
+    }
 
     uint64_t computeHandProduct( const std::vector < std::shared_ptr< CCard > >& cards )
     {
@@ -374,7 +423,7 @@ namespace NHandUtils
             return rankTo3CardHand( rank, playInfo );
         else if ( numCards == 4 )
             return rankTo4CardHand( rank, playInfo );
-        else if ( numCards == 5 )
+        else if ( numCards >= 5 )
             return rankTo5CardHand( rank, playInfo );
         else
             return EHand::eNoCards;
@@ -390,5 +439,20 @@ namespace NHandUtils
         return tmp;
     }
 
+    bool gComputeAllHands{true};
 }
 
+std::ostream& operator<<( std::ostream& oss, const std::vector< std::shared_ptr< CCard > >& cards )
+{
+    oss << "Cards: ";
+    bool first = true;
+    for ( auto&& ii : cards )
+    {
+        if ( !first )
+            oss << " ";
+        first = false;
+        oss << *ii;
+    }
+    oss << "\n";
+    return oss;
+}

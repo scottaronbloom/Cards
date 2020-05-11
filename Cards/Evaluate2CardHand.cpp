@@ -52,19 +52,13 @@ namespace NHandUtils
         fCard2( std::get< 1 >( cards ) )
     {
         fIsFlush = NHandUtils::isFlush( fCard1, fCard2 );
-        fIsPair = ( fCard1.first == fCard2.first );
-        fHighCard = std::max( fCard1.first, fCard2.first );
-        fKicker = std::min( fCard1.first, fCard2.first );
-        if ( ( fHighCard == ECard::eAce ) && ( fKicker == ECard::eDeuce ) )
-            std::swap( fHighCard, fKicker );
-        if ( fHighCard == ECard::eDeuce )
-        {
-            fIsStraight = ( fKicker == ECard::eAce );
-        }
-        else
-        {
-            fIsStraight = ( static_cast<int>( fHighCard ) - static_cast<int>( fKicker ) ) == 1;
-        }
+        fIsPair = NHandUtils::isCount( std::vector< TCard >( { fCard1, fCard2 } ), 2 );
+        fIsStraight = NHandUtils::isStraight( std::vector< TCard >( { fCard1, fCard2 } ) );
+
+        fCards.push_back( std::max( fCard1.first, fCard2.first ) );
+        fKickers.push_back( std::min( fCard1.first, fCard2.first ) );
+        if ( ( *fCards.begin() == ECard::eAce ) && ( *fKickers.begin() == ECard::eDeuce ) )
+            std::swap( *fCards.begin(), *fKickers.begin() );
         fBitValues.resize( 2 );
         fBitValues[ 0 ] = NHandUtils::computeBitValue( fCard1.first, fCard1.second );
         fBitValues[ 1 ] = NHandUtils::computeBitValue( fCard2.first, fCard2.second );
@@ -73,17 +67,17 @@ namespace NHandUtils
     bool S2CardInfo::compareJustCards( bool flushStraightCount, const S2CardInfo& rhs ) const
     {
         if ( fIsPair && rhs.fIsPair )
-            return fHighCard < rhs.fHighCard;
+            return *fCards.begin() < *(rhs.fCards.begin());
         if ( !fIsPair && rhs.fIsPair )
             return true;
         if ( fIsPair && !rhs.fIsPair )
             return false;
 
-        auto high1 = ( !flushStraightCount && ( fHighCard == ECard::eDeuce && fKicker == ECard::eAce ) ) ? fKicker : fHighCard;
-        auto kick1 = ( !flushStraightCount && ( fHighCard == ECard::eDeuce && fKicker == ECard::eAce ) ) ? fHighCard : fKicker;
+        auto high1 = ( !flushStraightCount && ( *fCards.begin() == ECard::eDeuce && *fKickers.begin() == ECard::eAce ) ) ? *fKickers.begin() : *fCards.begin();
+        auto kick1 = ( !flushStraightCount && ( *fCards.begin() == ECard::eDeuce && *fKickers.begin() == ECard::eAce ) ) ? *fCards.begin() : *fKickers.begin();
 
-        auto high2 = ( !flushStraightCount && ( rhs.fHighCard == ECard::eDeuce && rhs.fKicker == ECard::eAce ) ) ? rhs.fKicker : rhs.fHighCard;
-        auto kick2 = ( !flushStraightCount && ( rhs.fHighCard == ECard::eDeuce && rhs.fKicker == ECard::eAce ) ) ? rhs.fHighCard : rhs.fKicker;
+        auto high2 = ( !flushStraightCount && ( *(rhs.fCards.begin()) == ECard::eDeuce && *(rhs.fKickers.begin()) == ECard::eAce ) ) ? *(rhs.fKickers.begin()) : *(rhs.fCards.begin());
+        auto kick2 = ( !flushStraightCount && ( *(rhs.fCards.begin()) == ECard::eDeuce && *(rhs.fKickers.begin()) == ECard::eAce ) ) ? *(rhs.fCards.begin()) : *(rhs.fKickers.begin());
 
         if ( high1 != high2 )
             return ( high1 < high2 );
@@ -131,7 +125,7 @@ namespace NHandUtils
     bool S2CardInfo::equalTo( bool flushStraightCount, const S2CardInfo& rhs ) const
     {
         if ( fIsPair && rhs.fIsPair )
-            return fKicker == rhs.fKicker;
+            return *(fKickers.begin()) == *(rhs.fKickers.begin());
         if ( flushStraightCount )
         {
             if ( fIsFlush != rhs.fIsFlush )
@@ -139,7 +133,7 @@ namespace NHandUtils
             if ( fIsStraight != rhs.fIsStraight )
                 return false;
         }
-        return ( fHighCard == rhs.fHighCard ) && ( fKicker == rhs.fKicker );
+        return ( *fCards.begin() == *(rhs.fCards.begin()) ) && ( *(fKickers.begin()) == *(rhs.fKickers.begin()) );
     }
 
     uint16_t S2CardInfo::getCardsValue() const
@@ -1403,7 +1397,7 @@ namespace NHandUtils
 
         oss
             << "// " << header << "\n"
-            << "static std::map< THand, uint32_t > " << varName << " = \n"
+            << "static std::map< S2CardInfo::THand, uint32_t > " << varName << " = \n"
             << "{\n"
             ;
 
@@ -1438,7 +1432,7 @@ namespace NHandUtils
         static TCardsCountMap justCardsCount( gJustCardsCount );
         static TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
 
-        if ( allHands.empty() )
+        if ( NHandUtils::gComputeAllHands && allHands.empty() )
         {
             std::ofstream ofs( "2CardDump.cpp" );
             std::ostream* oss = &ofs; //&std::cout;
@@ -1504,7 +1498,7 @@ namespace NHandUtils
                 {
                     // pairs only..
                     auto productValue = ii.second.handProduct();
-                    cardValue = getCardRank( ii.second.fHighCard );
+                    cardValue = getCardRank( *(ii.second.fCards.begin()) );
                     productMap[ productValue ] = cardValue;
                 }
             }

@@ -25,10 +25,6 @@
 
 enum class ECard;
 class CGame;
-//#include "Cards/Game.h"
-//#include "Cards/Player.h"
-//#include "Cards/Hand.h"
-//#include "Cards/Card.h"
 
 #include <QString>
 #include <string>
@@ -44,19 +40,13 @@ namespace NHandTester
     class CHandTester : public ::testing::Test
     {
     protected:
-        // You can remove any or all of the following functions if its body
-        // is empty.
         CHandTester();
         virtual ~CHandTester();
 
         // If the constructor and destructor are not enough for setting up
         // and cleaning up each test, you can define the following methods:
-        virtual void SetUp()
-        {
-        }
-        virtual void TearDown()
-        {
-        }
+        virtual void SetUp();
+        virtual void TearDown();
         bool isStraight( std::vector< ECard > cards ) const;
     public:
         CGame * fGame{nullptr};

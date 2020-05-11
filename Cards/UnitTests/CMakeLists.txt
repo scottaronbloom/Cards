@@ -22,38 +22,12 @@
 
 SET( QT_LIBRARIES Qt5::Core )
 
-SAB_UNIT_TEST(Test2Card
-    Test2Card.cpp
+SAB_UNIT_TEST(TestHands
+    TestHands.cpp
     "${QT_LIBRARIES};Cards;gmock"
     CardTest.h;CardTest.cpp
     )
 
-SAB_UNIT_TEST(Test3Card
-    Test3Card.cpp
-    "${QT_LIBRARIES};Cards;gmock"
-    CardTest.h;CardTest.cpp
-    )
-
-SAB_UNIT_TEST(Test4Card
-    Test4Card.cpp
-    "${QT_LIBRARIES};Cards;gmock"
-    CardTest.h;CardTest.cpp
-    )
-
-SAB_UNIT_TEST(Test5Card
-    Test5Card.cpp
-    "${QT_LIBRARIES};Cards;gmock"
-    CardTest.h;CardTest.cpp
-    )
-
-SAB_UNIT_TEST(Test7Card
-    Test7Card.cpp
-    "${QT_LIBRARIES};Cards;gmock"
-    CardTest.h;CardTest.cpp
-    )
-
-DeployQt( Cards_Test3Card . )
-DeployQt( Cards_Test5Card . )
-DeployQt( Cards_Test7Card . )
+DeployQt( Cards_TestHands . )
 include_directories( ${CMAKE_SOURCE_DIR} )
 

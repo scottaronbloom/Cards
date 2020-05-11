@@ -97,6 +97,13 @@ namespace NHandUtils
         return card1.second == card2.second;
     }
     uint32_t getCardRank( ECard card );
+
+    bool isCount( const std::vector< TCard > & cards, uint8_t count );
+    bool isStraight( const std::vector< TCard > & cards );
+
+    extern bool gComputeAllHands;
 }
-#endif 
+
+std::ostream& operator<<( std::ostream& oss, const std::vector< std::shared_ptr< CCard > >& cards );
+#endif
 

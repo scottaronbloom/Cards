@@ -101,5 +101,7 @@ private:
     TCardBitType fBitValue;
 };
 
+std::ostream& operator<<( std::ostream& oss, const CCard & card );
+
 #endif 
 

@@ -34,53 +34,66 @@ void PrintTo( const QString& data, std::ostream* os )
     *os << data.toStdString();
 }
 
-NHandTester::CHandTester::CHandTester()
+namespace NHandTester
 {
-    fGame = new CGame;
-}
-
-NHandTester::CHandTester::~CHandTester()
-{
-    delete fGame;
-}
-
-bool NHandTester::CHandTester::isStraight( std::vector< ECard > cards ) const
-{
-    if ( cards.empty() )
-        return false;
-
-    std::sort( cards.begin(), cards.end(), []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
-    auto ii = cards.begin();
-    auto prev = *ii;
-    ii++;
-    bool highCardAce = prev == ECard::eAce;
-
-    bool isStraight = true;
-    for( ; isStraight && ( ii != cards.end() ); ++ii )
+    CHandTester::CHandTester()
     {
-        if ( prev != ( (*ii) + 1 ) )
-            isStraight = false;
-        prev = **ii;
+        fGame = new CGame;
     }
-    if ( isStraight )
-        return true;
 
-    if ( !highCardAce )
-        return false;
-
-    auto jj = cards.rbegin();
-    jj++;
-    if ( jj == cards.rend() )
-        return false; // onecard cant be a straight
-
-    auto expected = ECard::eDeuce;
-
-    while( jj != cards.rend() )
+    CHandTester::~CHandTester()
     {
-        if ( *jj != expected )
+        delete fGame;
+    }
+
+    void CHandTester::SetUp()
+    {
+        NHandUtils::gComputeAllHands = false;
+    }
+
+    void CHandTester::TearDown()
+    {
+
+    }
+
+    bool CHandTester::isStraight( std::vector< ECard > cards ) const
+    {
+        if ( cards.empty() )
             return false;
-        ++jj;
-        expected++;
+
+        std::sort( cards.begin(), cards.end(), []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
+        auto ii = cards.begin();
+        auto prev = *ii;
+        ii++;
+        bool highCardAce = prev == ECard::eAce;
+
+        bool isStraight = true;
+        for ( ; isStraight && ( ii != cards.end() ); ++ii )
+        {
+            if ( prev != ( ( *ii ) + 1 ) )
+                isStraight = false;
+            prev = **ii;
+        }
+        if ( isStraight )
+            return true;
+
+        if ( !highCardAce )
+            return false;
+
+        auto jj = cards.rbegin();
+        jj++;
+        if ( jj == cards.rend() )
+            return false; // onecard cant be a straight
+
+        auto expected = ECard::eDeuce;
+
+        while ( jj != cards.rend() )
+        {
+            if ( *jj != expected )
+                return false;
+            ++jj;
+            expected++;
+        }
+        return true;
     }
-    return true;
 }
