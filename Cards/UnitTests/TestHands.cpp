@@ -115,8 +115,8 @@ namespace NHandTester
                 ASSERT_EQ( 1, std::get< 2 >( hand ).size() );
                 if ( highCard == ECard::eDeuce )
                 {
-                    EXPECT_EQ( ECard::eAce, std::get< 1 >( hand ).front() );
-                    EXPECT_EQ( ECard::eDeuce, std::get< 2 >( hand ).front() );
+                    EXPECT_EQ( ECard::eDeuce, std::get< 1 >( hand ).front() );
+                    EXPECT_EQ( ECard::eAce, std::get< 2 >( hand ).front() );
                 }
                 else
                 {
@@ -251,10 +251,7 @@ namespace NHandTester
 
                 p1->addCard( fGame->getCard( highCard, ESuit::eClubs ) );
                 if ( highCard == ECard::eDeuce )
-                {
                     p1->addCard( fGame->getCard( ECard::eAce, suit ) );
-                    highCard = ECard::eAce;
-                }
                 else
                     p1->addCard( fGame->getCard( highCard - 1, suit ) );
 
