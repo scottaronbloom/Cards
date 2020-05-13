@@ -228,20 +228,6 @@ namespace NHandUtils
         return numAtCount == 1;
     }
 
-    enum EStraightType
-    {
-        eAce = 0b01111100000000, // AKQJT
-        eKing = 0b00111110000000, // KQJT9
-        eQueen = 0b00011111000000, // QJT98
-        eJack = 0b00001111100000, // JT987
-        eTen = 0b00000111110000, // T9876
-        eNine = 0b00000011111000, // 98765
-        eEight = 0b00000001111100, // 87654
-        eSeven = 0b00000000111110, // 76543
-        eSix = 0b00000000011111, // 65432
-        eWheel = 0b01000000001111
-    };
-
     bool isStraight( const std::vector< std::shared_ptr< CCard > >& cards )
     {
         static std::unordered_set< uint16_t > sStraights =
@@ -264,36 +250,104 @@ namespace NHandUtils
         return sStraights.find( value ) != sStraights.end();
     }
 
-
-    bool isStraight( const std::vector< TCard >& cards )
+    std::optional< ECard > isWheel( const std::vector< std::shared_ptr< CCard > >& cards )
     {
-        if ( cards.size() < 2 )
-            return false;
-
         auto sortedCards = cards;
-        std::sort( sortedCards.begin(), sortedCards.end(), []( TCard lhs, TCard rhs ) { return lhs.first > rhs.first; } );
+        std::sort( sortedCards.begin(), sortedCards.end(), []( const std::shared_ptr< CCard > & lhs, const std::shared_ptr< CCard >&  rhs ) { return lhs->getCard() > rhs->getCard(); } );
 
-        if ( ( sortedCards[ 0 ].first == ECard::eAce ) && ( (*sortedCards.rbegin()).first == ECard::eDeuce ) )
+        if ( ( sortedCards[ 0 ]->getCard() == ECard::eAce ) && ( ( *sortedCards.rbegin() )->getCard() == ECard::eDeuce ) )
         {
             auto prevCard = *sortedCards.rbegin(); // 2
             for ( size_t ii = sortedCards.size() - 2; ii >= 1; --ii )
             {
-
-                if ( ( static_cast<int>( sortedCards[ ii ].first ) - static_cast<int>( prevCard.first ) ) != 1 )
-                    return false;
+                if ( ( static_cast<int>( sortedCards[ ii ]->getCard() ) - static_cast<int>( prevCard->getCard() ) ) != 1 )
+                    return std::optional< ECard >();
                 prevCard = sortedCards[ ii ];
             }
-            return true;
+            // its a wheel...
+            return prevCard->getCard();
         }
+        return std::optional< ECard >();
+    }
+
+    std::optional< EStraightType > isWheel( const std::vector< TCard > & cards )
+    {
+        auto sortedCards = cards;
+        std::sort( sortedCards.begin(), sortedCards.end(), []( TCard lhs, TCard rhs ) { return lhs.first > rhs.first; } );
+
+        if ( ( sortedCards[ 0 ].first == ECard::eAce ) && ( ( *sortedCards.rbegin() ).first == ECard::eDeuce ) )
+        {
+            auto prevCard = *sortedCards.rbegin(); // 2
+            for ( size_t ii = sortedCards.size() - 2; ii >= 1; --ii )
+            {
+                if ( ( static_cast<int>( sortedCards[ ii ].first ) - static_cast<int>( prevCard.first ) ) != 1 )
+                    return std::optional< EStraightType >();
+                prevCard = sortedCards[ ii ];
+            }
+            return EStraightType::eWheel;
+        }
+        return std::optional< EStraightType >();
+    }
+
+    std::optional< bool > compareStraight( const std::optional< EStraightType >& lhs, const std::optional< EStraightType >& rhs )
+    {
+        if ( lhs.has_value() && !rhs.has_value() )
+            return false;
+        if ( !lhs.has_value() && rhs.has_value() )
+            return true;
+        if ( lhs.has_value() && rhs.has_value() )
+        {
+            bool lhsWheel = lhs.value() == EStraightType::eWheel;
+            bool rhsWheel = rhs.value() == EStraightType::eWheel;
+
+            if ( lhsWheel && rhsWheel )
+                return false; // equal;
+            if ( lhsWheel && !rhsWheel )
+                return true;
+            if ( !lhsWheel && rhsWheel )
+                return false;
+            else if ( !lhsWheel && !rhsWheel )
+                return lhs.value() < rhs.value();
+        }
+        return std::optional< bool >();
+    }
+
+    std::optional< EStraightType > isStraight( const std::vector< TCard >& cards )
+    {
+        if ( cards.size() < 2 )
+            return std::optional< EStraightType >();
+
+        auto retVal = isWheel( cards );
+        if ( retVal.has_value() )
+            return retVal;
+
+        auto sortedCards = cards;
+        std::sort( sortedCards.begin(), sortedCards.end(), []( TCard lhs, TCard rhs ) { return lhs.first > rhs.first; } );
 
         auto prevCard = sortedCards[ 0 ];
         for ( size_t ii = 1; ii < sortedCards.size(); ++ii )
         {
             if ( ( static_cast<int>( prevCard.first ) - static_cast<int>( sortedCards[ ii ].first ) ) != 1 )
-                return false;
+                return std::optional< EStraightType >();
             prevCard = sortedCards[ ii ];
         }
-        return true;
+        switch ( sortedCards[ 0 ].first )
+        {
+            case ECard::eAce: return EStraightType::eAce;
+            case ECard::eKing: return EStraightType::eKing;
+            case ECard::eQueen: return EStraightType::eQueen;
+            case ECard::eJack: return EStraightType::eJack;
+            case ECard::eTen: return EStraightType::eTen;
+            case ECard::eNine: return EStraightType::eNine;
+            case ECard::eEight: return EStraightType::eEight;
+            case ECard::eSeven: return EStraightType::eSeven;
+            case ECard::eSix: return EStraightType::eSix;
+            case ECard::eFive: return EStraightType::eFive;
+            case ECard::eFour: return EStraightType::eFour;
+            case ECard::eTrey: return EStraightType::eTrey;
+            default:
+                return std::optional< EStraightType >();
+        }
     }
 
     uint64_t computeHandProduct( const std::vector < std::shared_ptr< CCard > >& cards )
@@ -387,11 +441,14 @@ namespace NHandUtils
 
     ECard getMaxCard( const std::vector< std::shared_ptr< CCard > >& cards )
     {
-        auto value = cardsOrValue( cards ) >> 16;
-        if ( isStraight( cards ) && ( value == EStraightType::eWheel ) )
-            return ECard::eFive;
+        auto wheel = isWheel( cards );
+        if ( wheel.has_value() )
+        {
+            return wheel.value();
+        }
         else
         {
+            auto value = cardsOrValue( cards ) >> 16;
             auto pos = NUtils::findLargestIndexInBitSet( value );
             if ( pos.has_value() )
                 return static_cast<ECard>( pos.value() );

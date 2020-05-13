@@ -53,7 +53,7 @@ namespace NHandUtils
     {
         fIsFlush = NHandUtils::isFlush( fCard1, fCard2 );
         fIsPair = NHandUtils::isCount( std::vector< TCard >( { fCard1, fCard2 } ), 2 );
-        fIsStraight = NHandUtils::isStraight( std::vector< TCard >( { fCard1, fCard2 } ) );
+        fIsStraight = NHandUtils::isStraight( std::vector< TCard >( { fCard1, fCard2 } ) ).has_value();
 
         fCards.push_back( std::max( fCard1.first, fCard2.first ) );
         fKickers.push_back( std::min( fCard1.first, fCard2.first ) );

@@ -26,6 +26,7 @@
 #include <bitset>
 #include <unordered_set>
 #include <vector>
+#include <optional>
 
 class CHand;
 class CCard;
@@ -86,7 +87,8 @@ namespace NHandUtils
     TCardBitType cardsAndValue( const std::vector< TCardBitType > & cards );
     uint16_t getCardsValue( const std::vector< TCardBitType > & cards );
 
-    ECard getMaxCard( const std::vector< std::shared_ptr< CCard > > & cards );
+    std::optional< ECard > isWheel( const std::vector< std::shared_ptr< CCard > > & cards );
+    ECard getMaxCard( const std::vector< std::shared_ptr< CCard > >& cards );
     ECard getMinCard( const std::vector< std::shared_ptr< CCard > >& cards );
 
     EHand rankToHand( uint32_t rank, size_t numCards, const std::shared_ptr< SPlayInfo > & playInfo );
@@ -98,8 +100,30 @@ namespace NHandUtils
     }
     uint32_t getCardRank( ECard card );
 
+
+    enum EStraightType
+    {
+        eNotStraight = 0,
+        eAce   = 0b01111100000000, // AKQJT
+        eKing  = 0b00111110000000, // KQJT9
+        eQueen = 0b00011111000000, // QJT98
+        eJack  = 0b00001111100000, // JT987
+        eTen   = 0b00000111110000, // T9876
+        eNine  = 0b00000011111000, // 98765
+        eEight = 0b00000001111100, // 87654
+        eSeven = 0b00000000111110, // 76543
+        eSix   = 0b00000000011111, // 65432
+        eWheel = 0b01000000001111, // 5432A, 432A, 32A, 2A
+        eFive  = 0b00000000001111, // 5432
+        eFour  = 0b00000000000111, // 432
+        eTrey  = 0b00000000000011, // 32
+    };
+
     bool isCount( const std::vector< TCard > & cards, uint8_t count );
-    bool isStraight( const std::vector< TCard > & cards );
+    std::optional< EStraightType > isStraight( const std::vector< TCard > & cards );
+    std::optional< EStraightType > isWheel( const std::vector< TCard >& cards );
+
+    std::optional< bool > compareStraight( const std::optional< EStraightType > & lhs, const std::optional< EStraightType >& rhs );
 
     extern bool gComputeAllHands;
 }

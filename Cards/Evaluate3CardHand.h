@@ -26,6 +26,7 @@
 #include "Card.h"
 #include "HandUtils.h"
 #include <memory>
+#include <optional>
 enum class EHand;
 struct SPlayInfo;
 
@@ -54,9 +55,10 @@ namespace NHandUtils
         bool equalTo( bool flushStraightCount, const S3CardInfo& rhs ) const;
 
         bool isWheel() const;
+        bool isStraightFlush() const{ return fStraightType.has_value() && fIsFlush; }
 
         bool fIsFlush{ false };
-        bool fIsStraight{ false };
+        std::optional< EStraightType > fStraightType;
         bool fIsPair{ false };
         bool fIsThreeOfAKind{ false };
         std::list< ECard > fCards;
