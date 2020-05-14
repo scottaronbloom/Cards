@@ -35,6 +35,7 @@
 
 namespace NHandUtils
 {
+    // No Flushes/Straights
     static std::map< S2CardInfo::THand, uint32_t > sCardMap =
     {
          { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 1 } // pairs
@@ -62,8 +63,7 @@ namespace NHandUtils
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 22 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 23 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 24 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 25 }
-
+        ,{ { { ECard::eAce, ESuit::eSpades }, { ECard::eDeuce, ESuit::eSpades } }, 25 }
         ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 26 }
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 27 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 28 }
@@ -75,7 +75,6 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 34 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 35 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 36 }
-
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 37 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 38 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 39 }
@@ -86,7 +85,6 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 44 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 45 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 46 }
-
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 47 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 48 }
         ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 49 }
@@ -96,7 +94,6 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 53 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 54 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 55 }
-
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 56 }
         ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 57 }
         ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 58 }
@@ -105,7 +102,6 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 61 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 62 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 63 }
-
         ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 64 }
         ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 65 }
         ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 66 }
@@ -113,65 +109,58 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 68 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 69 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 70 }
-
         ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 71 }
         ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 72 }
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 73 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 74 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 75 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 76 }
-
         ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eSeven, ESuit::eSpades } }, 77 }
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eSeven, ESuit::eSpades } }, 78 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eSeven, ESuit::eSpades } }, 79 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eSeven, ESuit::eSpades } }, 80 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eSeven, ESuit::eSpades } }, 81 }
-
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 82 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 83 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 84 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 85 }
-
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 86 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 87 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 88 }
-
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } }, 89 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } }, 90 }
-
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades } }, 91 } // highcard
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades } }, 91 }
     };
 
     // Flushes/Straights
     static std::map< S2CardInfo::THand, uint32_t > sCardMapStraightsAndFlushesCount =
     {
-         { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 1 } // pairs
-        ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 2 }
-        ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts } }, 3 }
-        ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts } }, 4 }
-        ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eTen, ESuit::eHearts } }, 5 }
-        ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eNine, ESuit::eHearts } }, 6 }
-        ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eEight, ESuit::eHearts } }, 7 }
-        ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eSeven, ESuit::eHearts } }, 8 }
-        ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eSix, ESuit::eHearts } }, 9 }
-        ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eFive, ESuit::eHearts } }, 10 }
-        ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eFour, ESuit::eHearts } }, 11 }
-        ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eTrey, ESuit::eHearts } }, 12 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 13 } // pairs
-
-        ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 14 } // straight flush
-        ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 15 }
-        ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 16 }
-        ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 17 }
-        ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 18 }
-        ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 19 }
-        ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 20 }
-        ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eSeven, ESuit::eSpades } }, 21 }
-        ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 22 }
-        ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 23 }
-        ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } }, 24 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades } }, 25 }
-        ,{ { { ECard::eAce, ESuit::eSpades }, { ECard::eDeuce, ESuit::eSpades } }, 26 } // striaght flush
+         { { { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 1 } // straight flush
+        ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 2 }
+        ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 3 }
+        ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 4 }
+        ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 5 }
+        ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 6 }
+        ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 7 }
+        ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eSeven, ESuit::eSpades } }, 8 }
+        ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 9 }
+        ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 10 }
+        ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } }, 11 }
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades } }, 12 }
+        ,{ { { ECard::eAce, ESuit::eSpades }, { ECard::eDeuce, ESuit::eSpades } }, 13 } // straight flush
+        ,{ { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 14 } // pairs
+        ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 15 }
+        ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts } }, 16 }
+        ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts } }, 17 }
+        ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eTen, ESuit::eHearts } }, 18 }
+        ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eNine, ESuit::eHearts } }, 19 }
+        ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eEight, ESuit::eHearts } }, 20 }
+        ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eSeven, ESuit::eHearts } }, 21 }
+        ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eSix, ESuit::eHearts } }, 22 }
+        ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eFive, ESuit::eHearts } }, 23 }
+        ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eFour, ESuit::eHearts } }, 24 }
+        ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eTrey, ESuit::eHearts } }, 25 }
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 26 } // pairs
 
         ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 27 } // straight
         ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 28 }
@@ -186,8 +175,7 @@ namespace NHandUtils
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eHearts } }, 37 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eHearts } }, 38 }
         ,{ { { ECard::eAce, ESuit::eHearts }, { ECard::eDeuce, ESuit::eSpades } }, 39 } // straight
-
-        ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 40 }  // flush
+        ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 40 } // flush
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 41 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 42 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 43 }
@@ -197,7 +185,6 @@ namespace NHandUtils
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 47 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 48 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 49 }
-
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 50 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 51 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 52 }
@@ -208,7 +195,6 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 57 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 58 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 59 }
-
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 60 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 61 }
         ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 62 }
@@ -218,7 +204,6 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 66 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 67 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 68 }
-
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 69 }
         ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 70 }
         ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 71 }
@@ -227,7 +212,6 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 74 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 75 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 76 }
-
         ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 77 }
         ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 78 }
         ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 79 }
@@ -235,34 +219,27 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 81 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 82 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades } }, 83 }
-
         ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 84 }
         ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 85 }
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 86 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 87 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 88 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eNine, ESuit::eSpades } }, 89 }
-
         ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 90 }
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 91 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 92 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 93 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eEight, ESuit::eSpades } }, 94 }
-
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eSeven, ESuit::eSpades } }, 95 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eSeven, ESuit::eSpades } }, 96 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eSeven, ESuit::eSpades } }, 97 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eSeven, ESuit::eSpades } }, 98 }
-
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 99 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 100 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 101 }
-
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 102 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 103 }
-
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } }, 104 } // flushes
-
         ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 105 } // high card
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 106 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 107 }
@@ -273,7 +250,6 @@ namespace NHandUtils
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 112 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 113 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 114 }
-
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 115 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 116 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 117 }
@@ -284,7 +260,6 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 122 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 123 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 124 }
-
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts } }, 125 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts } }, 126 }
         ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts } }, 127 }
@@ -294,7 +269,6 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts } }, 131 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts } }, 132 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts } }, 133 }
-
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts } }, 134 }
         ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts } }, 135 }
         ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts } }, 136 }
@@ -303,7 +277,6 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts } }, 139 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts } }, 140 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts } }, 141 }
-
         ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eTen, ESuit::eHearts } }, 142 }
         ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eTen, ESuit::eHearts } }, 143 }
         ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eTen, ESuit::eHearts } }, 144 }
@@ -311,47 +284,41 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eTen, ESuit::eHearts } }, 146 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eTen, ESuit::eHearts } }, 147 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTen, ESuit::eHearts } }, 148 }
-
         ,{ { { ECard::eSeven, ESuit::eSpades }, { ECard::eNine, ESuit::eHearts } }, 149 }
         ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eNine, ESuit::eHearts } }, 150 }
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eNine, ESuit::eHearts } }, 151 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eNine, ESuit::eHearts } }, 152 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eNine, ESuit::eHearts } }, 153 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eNine, ESuit::eHearts } }, 154 }
-
         ,{ { { ECard::eSix, ESuit::eSpades }, { ECard::eEight, ESuit::eHearts } }, 155 }
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eEight, ESuit::eHearts } }, 156 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eEight, ESuit::eHearts } }, 157 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eEight, ESuit::eHearts } }, 158 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eEight, ESuit::eHearts } }, 159 }
-
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eSeven, ESuit::eHearts } }, 160 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eSeven, ESuit::eHearts } }, 161 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eSeven, ESuit::eHearts } }, 162 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eSeven, ESuit::eHearts } }, 163 }
-
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eSix, ESuit::eHearts } }, 164 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eSix, ESuit::eHearts } }, 165 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eSix, ESuit::eHearts } }, 166 }
-
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFive, ESuit::eHearts } }, 167 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFive, ESuit::eHearts } }, 168 }
-
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFour, ESuit::eHearts } }, 169 } // highcard
     };
 
     static std::vector< uint32_t > sFlushes =
     {
-        0, 0, 0, 25, 0, 104, 24, 0, 0, 103, 102, 0, 23, 0, 0, 0, 0, 101, 100,
-        0, 99, 0, 0, 0, 22, 0, 0, 0, 0, 0, 0, 0, 0, 98, 97, 0, 96, 0, 0, 0,
-        95, 0, 0, 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 12, 0, 104, 11, 0, 0, 103, 102, 0, 10, 0, 0, 0, 0, 101, 100,
+        0, 99, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 98, 97, 0, 96, 0, 0, 0,
+        95, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 94, 93, 0, 92, 0, 0, 0, 91, 0, 0, 0, 0, 0, 0, 0, 90, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 89, 88, 0, 87, 0, 0, 0, 86, 0, 0, 0, 0, 0, 0, 0, 85, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 84, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 83,
         82, 0, 81, 0, 0, 0, 80, 0, 0, 0, 0, 0, 0, 0, 79, 0, 0, 0, 0, 0, 0,
@@ -359,7 +326,7 @@ namespace NHandUtils
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 77, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 18, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -377,7 +344,7 @@ namespace NHandUtils
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -412,7 +379,7 @@ namespace NHandUtils
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -482,7 +449,7 @@ namespace NHandUtils
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -528,7 +495,7 @@ namespace NHandUtils
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 49, 0, 48, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 13, 49, 0, 48, 0, 0,
         0, 47, 0, 0, 0, 0, 0, 0, 0, 46, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 45, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -621,7 +588,7 @@ namespace NHandUtils
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
     };
 
     static std::vector< uint32_t > sHighCardUnique =
@@ -1292,6 +1259,13 @@ namespace NHandUtils
         if ( fIsThreeOfAKind && rhs.fIsThreeOfAKind )
             return compareJustCards( flushStraightCount, rhs ); // which best trips
 
+        if ( fIsPair && !rhs.fIsPair )
+            return false;
+        if ( !fIsPair && rhs.fIsPair )
+            return true;
+        if ( fIsPair && rhs.fIsPair )
+            return compareJustCards( flushStraightCount, rhs );
+
         auto straightCompare = NHandUtils::compareStraight( fStraightType, rhs.fStraightType );
         if ( straightCompare.has_value() )
             return straightCompare.value();
@@ -1497,43 +1471,43 @@ namespace NHandUtils
             std::vector< uint32_t > straightsUnique;
             straightsUnique.resize( maxCardsValue + 1 );
 
-            std::map< uint64_t, uint16_t > productMap;
+            std::map< uint64_t, uint16_t > highCardProductMap;
+            std::map< uint64_t, uint16_t > straightsProductMap;
 
             for( auto && ii : allHands )
             {
                 auto cardValue = ii.second.getCardsValue();
+
+                auto pos = flushesAndStraightsCount.find( ii.second );
+                Q_ASSERT( pos != flushesAndStraightsCount.end() );
+                auto straightsValue = ( *pos ).second;
+
+                auto pos2 = justCardsCount.find( ii.second );
+                Q_ASSERT( pos2 != justCardsCount.end() );
+                auto highCardValue = ( *pos2 ).second;
+
                 if ( ii.second.fIsFlush )
                 {
-                    auto pos = flushesAndStraightsCount.find( ii.second );
-                    if ( pos == flushesAndStraightsCount.end() )
-                        Q_ASSERT( pos != flushesAndStraightsCount.end() );
-
-                    flushes[ cardValue ] = ( *pos ).second;
+                    flushes[ cardValue ] = straightsValue;
                 }
                 else if ( !ii.second.fIsPair )
                 {
-                    // unique cards
-                    auto pos = flushesAndStraightsCount.find( ii.second );
-                    Q_ASSERT( pos != flushesAndStraightsCount.end() );
-
-                    straightsUnique[ cardValue ] = ( *pos ).second;
-
-                    auto pos2 = justCardsCount.find( ii.second );
-                    Q_ASSERT( pos2 != justCardsCount.end() );
-                    highCardUnique[ cardValue ] = ( *pos2 ).second;
+                    straightsUnique[ cardValue ] = straightsValue;
+                    highCardUnique[ cardValue ] = highCardValue;
                 }
                 else
                 {
                     // pairs only..
                     auto productValue = ii.second.handProduct();
-                    cardValue = getCardRank( *(ii.second.fCards.begin()) );
-                    productMap[ productValue ] = cardValue;
+                    straightsProductMap[ productValue ] = straightsValue;
+                    highCardProductMap[ productValue ] = highCardValue;
                 }
             }
             dumpTable( *oss, flushes, "sFlushes" );
             dumpTable( *oss, highCardUnique, "sHighCardUnique" );
             dumpTable( *oss, straightsUnique, "sStraightsUnique" );
-            dumpMap( *oss, productMap, "sProductMap" );
+            dumpMap( *oss, highCardProductMap, "sHighCardProductMap" );
+            dumpMap( *oss, straightsProductMap, "sStraitsProductMap" );
         }
     
         if ( cards.size() != 2 )
