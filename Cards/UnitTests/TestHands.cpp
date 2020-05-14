@@ -551,6 +551,7 @@ namespace NHandTester
     TEST_F( C3CardHandTester, TestCompare )
     {
         {
+            NHandUtils::gComputeAllHands = true;
             using TCardToInfoMap = std::map< NHandUtils::S3CardInfo::THand, NHandUtils::S3CardInfo >;
             auto gFlushStraightsCount = []( const NHandUtils::S3CardInfo& lhs, const NHandUtils::S3CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
             auto gJustCardsCount = []( const NHandUtils::S3CardInfo& lhs, const NHandUtils::S3CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
@@ -696,188 +697,136 @@ namespace NHandTester
         }
     }
 
-    //TEST_F( C3CardHandTester, Flush )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+    TEST_F( C3CardHandTester, Flush )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsFlushesCountForSmallHands( true );
+        for ( auto suit : ESuit() )
+        {
+            for ( auto && highCard : ECard() )
+            {
+                if ( highCard <= ECard::eTrey ) // for a flush, the high card can only be a 4 or above, otherwise its a striaght flush
+                    continue;
 
-    //    for ( auto suit : ESuit() )
-    //    {
-    //        for ( auto && highCard : ECard() )
-    //        {
-    //            if ( highCard <= ECard::eFive ) // for a flush, the high card can only be a 6 or above, otherwise its a striaght flush
-    //                continue;
+                p1->clearCards();
 
-    //            p1->clearCards();
+                p1->addCard( fGame->getCard( highCard, suit ) );
+                p1->addCard( fGame->getCard( highCard - 2, suit ) );
+                if ( highCard == ECard::eFour )
+                {
+                    p1->addCard( fGame->getCard( ECard::eAce, suit ) );
+                    highCard = ECard::eAce;
+                }
+                else
+                    p1->addCard( fGame->getCard( highCard - 3, suit ) );
 
-    //            p1->addCard( fGame->getCard( highCard, suit ) );
-    //            p1->addCard( fGame->getCard( highCard - 2, suit ) );
-    //            p1->addCard( fGame->getCard( highCard - 3, suit ) );
-    //            p1->addCard( fGame->getCard( highCard - 4, suit ) );
-    //            if ( highCard == ECard::eSix )
-    //            {
-    //                p1->addCard( fGame->getCard( ECard::eAce, suit ) );
-    //                highCard = ECard::eAce;
-    //            }
-    //            else
-    //                p1->addCard( fGame->getCard( highCard - 5, suit ) );
+                auto hand = p1->determineHand();
+                EXPECT_TRUE( p1->isFlush() );
+                EXPECT_EQ( EHand::eFlush, std::get< 0 >( hand ) );
+                ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
+                ASSERT_EQ( 2, std::get< 2 >( hand ).size() );
+                EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
+            }
+        }
+    }
 
-    //            auto hand = p1->determineHand();
-    //            EXPECT_TRUE( p1->isFlush() );
-    //            EXPECT_EQ( EHand::eFlush, std::get< 0 >( hand ) );
-    //            ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
-    //            ASSERT_EQ( 4, std::get< 2 >( hand ).size() );
-    //            EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
-    //        }
-    //    }
-    //}
+    TEST_F( C3CardHandTester, Straight )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsFlushesCountForSmallHands( true );
 
-    //TEST_F( C3CardHandTester, Straight )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+        for ( auto&& highCard : ECard() )
+        {
+            if ( highCard <= ECard::eDeuce )
+                continue;
 
-    //    for ( auto&& highCard : ECard() )
-    //    {
-    //        if ( highCard <= ECard::eFour )
-    //            continue;
+            for( auto && suit : ESuit() )
+            {
+                p1->clearCards();
 
-    //        for( auto && suit : ESuit() )
-    //        {
-    //            p1->clearCards();
+                p1->addCard( fGame->getCard( highCard, ESuit::eClubs ) );
+                p1->addCard( fGame->getCard( highCard - 1, ESuit::eDiamonds ) );
+                if ( highCard == ECard::eTrey )
+                    p1->addCard( fGame->getCard( ECard::eAce, suit ) );
+                else
+                    p1->addCard( fGame->getCard( highCard - 2, suit ) );
 
-    //            p1->addCard( fGame->getCard( highCard, ESuit::eClubs ) );
-    //            p1->addCard( fGame->getCard( highCard - 1, ESuit::eDiamonds ) );
-    //            p1->addCard( fGame->getCard( highCard - 2, ESuit::eHearts ) );
-    //            p1->addCard( fGame->getCard( highCard - 3, ESuit::eSpades ) );
-    //            if ( highCard == ECard::eFive )
-    //                p1->addCard( fGame->getCard( ECard::eAce, suit ) );
-    //            else
-    //                p1->addCard( fGame->getCard( highCard - 4, suit ) );
+                auto hand = p1->determineHand();
+                EXPECT_TRUE( p1->isStraight() );
+                EXPECT_EQ( EHand::eStraight, std::get< 0 >( hand ) );
+                ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
+                ASSERT_EQ( 2, std::get< 2 >( hand ).size() );
+                EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
+            }
+        }
+    }
 
-    //            auto hand = p1->determineHand();
-    //            EXPECT_TRUE( p1->isStraight() );
-    //            EXPECT_EQ( EHand::eStraight, std::get< 0 >( hand ) );
-    //            ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
-    //            ASSERT_EQ( 4, std::get< 2 >( hand ).size() );
-    //            EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
-    //        }
-    //    }
-    //}
+    TEST_F( C3CardHandTester, ThreeOfAKind )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
 
-    //TEST_F( C3CardHandTester, ThreeOfAKind )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+        for ( auto&& highCard : ECard() )
+        {
+            for ( auto&& suit : ESuit() )
+            {
+                p1->clearCards();
+                for( auto && skipSuit : ESuit() )
+                {
+                    if ( suit == skipSuit )
+                        continue;
 
-    //    for ( auto&& highCard : ECard() )
-    //    {
-    //        for ( auto&& suit : ESuit() )
-    //        {
-    //            for ( auto&& kickCard1 : ECard() )
-    //            {
-    //                if ( kickCard1 == highCard )
-    //                    continue;
-    //                for ( auto&& kickCard2 : ECard() )
-    //                {
-    //                    if ( kickCard1 == kickCard2 )
-    //                        continue;
+                    p1->addCard( fGame->getCard( highCard, skipSuit ) );
+                }
+                // now have 3 of a kind
 
-    //                    if ( kickCard2 == highCard )
-    //                        continue;
+                auto hand = p1->determineHand();
+                EXPECT_EQ( EHand::eThreeOfAKind, std::get< 0 >( hand ) );
+                ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
+                ASSERT_EQ( 0, std::get< 2 >( hand ).size() );
+                EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
+            }
+        }
+    }
 
-    //                    for( auto && kickSuit1 : ESuit() )
-    //                    {
-    //                        for( auto && kickSuit2 : ESuit() )
-    //                        {
-    //                            p1->clearCards();
-    //                            for ( auto&& skipSuit : ESuit() )
-    //                            {
-    //                                if ( suit == skipSuit )
-    //                                    continue;
+    TEST_F( C3CardHandTester, Pair )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
 
-    //                                p1->addCard( fGame->getCard( highCard, skipSuit ) );
-    //                            }
-    //                            // now have 3 of a kind
+        for ( auto&& highCard : ECard() )
+        {
+            for ( auto&& highSuit1 : ESuit() )
+            {
+                for ( auto&& highSuit2 : ESuit() )
+                {
+                    if ( highSuit1 == highSuit2 )
+                        continue;
 
-    //                            auto hand = p1->determineHand();
-    //                            EXPECT_EQ( EHand::eThreeOfAKind, std::get< 0 >( hand ) );
-    //                            ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
-    //                            ASSERT_EQ( 2, std::get< 2 >( hand ).size() );
-    //                            EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
-    //                            if ( kickCard1 > kickCard2 )
-    //                            {
-    //                                EXPECT_EQ( kickCard1, std::get< 2 >( hand ).front() );
-    //                                EXPECT_EQ( kickCard2, std::get< 2 >( hand ).back() );
-    //                            }
-    //                            else
-    //                            {
-    //                                EXPECT_EQ( kickCard2, std::get< 2 >( hand ).front() );
-    //                                EXPECT_EQ( kickCard1, std::get< 2 >( hand ).back() );
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
+                    for ( auto && kicker : ECard() )
+                    {
+                        if ( kicker == highCard )
+                            continue;
+                        for ( auto&& kickerSuit : ESuit() )
+                        {
+                            p1->clearCards();
 
-    //TEST_F( C3CardHandTester, Pair )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+                            p1->addCard( fGame->getCard( highCard, highSuit1 ) );
+                            p1->addCard( fGame->getCard( highCard, highSuit2 ) );
+                            p1->addCard( fGame->getCard( kicker, kickerSuit ) );
 
-    //    for ( auto&& highCard : ECard() )
-    //    {
-    //        for ( auto&& highSuit1 : ESuit() )
-    //        {
-    //            for ( auto&& highSuit2 : ESuit() )
-    //            {
-    //                if ( highSuit1 == highSuit2 )
-    //                    continue;
+                            auto hand = p1->determineHand();
+                            EXPECT_EQ( EHand::ePair, std::get< 0 >( hand ) );
+                            ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
 
-    //                for ( auto && kicker1 : ECard() )
-    //                {
-    //                    if ( kicker1 == highCard )
-    //                        continue;
-    //                    for ( auto&& kickerSuit1 : ESuit() )
-    //                    {
-    //                        for ( auto&& kicker2 : ECard() )
-    //                        {
-    //                            if ( ( kicker2 == highCard ) || ( kicker2 == kicker1 ) )
-    //                                continue;
-
-    //                            for ( auto && kickerSuit2 : ESuit() )
-    //                            {
-    //                                for ( auto&& kicker3 : ECard() )
-    //                                {
-    //                                    if ( ( kicker3 == highCard ) || ( kicker3 == kicker1 ) || ( kicker3 == kicker2 ) )
-    //                                        continue;
-    //                                    for ( auto&& kickerSuit3 : ESuit() )
-    //                                    {
-    //                                        p1->clearCards();
-
-    //                                        p1->addCard( fGame->getCard( highCard, highSuit1 ) );
-    //                                        p1->addCard( fGame->getCard( highCard, highSuit2 ) );
-    //                                        p1->addCard( fGame->getCard( kicker1, kickerSuit1 ) );
-    //                                        p1->addCard( fGame->getCard( kicker2, kickerSuit2 ) );
-    //                                        p1->addCard( fGame->getCard( kicker3, kickerSuit3 ) );
-
-    //                                        auto hand = p1->determineHand();
-    //                                        EXPECT_EQ( EHand::ePair, std::get< 0 >( hand ) );
-    //                                        ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
-
-    //                                        EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
-    //                                        auto kickers = std::vector< ECard >( { kicker1, kicker2, kicker3 } );
-    //                                        std::sort( kickers.begin(), kickers.end(), []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
-    //                                        EXPECT_EQ( kickers, std::get< 2 >( hand ) );
-    //                                    }
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
+                            EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
+                            auto kickers = std::vector< ECard >( { kicker } );
+                            std::sort( kickers.begin(), kickers.end(), []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
+                            EXPECT_EQ( kickers, std::get< 2 >( hand ) );
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     //TEST_F( C3CardHandTester, HighCard )
     //{
