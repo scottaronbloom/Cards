@@ -94,10 +94,8 @@ namespace NHandUtils
     EHand rankToHand( uint32_t rank, size_t numCards, const std::shared_ptr< SPlayInfo > & playInfo );
 
     TCardBitType computeBitValue( ECard card, ESuit suit );
-    inline bool isFlush( const TCard & card1, const TCard& card2 )
-    {
-        return card1.second == card2.second;
-    }
+    bool isFlush( const std::vector< TCard > & cards );
+
     uint32_t getCardRank( ECard card );
 
 
@@ -124,6 +122,9 @@ namespace NHandUtils
     std::optional< EStraightType > isWheel( const std::vector< TCard >& cards );
 
     std::optional< bool > compareStraight( const std::optional< EStraightType > & lhs, const std::optional< EStraightType >& rhs );
+    std::optional< bool > straightsEqual( const std::optional< EStraightType >& lhs, const std::optional< EStraightType >& rhs );
+
+    bool compareCards( const std::pair< std::list< ECard >, std::list< ECard > > & lhs, const std::pair< std::list< ECard >, std::list< ECard > > & rhs );
 
     extern bool gComputeAllHands;
 }

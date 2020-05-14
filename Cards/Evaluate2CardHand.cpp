@@ -148,6 +148,7 @@ namespace NHandUtils
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } }, 11 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades } }, 12 }
         ,{ { { ECard::eAce, ESuit::eSpades }, { ECard::eDeuce, ESuit::eSpades } }, 13 } // straight flush
+
         ,{ { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 14 } // pairs
         ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 15 }
         ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts } }, 16 }
@@ -175,6 +176,7 @@ namespace NHandUtils
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eHearts } }, 37 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eHearts } }, 38 }
         ,{ { { ECard::eAce, ESuit::eHearts }, { ECard::eDeuce, ESuit::eSpades } }, 39 } // straight
+
         ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 40 } // flush
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 41 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 42 }
@@ -240,6 +242,7 @@ namespace NHandUtils
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 102 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 103 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } }, 104 } // flushes
+
         ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 105 } // high card
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 106 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 107 }
@@ -1160,21 +1163,38 @@ namespace NHandUtils
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 27
     };
 
-    static std::unordered_map< int64_t, int16_t > sProductMap =
+    static std::unordered_map< int64_t, int16_t > sHighCardProductMap =
     {
-         { 4, 12 }
-        ,{ 9, 11 }
-        ,{ 25, 10 }
-        ,{ 49, 9 }
-        ,{ 121, 8 }
-        ,{ 169, 7 }
-        ,{ 289, 6 }
-        ,{ 361, 5 }
-        ,{ 529, 4 }
-        ,{ 841, 3 }
-        ,{ 961, 2 }
-        ,{ 1369, 1 }
-        ,{ 1681, 0 }
+         { 4, 13 }
+        ,{ 9, 12 }
+        ,{ 25, 11 }
+        ,{ 49, 10 }
+        ,{ 121, 9 }
+        ,{ 169, 8 }
+        ,{ 289, 7 }
+        ,{ 361, 6 }
+        ,{ 529, 5 }
+        ,{ 841, 4 }
+        ,{ 961, 3 }
+        ,{ 1369, 2 }
+        ,{ 1681, 1 }
+    };
+
+    static std::unordered_map< int64_t, int16_t > sStraitsProductMap =
+    {
+         { 4, 26 }
+        ,{ 9, 25 }
+        ,{ 25, 24 }
+        ,{ 49, 23 }
+        ,{ 121, 22 }
+        ,{ 169, 21 }
+        ,{ 289, 20 }
+        ,{ 361, 19 }
+        ,{ 529, 18 }
+        ,{ 841, 17 }
+        ,{ 961, 16 }
+        ,{ 1369, 15 }
+        ,{ 1681, 14 }
     };
 
     S2CardInfo::S2CardInfo() :
@@ -1525,8 +1545,9 @@ namespace NHandUtils
             return straightOrHighCard;
 
         auto product = computeHandProduct( cards );
-        auto pos = sProductMap.find( product );
-        if ( pos == sProductMap.end() )
+        auto && productMap = playInfo->fStraightsFlushesCountForSmallHands ? sStraitsProductMap : sHighCardProductMap;
+        auto pos = productMap.find( product );
+        if ( pos == productMap.end() )
             return -1;
         return (*pos).second;
     }
@@ -1550,9 +1571,9 @@ namespace NHandUtils
             else if ( rank > 26U )
                 hand = EHand::eStraight;
             else if ( rank > 13U )
-                hand = EHand::eStraightFlush;
-            else
                 hand = EHand::ePair;
+            else
+                hand = EHand::eStraightFlush;
         }
         return hand;
     }

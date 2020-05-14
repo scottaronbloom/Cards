@@ -54,10 +54,14 @@ namespace NHandUtils
         bool equalTo( bool flushStraightCount, const S4CardInfo& rhs ) const;
 
         bool isWheel() const;
+        bool isStraightFlush() const{ return fStraightType.has_value() && fIsFlush; }
 
         bool fIsFlush{ false };
-        bool fIsStraight{ false };
+        std::optional< EStraightType > fStraightType;
         bool fIsPair{ false };
+        bool fIsTwoPair{ false };
+        bool fIsThreeOfAKind{ false };
+        bool fIsFourOfAKind{ false };
         std::list< ECard > fCards;
         std::list< ECard > fKickers;
         TCard fCard1;

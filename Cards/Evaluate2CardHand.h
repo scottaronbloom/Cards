@@ -53,11 +53,13 @@ namespace NHandUtils
         }
         bool equalTo( bool flushStraightCount, const S2CardInfo& rhs ) const;
 
-        bool isWheel() const{ return ( !fCards.empty() && *fCards.begin() == ECard::eAce ) && ( !fKickers.empty() && *fKickers.begin() == ECard::eDeuce ); }
+        bool isWheel() const;
+        bool isStraightFlush() const { return fStraightType.has_value() && fIsFlush; }
 
         bool fIsFlush{ false };
-        bool fIsStraight{ false };
+        std::optional< EStraightType > fStraightType;
         bool fIsPair{ false };
+        bool fIsThreeOfAKind{ false };
         std::list< ECard > fCards;
         std::list< ECard > fKickers;
         TCard fCard1;

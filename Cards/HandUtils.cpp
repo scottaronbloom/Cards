@@ -202,6 +202,19 @@ namespace NHandUtils
         return value.to_ulong() != 0;
     }
 
+    bool isFlush( const std::vector< TCard >& cards )
+    {
+        if ( cards.empty() )
+            return false;
+        auto first = cards[ 0 ];
+        for ( size_t ii = 1; ii < cards.size(); ++ii )
+        {
+            if ( first.second != cards[ ii ].second )
+                return false;
+        }
+        return true;
+    }
+
     uint32_t getCardRank( ECard card )
     {
         auto pos = sFiveOfAKindMap.find( card );
@@ -287,6 +300,48 @@ namespace NHandUtils
             return EStraightType::eWheel;
         }
         return std::optional< EStraightType >();
+    }
+
+    bool compareCards( const std::pair< std::list< ECard >, std::list< ECard > >& lhs, const std::pair< std::list< ECard >, std::list< ECard > >& rhs )
+    {
+        auto ii = lhs.first.begin();
+        auto jj = rhs.first.begin();
+        for ( ; ( ii != lhs.first.end() ) && ( jj != rhs.first.end() ); ++ii, ++jj )
+        {
+            if ( *ii == *jj )
+                continue;
+            return *ii < *jj;
+        }
+        if ( ii != lhs.first.end() && jj == rhs.first.end() )
+            return true;
+        if ( ii == lhs.first.end() && jj != rhs.first.end() )
+            return false;
+        // both at end or both not at end
+        ii = lhs.second.begin();
+        jj = rhs.second.begin();
+        for ( ; ( ii != lhs.second.end() ) && ( jj != rhs.second.end() ); ++ii, ++jj )
+        {
+            if ( *ii == *jj )
+                continue;
+            return *ii < *jj;
+        }
+        if ( ii != lhs.second.end() && jj == rhs.second.end() )
+            return true;
+        if ( ii == lhs.second.end() && jj != rhs.second.end() )
+            return false;
+
+        return false;
+    }
+
+    std::optional< bool > straightsEqual( const std::optional< EStraightType >& lhs, const std::optional< EStraightType >& rhs )
+    {
+        if ( lhs.has_value() && !rhs.has_value() )
+            return false;
+        if ( !lhs.has_value() && rhs.has_value() )
+            return false;
+        if ( !lhs.has_value() && !rhs.has_value() )
+            return std::optional< bool >();
+        return lhs.value() == rhs.value();
     }
 
     std::optional< bool > compareStraight( const std::optional< EStraightType >& lhs, const std::optional< EStraightType >& rhs )

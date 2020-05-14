@@ -23,6 +23,7 @@
 #include "CardTest.h"
 #include "Cards/Evaluate2CardHand.h"
 #include "Cards/Evaluate3CardHand.h"
+#include "Cards/Evaluate4CardHand.h"
 #include "Cards/Game.h"
 #include "Cards/Player.h"
 #include "Cards/Hand.h"
@@ -39,8 +40,28 @@ namespace NHandTester
         C2CardHandTester() {}
         virtual ~C2CardHandTester() {}
     };
-    TEST_F( C2CardHandTester, TestCompare )
+    TEST_F( C2CardHandTester, Basic )
     {
+        {
+            NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts );
+            NHandUtils::S2CardInfo h2( ECard::eDeuce, ESuit::eClubs, ECard::eDeuce, ESuit::eDiamonds );
+            EXPECT_FALSE( h2.lessThan( false, h1 ) );
+            EXPECT_FALSE( h2.greaterThan( false, h1 ) );
+            EXPECT_TRUE( h2.equalTo( false, h1 ) );
+
+            EXPECT_FALSE( h1.lessThan( false, h2 ) );
+            EXPECT_FALSE( h1.greaterThan( false, h2 ) );
+            EXPECT_TRUE( h1.equalTo( false, h2 ) );
+
+            EXPECT_FALSE( h2.lessThan( true, h1 ) );
+            EXPECT_FALSE( h2.greaterThan( true, h1 ) );
+            EXPECT_TRUE( h2.equalTo( true, h1 ) );
+
+            EXPECT_FALSE( h1.lessThan( true, h2 ) );
+            EXPECT_FALSE( h1.greaterThan( true, h2 ) );
+            EXPECT_TRUE( h1.equalTo( true, h2 ) );
+        }
+
         {
             NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eFour, ESuit::eSpades );
             NHandUtils::S2CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades );
@@ -68,6 +89,31 @@ namespace NHandTester
             NHandUtils::S2CardInfo h2( ECard::eQueen, ESuit::eSpades, ECard::eKing, ESuit::eSpades );
             EXPECT_TRUE( h1.lessThan( true, h2 ) );
         }
+
+        {
+            NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts ); // pair
+            NHandUtils::S2CardInfo h2( ECard::eQueen, ESuit::eSpades, ECard::eKing, ESuit::eHearts ); // straight
+            EXPECT_FALSE( h1.lessThan( true, h2 ) );
+            EXPECT_TRUE( h1.greaterThan( true, h2 ) );
+            EXPECT_FALSE( h1.equalTo( true, h2 ) );
+
+            EXPECT_TRUE( h2.lessThan( true, h1 ) );
+            EXPECT_FALSE( h2.greaterThan( true, h1 ) );
+            EXPECT_FALSE( h2.equalTo( true, h1 ) );
+        }
+
+        {
+            NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts ); // pair
+            NHandUtils::S2CardInfo h2( ECard::eQueen, ESuit::eSpades, ECard::eKing, ESuit::eSpades ); // straight flush
+            EXPECT_TRUE( h1.lessThan( true, h2 ) );
+            EXPECT_FALSE( h1.greaterThan( true, h2 ) );
+            EXPECT_FALSE( h1.equalTo( true, h2 ) );
+
+            EXPECT_FALSE( h2.lessThan( true, h1 ) );
+            EXPECT_TRUE( h2.greaterThan( true, h1 ) );
+            EXPECT_FALSE( h2.equalTo( true, h1 ) );
+        }
+
         {
             NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades );   // straight flush
             NHandUtils::S2CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eHearts ); // straight
@@ -86,6 +132,8 @@ namespace NHandTester
 
     TEST_F( C2CardHandTester, StraightFlushes )
     {
+        //NHandUtils::gComputeAllHands = true;
+
         auto p1 = fGame->addPlayer( "Scott" );
         fGame->setStraightsFlushesCountForSmallHands( true );
 
@@ -107,8 +155,8 @@ namespace NHandTester
                         p1->addCard( fGame->getCard( currCard, suit ) );
                     }
                 }
-                EXPECT_TRUE( p1->isFlush() );
-                EXPECT_TRUE( p1->isStraight() );
+                EXPECT_TRUE( p1->isFlush() ) << *p1->getHand();
+                EXPECT_TRUE( p1->isStraight() ) << *p1->getHand();
                 auto hand = p1->determineHand();
                 EXPECT_EQ( EHand::eStraightFlush, std::get< 0 >( hand ) );
                 ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
@@ -127,7 +175,7 @@ namespace NHandTester
         }
     }
 
-    TEST_F( C2CardHandTester, StraightFlushesDisabled )
+    TEST_F( C2CardHandTester, StraightFlushes_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
         fGame->setStraightsFlushesCountForSmallHands( false );
@@ -203,7 +251,7 @@ namespace NHandTester
         }
     }
 
-    TEST_F( C2CardHandTester, FlushDisabled )
+    TEST_F( C2CardHandTester, Flush_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
         fGame->setStraightsFlushesCountForSmallHands( false );
@@ -265,7 +313,7 @@ namespace NHandTester
         }
     }
 
-    TEST_F( C2CardHandTester, StraightDisabled )
+    TEST_F( C2CardHandTester, Straight_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
         fGame->setStraightsFlushesCountForSmallHands( false );
@@ -333,7 +381,7 @@ namespace NHandTester
         }
     }
 
-    TEST_F( C2CardHandTester, PairDisabled )
+    TEST_F( C2CardHandTester, Pair_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
         fGame->setStraightsFlushesCountForSmallHands( false );
@@ -480,7 +528,7 @@ namespace NHandTester
         EXPECT_EQ( 65, subFreq[ EHand::eHighCard ] );
     }
 
-    TEST_F( C2CardHandTester, AllCardHandsDisabled )
+    TEST_F( C2CardHandTester, AllCardHands_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
         fGame->setStraightsFlushesCountForSmallHands( false );
@@ -548,10 +596,9 @@ namespace NHandTester
         virtual ~C3CardHandTester() {}
     };
 
-    TEST_F( C3CardHandTester, TestCompare )
+    TEST_F( C3CardHandTester, Basic )
     {
         {
-            //NHandUtils::gComputeAllHands = true;
             using TCardToInfoMap = std::map< NHandUtils::S3CardInfo::THand, NHandUtils::S3CardInfo >;
             auto gFlushStraightsCount = []( const NHandUtils::S3CardInfo& lhs, const NHandUtils::S3CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
             auto gJustCardsCount = []( const NHandUtils::S3CardInfo& lhs, const NHandUtils::S3CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
@@ -611,6 +658,18 @@ namespace NHandTester
             EXPECT_TRUE( h2.greaterThan( true, h1 ) );
             EXPECT_FALSE( h2.lessThan( true, h1 ) );
             EXPECT_FALSE( h2.equalTo( true, h1 ) );
+        }
+
+        {
+            NHandUtils::S3CardInfo h1( { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eHearts } } ); 
+            NHandUtils::S3CardInfo h2( { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eDiamonds } } ); 
+            EXPECT_FALSE( h2.lessThan( true, h1 ) );
+            EXPECT_FALSE( h2.greaterThan( true, h1 ) );
+            EXPECT_TRUE( h2.equalTo( true, h1 ) );
+
+            EXPECT_FALSE( h1.lessThan( true, h2 ) );
+            EXPECT_FALSE( h1.greaterThan( true, h2 ) );
+            EXPECT_TRUE( h1.equalTo( true, h2 ) );
         }
 
         {
@@ -1047,6 +1106,27 @@ namespace NHandTester
         C4CardHandTester() {}
         virtual ~C4CardHandTester() {}
     };
+
+    TEST_F( C4CardHandTester, DISABLED_Basic )
+    {
+        NHandUtils::gComputeAllHands = true;
+        {
+            //NHandUtils::gComputeAllHands = true;
+            auto p1 = fGame->addPlayer( "Scott" );
+            fGame->setStraightsFlushesCountForSmallHands( true );
+
+            p1->addCard( fGame->getCard( ECard::eTrey, ESuit::eSpades ) );
+            p1->addCard( fGame->getCard( ECard::eDeuce, ESuit::eSpades ) );
+            p1->addCard( fGame->getCard( ECard::eAce, ESuit::eSpades ) );
+            p1->addCard( fGame->getCard( ECard::eFour, ESuit::eSpades ) );
+
+            EXPECT_TRUE( p1->isFlush() ) << "Cards: " << p1->getHand()->getCards();
+            EXPECT_TRUE( p1->isStraight() ) << "Cards: " << p1->getHand()->getCards();
+            auto hand = p1->determineHand();
+            EXPECT_EQ( EHand::eStraightFlush, std::get< 0 >( hand ) );
+        }
+    }
+
     //TEST_F( C4CardHandTester, StraightFlushes )
     //{
     //    auto p1 = fGame->addPlayer( "Scott" );
