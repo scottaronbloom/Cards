@@ -551,7 +551,7 @@ namespace NHandTester
     TEST_F( C3CardHandTester, TestCompare )
     {
         {
-            NHandUtils::gComputeAllHands = true;
+            //NHandUtils::gComputeAllHands = true;
             using TCardToInfoMap = std::map< NHandUtils::S3CardInfo::THand, NHandUtils::S3CardInfo >;
             auto gFlushStraightsCount = []( const NHandUtils::S3CardInfo& lhs, const NHandUtils::S3CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
             auto gJustCardsCount = []( const NHandUtils::S3CardInfo& lhs, const NHandUtils::S3CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
