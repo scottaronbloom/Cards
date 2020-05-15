@@ -32,6 +32,7 @@
 #include <optional>
 #include <bitset>
 #include <unordered_set>
+#include <string>
 
 enum class EHand
 {
@@ -50,6 +51,7 @@ enum class EHand
 DECLARE_ENUM_FUNCS_ARITHMETIC( EHand );
 DECLARE_ENUM_ITERATORS( EHand, EHand::eHighCard, EHand::eFiveOfAKind );
 QString toString( EHand hand, bool format );
+std::string toCPPString( EHand hand );
 std::ostream& operator<<( std::ostream& oss, EHand value );
 
 enum class ECard;

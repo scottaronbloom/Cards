@@ -5800,23 +5800,23 @@ namespace NHandUtils
     {
         bool hasWildCards = playInfo->hasWildCards();
         EHand hand;
-        if ( rank > ( 6185U + ( hasWildCards ? 13 : 0 ) ) )
+        if ( rank >= ( 6186U + ( hasWildCards ? 13 : 0 ) ) )
             hand = EHand::eHighCard;
-        else if ( rank > ( 3325U + ( hasWildCards ? 13 : 0 ) ) )
+        else if ( rank >= ( 3326U + ( hasWildCards ? 13 : 0 ) ) )
             hand = EHand::ePair;
-        else if ( rank > ( 2467U + ( hasWildCards ? 13 : 0 ) ) )
+        else if ( rank >= ( 2468U + ( hasWildCards ? 13 : 0 ) ) )
             hand = EHand::eTwoPair;
-        else if ( rank > ( 1609U + ( hasWildCards ? 13 : 0 ) ) )
+        else if ( rank >= ( 1610U + ( hasWildCards ? 13 : 0 ) ) )
             hand = EHand::eThreeOfAKind;
-        else if ( rank > ( 1599U + ( hasWildCards ? 13 : 0 ) ) )
+        else if ( rank >= ( 1600U + ( hasWildCards ? 13 : 0 ) ) )
             hand = EHand::eStraight;
-        else if ( rank > ( 322U + ( hasWildCards ? 13 : 0 ) ) )
+        else if ( rank >= ( 323U + ( hasWildCards ? 13 : 0 ) ) )
             hand = EHand::eFlush;
-        else if ( rank > ( 166U + ( hasWildCards ? 13 : 0 ) ) )
+        else if ( rank >= ( 167U + ( hasWildCards ? 13 : 0 ) ) )
             hand = EHand::eFullHouse;
-        else if ( rank > ( 10U + ( hasWildCards ? 13 : 0 ) ) )
+        else if ( rank >= ( 11U + ( hasWildCards ? 13 : 0 ) ) )
             hand = EHand::eFourOfAKind;
-        else if ( rank > ( 0U + ( hasWildCards ? 13 : 0 ) ) )
+        else if ( rank >= ( 1U + ( hasWildCards ? 13 : 0 ) ) )
             hand = EHand::eStraightFlush;
         else
             hand = EHand::eFiveOfAKind;

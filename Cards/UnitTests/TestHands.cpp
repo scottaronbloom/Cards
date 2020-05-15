@@ -34,17 +34,101 @@
 
 namespace NHandTester
 {
+    TEST( HandUtils, HandUtils )
+    {
+        auto cards = std::vector< TCard >( { TCard( ECard::eDeuce, ESuit::eSpades ), TCard( ECard::eDeuce, ESuit::eHearts ), TCard( ECard::eTrey, ESuit::eSpades ), TCard( ECard::eTrey, ESuit::eHearts ), TCard( ECard::eFour, ESuit::eHearts ) } );
+        EXPECT_FALSE( NHandUtils::isCount( cards, 4 ) );
+        EXPECT_TRUE( NHandUtils::isCount( cards, { 2, 2 } ) );
+        EXPECT_FALSE( NHandUtils::isCount( cards, { 2, 3 } ) );
+        EXPECT_FALSE( NHandUtils::isCount( cards, { 3, 2 } ) );
+
+        cards = std::vector< TCard >( { TCard( ECard::eDeuce, ESuit::eSpades ), TCard( ECard::eDeuce, ESuit::eHearts ), TCard( ECard::eTrey, ESuit::eSpades ), TCard( ECard::eTrey, ESuit::eHearts ), TCard( ECard::eDeuce, ESuit::eHearts ) } );
+        EXPECT_FALSE( NHandUtils::isCount( cards, { 2, 2 } ) );
+        EXPECT_TRUE( NHandUtils::isCount( cards, { 2, 3 } ) );
+        EXPECT_TRUE( NHandUtils::isCount( cards, { 3, 2 } ) );
+    }
     class C2CardHandTester : public CHandTester
     {
     protected:
         C2CardHandTester() {}
         virtual ~C2CardHandTester() {}
     };
+    
+    TEST_F( C2CardHandTester, AllCardHandsHardWay )
+    {
+        std::vector< NHandUtils::C2CardInfo > allHands;
+        size_t numHands = 0;
+        auto allCards = getAllCards();
+        for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
+        {
+            for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
+            {
+                NHandUtils::C2CardInfo cardInfo( allCards[ c1 ]->getCard(), allCards[ c1 ]->getSuit(), allCards[ c2 ]->getCard(), allCards[ c2 ]->getSuit() );
+                allHands.push_back( cardInfo );
+                numHands++;
+            }
+        }
+
+        std::sort( allHands.begin(), allHands.end(), []( const NHandUtils::C2CardInfo & lhs, const NHandUtils::C2CardInfo & rhs )
+                   { return lhs.greaterThan( true, rhs ); }
+        );
+
+        EXPECT_EQ( 1326, numHands );
+        EXPECT_EQ( 1326, allHands.size() );
+
+        std::vector< NHandUtils::C2CardInfo > uniqueHands;
+        auto prevHand = allHands[ 0 ];
+        uniqueHands.push_back( prevHand );
+        for ( size_t ii = 1; ii < allHands.size(); ++ii )
+        {
+            if ( prevHand.equalTo( true, allHands[ ii ] ) )
+                continue;
+            prevHand = allHands[ ii ];
+            uniqueHands.push_back( prevHand );
+        }
+        EXPECT_EQ( 169, uniqueHands.size() );
+
+        std::map< EHand, size_t > freq;
+        for ( auto && ii : allHands )
+        {
+            auto hand = ii.getHandType();
+            freq[ hand ]++;
+        }
+        EXPECT_EQ( 52, freq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 0, freq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 0, freq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 0, freq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 78, freq[ EHand::ePair ] );
+        EXPECT_EQ( 156, freq[ EHand::eStraight ] );
+        EXPECT_EQ( 260, freq[ EHand::eFlush ] );
+        EXPECT_EQ( 780, freq[ EHand::eHighCard ] );
+
+        std::map< EHand, size_t > subFreq;
+        for ( auto&& ii : uniqueHands )
+        {
+            auto hand = ii.getHandType();
+            subFreq[ hand ]++;
+        }
+        EXPECT_EQ( 13, subFreq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 0, freq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 0, freq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 0, freq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 13, subFreq[ EHand::ePair ] );
+        EXPECT_EQ( 13, subFreq[ EHand::eStraight ] );
+        EXPECT_EQ( 65, subFreq[ EHand::eFlush ] );
+        EXPECT_EQ( 65, subFreq[ EHand::eHighCard ] );
+
+        //NHandUtils::gComputeAllHands = true;
+        NHandUtils::generateAll2CardHands();
+    }
+
     TEST_F( C2CardHandTester, Basic )
     {
         {
-            NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts );
-            NHandUtils::S2CardInfo h2( ECard::eDeuce, ESuit::eClubs, ECard::eDeuce, ESuit::eDiamonds );
+            NHandUtils::C2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts );
+            NHandUtils::C2CardInfo h2( ECard::eDeuce, ESuit::eClubs, ECard::eDeuce, ESuit::eDiamonds );
             EXPECT_FALSE( h2.lessThan( false, h1 ) );
             EXPECT_FALSE( h2.greaterThan( false, h1 ) );
             EXPECT_TRUE( h2.equalTo( false, h1 ) );
@@ -63,36 +147,36 @@ namespace NHandTester
         }
 
         {
-            NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eFour, ESuit::eSpades );
-            NHandUtils::S2CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades );
+            NHandUtils::C2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eFour, ESuit::eSpades );
+            NHandUtils::C2CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades );
             EXPECT_TRUE( h2.lessThan( false, h1 ) );
         }
         {
-            NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts );
-            NHandUtils::S2CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eHearts );
+            NHandUtils::C2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts );
+            NHandUtils::C2CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eHearts );
             EXPECT_TRUE( h2.lessThan( false, h1 ) );
         }
         {
-            NHandUtils::S2CardInfo h1( ECard::eAce, ESuit::eSpades, ECard::eQueen, ESuit::eSpades );
-            NHandUtils::S2CardInfo h2( ECard::eTrey, ESuit::eHearts, ECard::eDeuce, ESuit::eSpades );
-            EXPECT_TRUE( h2.lessThan( false, h1 ) );
-        }
-
-        {
-            NHandUtils::S2CardInfo h1( ECard::eAce, ESuit::eSpades, ECard::eDeuce, ESuit::eSpades );
-            NHandUtils::S2CardInfo h2( ECard::eTrey, ESuit::eHearts, ECard::eDeuce, ESuit::eSpades );
+            NHandUtils::C2CardInfo h1( ECard::eAce, ESuit::eSpades, ECard::eQueen, ESuit::eSpades );
+            NHandUtils::C2CardInfo h2( ECard::eTrey, ESuit::eHearts, ECard::eDeuce, ESuit::eSpades );
             EXPECT_TRUE( h2.lessThan( false, h1 ) );
         }
 
         {
-            NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eAce, ESuit::eSpades );
-            NHandUtils::S2CardInfo h2( ECard::eQueen, ESuit::eSpades, ECard::eKing, ESuit::eSpades );
+            NHandUtils::C2CardInfo h1( ECard::eAce, ESuit::eSpades, ECard::eDeuce, ESuit::eSpades );
+            NHandUtils::C2CardInfo h2( ECard::eTrey, ESuit::eHearts, ECard::eDeuce, ESuit::eSpades );
+            EXPECT_TRUE( h2.lessThan( false, h1 ) );
+        }
+
+        {
+            NHandUtils::C2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eAce, ESuit::eSpades );
+            NHandUtils::C2CardInfo h2( ECard::eQueen, ESuit::eSpades, ECard::eKing, ESuit::eSpades );
             EXPECT_TRUE( h1.lessThan( true, h2 ) );
         }
 
         {
-            NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts ); // pair
-            NHandUtils::S2CardInfo h2( ECard::eQueen, ESuit::eSpades, ECard::eKing, ESuit::eHearts ); // straight
+            NHandUtils::C2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts ); // pair
+            NHandUtils::C2CardInfo h2( ECard::eQueen, ESuit::eSpades, ECard::eKing, ESuit::eHearts ); // straight
             EXPECT_FALSE( h1.lessThan( true, h2 ) );
             EXPECT_TRUE( h1.greaterThan( true, h2 ) );
             EXPECT_FALSE( h1.equalTo( true, h2 ) );
@@ -103,8 +187,8 @@ namespace NHandTester
         }
 
         {
-            NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts ); // pair
-            NHandUtils::S2CardInfo h2( ECard::eQueen, ESuit::eSpades, ECard::eKing, ESuit::eSpades ); // straight flush
+            NHandUtils::C2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts ); // pair
+            NHandUtils::C2CardInfo h2( ECard::eQueen, ESuit::eSpades, ECard::eKing, ESuit::eSpades ); // straight flush
             EXPECT_TRUE( h1.lessThan( true, h2 ) );
             EXPECT_FALSE( h1.greaterThan( true, h2 ) );
             EXPECT_FALSE( h1.equalTo( true, h2 ) );
@@ -115,13 +199,13 @@ namespace NHandTester
         }
 
         {
-            NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades );   // straight flush
-            NHandUtils::S2CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eHearts ); // straight
+            NHandUtils::C2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades );   // straight flush
+            NHandUtils::C2CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eHearts ); // straight
             EXPECT_FALSE( h1.lessThan( true, h2 ) );
             EXPECT_TRUE( h2.lessThan( true, h1 ) );
 
-            auto gFlushStraightsCount = []( const NHandUtils::S2CardInfo& lhs, const NHandUtils::S2CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
-            using TFlushesCountMap = std::map< NHandUtils::S2CardInfo, uint32_t, decltype( gFlushStraightsCount ) >;
+            auto gFlushStraightsCount = []( const NHandUtils::C2CardInfo& lhs, const NHandUtils::C2CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
+            using TFlushesCountMap = std::map< NHandUtils::C2CardInfo, uint32_t, decltype( gFlushStraightsCount ) >;
             static TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
 
             flushesAndStraightsCount.insert( std::make_pair( h1, -1 ) );
@@ -130,10 +214,119 @@ namespace NHandTester
         }
     }
 
+    TEST_F( C2CardHandTester, OneOfEachHand )
+    {
+        auto h1 = NHandUtils::C2CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades );
+        EXPECT_TRUE( h1.isStraightFlush() );
+        EXPECT_FALSE( h1.isFourOfAKind() );
+        EXPECT_FALSE( h1.isFullHouse() );
+        EXPECT_TRUE( h1.isFlush() );
+        EXPECT_TRUE( h1.isStraight() );
+        EXPECT_FALSE( h1.isWheel() );
+        EXPECT_FALSE( h1.isThreeOfAKind() );
+        EXPECT_FALSE( h1.isTwoPair() );
+        EXPECT_FALSE( h1.isPair() );
+        EXPECT_FALSE( h1.isHighCard() );
+
+        auto h2 = NHandUtils::C2CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts );
+        EXPECT_FALSE( h2.isStraightFlush() );
+        EXPECT_FALSE( h2.isFourOfAKind() );
+        EXPECT_FALSE( h2.isFullHouse() );
+        EXPECT_FALSE( h2.isFlush() );
+        EXPECT_FALSE( h2.isStraight() );
+        EXPECT_FALSE( h2.isWheel() );
+        EXPECT_FALSE( h2.isThreeOfAKind() );
+        EXPECT_FALSE( h2.isTwoPair() );
+        EXPECT_TRUE( h2.isPair() );
+        EXPECT_FALSE( h2.isHighCard() );
+
+        auto h3 = NHandUtils::C2CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eHearts );
+        EXPECT_FALSE( h3.isStraightFlush() );
+        EXPECT_FALSE( h3.isFourOfAKind() );
+        EXPECT_FALSE( h3.isFullHouse() );
+        EXPECT_FALSE( h3.isFlush() );
+        EXPECT_TRUE( h3.isStraight() );
+        EXPECT_FALSE( h3.isWheel() );
+        EXPECT_FALSE( h3.isThreeOfAKind() );
+        EXPECT_FALSE( h3.isTwoPair() );
+        EXPECT_FALSE( h3.isPair() );
+        EXPECT_FALSE( h3.isHighCard() );
+
+        auto h4 = NHandUtils::C2CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eAce, ESuit::eHearts );
+        EXPECT_FALSE( h4.isStraightFlush() );
+        EXPECT_FALSE( h4.isFourOfAKind() );
+        EXPECT_FALSE( h4.isFullHouse() );
+        EXPECT_FALSE( h4.isFlush() );
+        EXPECT_TRUE( h4.isStraight() );
+        EXPECT_TRUE( h4.isWheel() );
+        EXPECT_FALSE( h4.isThreeOfAKind() );
+        EXPECT_FALSE( h4.isTwoPair() );
+        EXPECT_FALSE( h4.isPair() );
+        EXPECT_FALSE( h4.isHighCard() );
+
+        auto h5 = NHandUtils::C2CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eFive, ESuit::eSpades );
+        EXPECT_FALSE( h5.isStraightFlush() );
+        EXPECT_FALSE( h5.isFourOfAKind() );
+        EXPECT_FALSE( h5.isFullHouse() );
+        EXPECT_TRUE( h5.isFlush() );
+        EXPECT_FALSE( h5.isStraight() );
+        EXPECT_FALSE( h5.isWheel() );
+        EXPECT_FALSE( h5.isThreeOfAKind() );
+        EXPECT_FALSE( h5.isTwoPair() );
+        EXPECT_FALSE( h5.isPair() );
+        EXPECT_FALSE( h5.isHighCard() );
+
+        auto h6 = NHandUtils::C2CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eFive, ESuit::eHearts );
+        EXPECT_FALSE( h6.isStraightFlush() );
+        EXPECT_FALSE( h6.isFourOfAKind() );
+        EXPECT_FALSE( h6.isFullHouse() );
+        EXPECT_FALSE( h6.isFlush() );
+        EXPECT_FALSE( h6.isStraight() );
+        EXPECT_FALSE( h6.isWheel() );
+        EXPECT_FALSE( h6.isThreeOfAKind() );
+        EXPECT_FALSE( h6.isTwoPair() );
+        EXPECT_FALSE( h6.isPair() );
+        EXPECT_TRUE( h6.isHighCard() );
+
+        EXPECT_TRUE( h1.greaterThan( true, h2 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h3 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h4 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h6 ) );
+
+        EXPECT_TRUE( h2.lessThan( true, h1 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h3 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h4 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h6 ) );
+
+        EXPECT_TRUE( h3.lessThan( true, h1 ) );
+        EXPECT_TRUE( h3.lessThan( true, h2 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h4 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h6 ) );
+
+        EXPECT_TRUE( h4.lessThan( true, h1 ) );
+        EXPECT_TRUE( h4.lessThan( true, h2 ) );
+        EXPECT_TRUE( h4.lessThan( true, h3 ) );
+        EXPECT_TRUE( h4.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h4.greaterThan( true, h6 ) );
+
+        EXPECT_TRUE( h5.lessThan( true, h1 ) );
+        EXPECT_TRUE( h5.lessThan( true, h2 ) );
+        EXPECT_TRUE( h5.lessThan( true, h3 ) );
+        EXPECT_TRUE( h5.lessThan( true, h4 ) );
+        EXPECT_TRUE( h5.greaterThan( true, h6 ) );
+
+        EXPECT_TRUE( h6.lessThan( true, h1 ) );
+        EXPECT_TRUE( h6.lessThan( true, h2 ) );
+        EXPECT_TRUE( h6.lessThan( true, h3 ) );
+        EXPECT_TRUE( h6.lessThan( true, h4 ) );
+        EXPECT_TRUE( h6.lessThan( true, h5 ) );
+    }
+
     TEST_F( C2CardHandTester, StraightFlushes )
     {
-        //NHandUtils::gComputeAllHands = true;
-
         auto p1 = fGame->addPlayer( "Scott" );
         fGame->setStraightsFlushesCountForSmallHands( true );
 
@@ -510,9 +703,9 @@ namespace NHandTester
             freq[ std::get< 0 >( hand ) ]++;
         }
         EXPECT_EQ( 52, freq[ EHand::eStraightFlush ] );
-        EXPECT_EQ( 260, freq[ EHand::eFlush ] );
-        EXPECT_EQ( 156, freq[ EHand::eStraight ] );
         EXPECT_EQ( 78, freq[ EHand::ePair ] );
+        EXPECT_EQ( 156, freq[ EHand::eStraight ] );
+        EXPECT_EQ( 260, freq[ EHand::eFlush ] );
         EXPECT_EQ( 780, freq[ EHand::eHighCard ] );
 
         std::map< EHand, size_t > subFreq;
@@ -522,9 +715,9 @@ namespace NHandTester
             subFreq[ std::get< 0 >( hand ) ]++;
         }
         EXPECT_EQ( 13, subFreq[ EHand::eStraightFlush ] );
-        EXPECT_EQ( 65, subFreq[ EHand::eFlush ] );
-        EXPECT_EQ( 13, subFreq[ EHand::eStraight ] );
         EXPECT_EQ( 13, subFreq[ EHand::ePair ] );
+        EXPECT_EQ( 13, subFreq[ EHand::eStraight ] );
+        EXPECT_EQ( 65, subFreq[ EHand::eFlush ] );
         EXPECT_EQ( 65, subFreq[ EHand::eHighCard ] );
     }
 
@@ -596,21 +789,94 @@ namespace NHandTester
         virtual ~C3CardHandTester() {}
     };
 
+    TEST_F( C3CardHandTester, AllCardHandsHardWay )
+    {
+        std::vector< NHandUtils::C3CardInfo > allHands;
+        size_t numHands = 0;
+        auto allCards = getAllCards();
+        for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
+        {
+            for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
+            {
+                for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
+                {
+                    NHandUtils::C3CardInfo cardInfo( allCards[ c1 ]->getCard(), allCards[ c1 ]->getSuit(), allCards[ c2 ]->getCard(), allCards[ c2 ]->getSuit(), allCards[ c3 ]->getCard(), allCards[ c3 ]->getSuit() );
+                    allHands.push_back( cardInfo );
+                    numHands++;
+                }
+            }
+        }
+
+        std::sort( allHands.begin(), allHands.end(), []( const NHandUtils::C3CardInfo& lhs, const NHandUtils::C3CardInfo& rhs )
+                   { return lhs.greaterThan( true, rhs ); }
+        );
+
+        EXPECT_EQ( 22100, numHands );
+        EXPECT_EQ( 22100, allHands.size() );
+
+        std::vector< NHandUtils::C3CardInfo > uniqueHands;
+        auto prevHand = allHands[ 0 ];
+        uniqueHands.push_back( prevHand );
+        for ( size_t ii = 1; ii < allHands.size(); ++ii )
+        {
+            if ( prevHand.equalTo( true, allHands[ ii ] ) )
+                continue;
+            prevHand = allHands[ ii ];
+            uniqueHands.push_back( prevHand );
+        }
+        EXPECT_EQ( 741, uniqueHands.size() );
+
+        std::map< EHand, size_t > freq;
+        for ( auto&& ii : allHands )
+        {
+            auto hand = ii.getHandType();
+            freq[ hand ]++;
+        }
+        EXPECT_EQ( 0, freq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 0, freq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 48, freq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 52, freq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 720, freq[ EHand::eStraight ] );
+        EXPECT_EQ( 1096, freq[ EHand::eFlush ] );
+        EXPECT_EQ( 3744, freq[ EHand::ePair ] );
+        EXPECT_EQ( 16440, freq[ EHand::eHighCard ] );
+
+        std::map< EHand, size_t > subFreq;
+        for ( auto&& ii : uniqueHands )
+        {
+            auto hand = ii.getHandType();
+            subFreq[ hand ]++;
+        }
+        EXPECT_EQ( 12, subFreq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 0, subFreq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 0, subFreq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 274, subFreq[ EHand::eFlush ] );
+        EXPECT_EQ( 12, subFreq[ EHand::eStraight ] );
+        EXPECT_EQ( 13, subFreq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 0, subFreq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 156, subFreq[ EHand::ePair ] );
+        EXPECT_EQ( 274, subFreq[ EHand::eHighCard ] );
+
+        //NHandUtils::gComputeAllHands = true;
+        NHandUtils::generateAll3CardHands();
+    }
+
     TEST_F( C3CardHandTester, Basic )
     {
         {
-            using TCardToInfoMap = std::map< NHandUtils::S3CardInfo::THand, NHandUtils::S3CardInfo >;
-            auto gFlushStraightsCount = []( const NHandUtils::S3CardInfo& lhs, const NHandUtils::S3CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
-            auto gJustCardsCount = []( const NHandUtils::S3CardInfo& lhs, const NHandUtils::S3CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
+            using TCardToInfoMap = std::map< NHandUtils::C3CardInfo::THand, NHandUtils::C3CardInfo >;
+            auto gFlushStraightsCount = []( const NHandUtils::C3CardInfo& lhs, const NHandUtils::C3CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
+            auto gJustCardsCount = []( const NHandUtils::C3CardInfo& lhs, const NHandUtils::C3CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
 
-            using TCardsCountMap = std::map< NHandUtils::S3CardInfo, uint32_t, decltype( gJustCardsCount ) >;
-            using TFlushesCountMap = std::map< NHandUtils::S3CardInfo, uint32_t, decltype( gFlushStraightsCount ) >;
+            using TCardsCountMap = std::map< NHandUtils::C3CardInfo, uint32_t, decltype( gJustCardsCount ) >;
+            using TFlushesCountMap = std::map< NHandUtils::C3CardInfo, uint32_t, decltype( gFlushStraightsCount ) >;
 
             TCardsCountMap justCardsCount( gJustCardsCount );
             TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
 
-            NHandUtils::S3CardInfo h1( ECard::eAce, ESuit::eSpades, ECard::eKing, ESuit::eHearts, ECard::eJack, ESuit::eSpades ); // pair of 2s 3 kicker
-            NHandUtils::S3CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eAce, ESuit::eSpades ); // pair or 3s 2 kicker
+            NHandUtils::C3CardInfo h1( ECard::eAce, ESuit::eSpades, ECard::eKing, ESuit::eHearts, ECard::eJack, ESuit::eSpades ); // pair of 2s 3 kicker
+            NHandUtils::C3CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eAce, ESuit::eSpades ); // pair or 3s 2 kicker
             EXPECT_TRUE( h2.greaterThan( true, h1 ) );
             EXPECT_FALSE( h2.lessThan( true, h1 ) );
             EXPECT_FALSE( h2.equalTo( true, h1 ) );
@@ -629,8 +895,8 @@ namespace NHandTester
 
             justCardsCount.clear();
             flushesAndStraightsCount.clear();
-            NHandUtils::S3CardInfo h3( ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eSpades ); 
-            NHandUtils::S3CardInfo h4( ECard::eDeuce, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eSpades ); 
+            NHandUtils::C3CardInfo h3( ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eSpades ); 
+            NHandUtils::C3CardInfo h4( ECard::eDeuce, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eSpades ); 
             inserted = justCardsCount.insert( std::make_pair( h3, -1 ) );
             EXPECT_TRUE( inserted.second );
 
@@ -645,24 +911,24 @@ namespace NHandTester
         }
 
         {
-            NHandUtils::S3CardInfo h1( { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } } );  /// ace high 3 2
-            NHandUtils::S3CardInfo h2( { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } } ); // K high
+            NHandUtils::C3CardInfo h1( { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } } );  /// ace high 3 2
+            NHandUtils::C3CardInfo h2( { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } } ); // K high
             EXPECT_TRUE( h2.lessThan( false, h1 ) );
             EXPECT_FALSE( h2.greaterThan( false, h1 ) );
             EXPECT_FALSE( h2.equalTo( false, h1 ) );
         }
 
         {
-            NHandUtils::S3CardInfo h1( { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } } ); // a23 straight
-            NHandUtils::S3CardInfo h2( { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } } ); // kqj straight
+            NHandUtils::C3CardInfo h1( { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } } ); // a23 straight
+            NHandUtils::C3CardInfo h2( { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } } ); // kqj straight
             EXPECT_TRUE( h2.greaterThan( true, h1 ) );
             EXPECT_FALSE( h2.lessThan( true, h1 ) );
             EXPECT_FALSE( h2.equalTo( true, h1 ) );
         }
 
         {
-            NHandUtils::S3CardInfo h1( { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eHearts } } ); 
-            NHandUtils::S3CardInfo h2( { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eDiamonds } } ); 
+            NHandUtils::C3CardInfo h1( { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eHearts } } ); 
+            NHandUtils::C3CardInfo h2( { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eDiamonds } } ); 
             EXPECT_FALSE( h2.lessThan( true, h1 ) );
             EXPECT_FALSE( h2.greaterThan( true, h1 ) );
             EXPECT_TRUE( h2.equalTo( true, h1 ) );
@@ -673,7 +939,6 @@ namespace NHandTester
         }
 
         {
-            //NHandUtils::gComputeAllHands = true;
             auto p1 = fGame->addPlayer( "Scott" );
             fGame->setStraightsFlushesCountForSmallHands( true );
 
@@ -688,36 +953,229 @@ namespace NHandTester
         }
 
         {
-            NHandUtils::S3CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts ); // pair of 2s 3 kicker
-            NHandUtils::S3CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eTrey, ESuit::eHearts ); // pair or 3s 2 kicker
+            NHandUtils::C3CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts ); // pair of 2s 3 kicker
+            NHandUtils::C3CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eTrey, ESuit::eHearts ); // pair or 3s 2 kicker
             EXPECT_FALSE( h2.lessThan( false, h1 ) );
             EXPECT_TRUE( h2.greaterThan( false, h1 ) );
             EXPECT_FALSE( h2.equalTo( false, h1 ) );
         }
         {
-            NHandUtils::S3CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts ); // pair of 2s 3 kicker
-            NHandUtils::S3CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts );  // pair of 2s 4 kicker
+            NHandUtils::C3CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts ); // pair of 2s 3 kicker
+            NHandUtils::C3CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts );  // pair of 2s 4 kicker
             EXPECT_FALSE( h2.lessThan( false, h1 ) );
             EXPECT_TRUE( h2.greaterThan( false, h1 ) );
             EXPECT_FALSE( h2.equalTo( false, h1 ) );
         }
         {
-            NHandUtils::S3CardInfo h1( ECard::eTrey, ESuit::eSpades, ECard::eDeuce, ESuit::eSpades, ECard::eAce, ESuit::eSpades ); // pair of 2s 3 kicker
-            EXPECT_TRUE( h1.fIsFlush );
-            EXPECT_TRUE( h1.fStraightType.has_value() );
-            EXPECT_EQ( NHandUtils::EStraightType::eWheel, h1.fStraightType.value() );
+            NHandUtils::C3CardInfo h1( ECard::eTrey, ESuit::eSpades, ECard::eDeuce, ESuit::eSpades, ECard::eAce, ESuit::eSpades ); // pair of 2s 3 kicker
+            EXPECT_TRUE( h1.isFlush() );
+            EXPECT_TRUE( h1.straightType().has_value() );
+            EXPECT_EQ( NHandUtils::EStraightType::eWheel, h1.straightType().value() );
         }
         {
-            NHandUtils::S2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts );
-            NHandUtils::S2CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eHearts );
+            NHandUtils::C2CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts );
+            NHandUtils::C2CardInfo h2( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eHearts );
             EXPECT_TRUE( h2.lessThan( false, h1 ) );
         }
         {
-            NHandUtils::S2CardInfo h1( ECard::eAce, ESuit::eSpades, ECard::eQueen, ESuit::eSpades );
-            NHandUtils::S2CardInfo h2( ECard::eTrey, ESuit::eHearts, ECard::eDeuce, ESuit::eSpades );
+            NHandUtils::C2CardInfo h1( ECard::eAce, ESuit::eSpades, ECard::eQueen, ESuit::eSpades );
+            NHandUtils::C2CardInfo h2( ECard::eTrey, ESuit::eHearts, ECard::eDeuce, ESuit::eSpades );
             EXPECT_TRUE( h2.lessThan( false, h1 ) );
         }
     }
+    
+    TEST_F( C3CardHandTester, OneOfEachHand )
+    {
+        //auto h1 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eSpades );
+        //EXPECT_TRUE( h1.isStraightFlush() );
+        //EXPECT_FALSE( h1.isFourOfAKind() );
+        //EXPECT_FALSE( h1.isFullHouse() );
+        //EXPECT_TRUE( h1.isFlush() );
+        //EXPECT_TRUE( h1.isStraight() );
+        //EXPECT_FALSE( h1.isWheel() );
+        //EXPECT_FALSE( h1.isThreeOfAKind() );
+        //EXPECT_FALSE( h1.isTwoPair() );
+        //EXPECT_FALSE( h1.isPair() );
+        //EXPECT_FALSE( h1.isHighCard() );
+
+        //auto h2 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs, ECard::eDeuce, ESuit::eDiamonds );
+        //EXPECT_FALSE( h2.isStraightFlush() );
+        //EXPECT_TRUE( h2.isFourOfAKind() );
+        //EXPECT_FALSE( h2.isFullHouse() );
+        //EXPECT_FALSE( h2.isFlush() );
+        //EXPECT_FALSE( h2.isStraight() );
+        //EXPECT_FALSE( h2.isWheel() );
+        //EXPECT_FALSE( h2.isThreeOfAKind() );
+        //EXPECT_FALSE( h2.isTwoPair() );
+        //EXPECT_FALSE( h2.isPair() );
+        //EXPECT_FALSE( h2.isHighCard() );
+
+        //auto h3 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eSix, ESuit::eSpades );
+        //EXPECT_FALSE( h3.isStraightFlush() );
+        //EXPECT_FALSE( h3.isFourOfAKind() );
+        //EXPECT_FALSE( h3.isFullHouse() );
+        //EXPECT_TRUE( h3.isFlush() );
+        //EXPECT_FALSE( h3.isStraight() );
+        //EXPECT_FALSE( h3.isWheel() );
+        //EXPECT_FALSE( h3.isThreeOfAKind() );
+        //EXPECT_FALSE( h3.isTwoPair() );
+        //EXPECT_FALSE( h3.isPair() );
+        //EXPECT_FALSE( h3.isHighCard() );
+
+        //auto h4 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eHearts );
+        //EXPECT_FALSE( h4.isStraightFlush() );
+        //EXPECT_FALSE( h4.isFourOfAKind() );
+        //EXPECT_FALSE( h4.isFullHouse() );
+        //EXPECT_FALSE( h4.isFlush() );
+        //EXPECT_TRUE( h4.isStraight() );
+        //EXPECT_FALSE( h4.isWheel() );
+        //EXPECT_FALSE( h4.isThreeOfAKind() );
+        //EXPECT_FALSE( h4.isTwoPair() );
+        //EXPECT_FALSE( h4.isPair() );
+        //EXPECT_FALSE( h4.isHighCard() );
+
+        //auto h5 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eAce, ESuit::eHearts );
+        //EXPECT_FALSE( h5.isStraightFlush() );
+        //EXPECT_FALSE( h5.isFourOfAKind() );
+        //EXPECT_FALSE( h5.isFullHouse() );
+        //EXPECT_FALSE( h5.isFlush() );
+        //EXPECT_TRUE( h5.isStraight() );
+        //EXPECT_TRUE( h5.isWheel() );
+        //EXPECT_FALSE( h5.isThreeOfAKind() );
+        //EXPECT_FALSE( h5.isTwoPair() );
+        //EXPECT_FALSE( h5.isPair() );
+        //EXPECT_FALSE( h5.isHighCard() );
+
+        //auto h6 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs, ECard::eTrey, ESuit::eDiamonds );
+        //EXPECT_FALSE( h6.isStraightFlush() );
+        //EXPECT_FALSE( h6.isFourOfAKind() );
+        //EXPECT_FALSE( h6.isFullHouse() );
+        //EXPECT_FALSE( h6.isFlush() );
+        //EXPECT_FALSE( h6.isStraight() );
+        //EXPECT_FALSE( h6.isWheel() );
+        //EXPECT_TRUE( h6.isThreeOfAKind() );
+        //EXPECT_FALSE( h6.isTwoPair() );
+        //EXPECT_FALSE( h6.isPair() );
+        //EXPECT_FALSE( h6.isHighCard() );
+
+        //auto h7 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eTrey, ESuit::eClubs, ECard::eTrey, ESuit::eDiamonds );
+        //EXPECT_FALSE( h7.isStraightFlush() );
+        //EXPECT_FALSE( h7.isFourOfAKind() );
+        //EXPECT_FALSE( h7.isFullHouse() );
+        //EXPECT_FALSE( h7.isFlush() );
+        //EXPECT_FALSE( h7.isStraight() );
+        //EXPECT_FALSE( h7.isWheel() );
+        //EXPECT_FALSE( h7.isThreeOfAKind() );
+        //EXPECT_TRUE( h7.isTwoPair() );
+        //EXPECT_FALSE( h7.isPair() );
+        //EXPECT_FALSE( h7.isHighCard() );
+
+        //auto h8 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eTrey, ESuit::eClubs, ECard::eAce, ESuit::eDiamonds );
+        //EXPECT_FALSE( h8.isStraightFlush() );
+        //EXPECT_FALSE( h8.isFourOfAKind() );
+        //EXPECT_FALSE( h8.isFullHouse() );
+        //EXPECT_FALSE( h8.isFlush() );
+        //EXPECT_FALSE( h8.isStraight() );
+        //EXPECT_FALSE( h8.isWheel() );
+        //EXPECT_FALSE( h8.isThreeOfAKind() );
+        //EXPECT_FALSE( h8.isTwoPair() );
+        //EXPECT_TRUE( h8.isPair() );
+        //EXPECT_FALSE( h8.isHighCard() );
+
+        //auto h9 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eFive, ESuit::eHearts, ECard::eTrey, ESuit::eClubs, ECard::eAce, ESuit::eDiamonds );
+        //EXPECT_FALSE( h9.isStraightFlush() );
+        //EXPECT_FALSE( h9.isFourOfAKind() );
+        //EXPECT_FALSE( h9.isFullHouse() );
+        //EXPECT_FALSE( h9.isFlush() );
+        //EXPECT_FALSE( h9.isStraight() );
+        //EXPECT_FALSE( h9.isWheel() );
+        //EXPECT_FALSE( h9.isThreeOfAKind() );
+        //EXPECT_FALSE( h9.isTwoPair() );
+        //EXPECT_FALSE( h9.isPair() );
+        //EXPECT_TRUE( h9.isHighCard() );
+
+        //EXPECT_TRUE( h1.greaterThan( true, h2 ) );
+        //EXPECT_TRUE( h1.greaterThan( true, h3 ) );
+        //EXPECT_TRUE( h1.greaterThan( true, h4 ) );
+        //EXPECT_TRUE( h1.greaterThan( true, h5 ) );
+        //EXPECT_TRUE( h1.greaterThan( true, h6 ) );
+        //EXPECT_TRUE( h1.greaterThan( true, h7 ) );
+        //EXPECT_TRUE( h1.greaterThan( true, h8 ) );
+        //EXPECT_TRUE( h1.greaterThan( true, h9 ) );
+
+        //EXPECT_TRUE( h2.lessThan( true, h1 ) );
+        //EXPECT_TRUE( h2.greaterThan( true, h3 ) );
+        //EXPECT_TRUE( h2.greaterThan( true, h4 ) );
+        //EXPECT_TRUE( h2.greaterThan( true, h5 ) );
+        //EXPECT_TRUE( h2.greaterThan( true, h6 ) );
+        //EXPECT_TRUE( h2.greaterThan( true, h7 ) );
+        //EXPECT_TRUE( h2.greaterThan( true, h8 ) );
+        //EXPECT_TRUE( h2.greaterThan( true, h9 ) );
+
+        //EXPECT_TRUE( h3.lessThan( true, h1 ) );
+        //EXPECT_TRUE( h3.lessThan( true, h2 ) );
+        //EXPECT_TRUE( h3.greaterThan( true, h4 ) );
+        //EXPECT_TRUE( h3.greaterThan( true, h5 ) );
+        //EXPECT_TRUE( h3.greaterThan( true, h6 ) );
+        //EXPECT_TRUE( h3.greaterThan( true, h7 ) );
+        //EXPECT_TRUE( h3.greaterThan( true, h8 ) );
+        //EXPECT_TRUE( h3.greaterThan( true, h9 ) );
+
+        //EXPECT_TRUE( h4.lessThan( true, h1 ) );
+        //EXPECT_TRUE( h4.lessThan( true, h2 ) );
+        //EXPECT_TRUE( h4.lessThan( true, h3 ) );
+        //EXPECT_TRUE( h4.greaterThan( true, h5 ) );
+        //EXPECT_TRUE( h4.greaterThan( true, h6 ) );
+        //EXPECT_TRUE( h4.greaterThan( true, h7 ) );
+        //EXPECT_TRUE( h4.greaterThan( true, h8 ) );
+        //EXPECT_TRUE( h4.greaterThan( true, h9 ) );
+
+        //EXPECT_TRUE( h5.lessThan( true, h1 ) );
+        //EXPECT_TRUE( h5.lessThan( true, h2 ) );
+        //EXPECT_TRUE( h5.lessThan( true, h3 ) );
+        //EXPECT_TRUE( h5.lessThan( true, h4 ) );
+        //EXPECT_TRUE( h5.greaterThan( true, h6 ) );
+        //EXPECT_TRUE( h5.greaterThan( true, h7 ) );
+        //EXPECT_TRUE( h5.greaterThan( true, h8 ) );
+        //EXPECT_TRUE( h5.greaterThan( true, h9 ) );
+
+        //EXPECT_TRUE( h6.lessThan( true, h1 ) );
+        //EXPECT_TRUE( h6.lessThan( true, h2 ) );
+        //EXPECT_TRUE( h6.lessThan( true, h3 ) );
+        //EXPECT_TRUE( h6.lessThan( true, h4 ) );
+        //EXPECT_TRUE( h6.lessThan( true, h5 ) );
+        //EXPECT_TRUE( h6.greaterThan( true, h7 ) );
+        //EXPECT_TRUE( h6.greaterThan( true, h8 ) );
+        //EXPECT_TRUE( h6.greaterThan( true, h9 ) );
+
+        //EXPECT_TRUE( h7.lessThan( true, h1 ) );
+        //EXPECT_TRUE( h7.lessThan( true, h2 ) );
+        //EXPECT_TRUE( h7.lessThan( true, h3 ) );
+        //EXPECT_TRUE( h7.lessThan( true, h4 ) );
+        //EXPECT_TRUE( h7.lessThan( true, h5 ) );
+        //EXPECT_TRUE( h7.lessThan( true, h6 ) );
+        //EXPECT_TRUE( h7.greaterThan( true, h8 ) );
+        //EXPECT_TRUE( h7.greaterThan( true, h9 ) );
+
+        //EXPECT_TRUE( h8.lessThan( true, h1 ) );
+        //EXPECT_TRUE( h8.lessThan( true, h2 ) );
+        //EXPECT_TRUE( h8.lessThan( true, h3 ) );
+        //EXPECT_TRUE( h8.lessThan( true, h4 ) );
+        //EXPECT_TRUE( h8.lessThan( true, h5 ) );
+        //EXPECT_TRUE( h8.lessThan( true, h6 ) );
+        //EXPECT_TRUE( h8.lessThan( true, h7 ) );
+        //EXPECT_TRUE( h8.greaterThan( true, h9 ) );
+
+        //EXPECT_TRUE( h9.lessThan( true, h1 ) );
+        //EXPECT_TRUE( h9.lessThan( true, h2 ) );
+        //EXPECT_TRUE( h9.lessThan( true, h3 ) );
+        //EXPECT_TRUE( h9.lessThan( true, h4 ) );
+        //EXPECT_TRUE( h9.lessThan( true, h5 ) );
+        //EXPECT_TRUE( h9.lessThan( true, h6 ) );
+        //EXPECT_TRUE( h9.lessThan( true, h7 ) );
+        //EXPECT_TRUE( h9.lessThan( true, h8 ) );
+    }
+
     TEST_F( C3CardHandTester, StraightFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
@@ -1001,13 +1459,13 @@ namespace NHandTester
             auto hand = ii->determineHand();
             freq[ std::get< 0 >( hand ) ]++;
         }
-        EXPECT_EQ( 48, freq[ EHand::eStraightFlush ] );
         EXPECT_EQ( 0, freq[ EHand::eFourOfAKind ] );
         EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
-        EXPECT_EQ( 1096, freq[ EHand::eFlush ] );
-        EXPECT_EQ( 720, freq[ EHand::eStraight ] );
-        EXPECT_EQ( 52, freq[ EHand::eThreeOfAKind ] );
         EXPECT_EQ( 0, freq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 48, freq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 52, freq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 720, freq[ EHand::eStraight ] );
+        EXPECT_EQ( 1096, freq[ EHand::eFlush ] );
         EXPECT_EQ( 3744, freq[ EHand::ePair ] );
         EXPECT_EQ( 16440, freq[ EHand::eHighCard ] );
 
@@ -1107,24 +1565,383 @@ namespace NHandTester
         virtual ~C4CardHandTester() {}
     };
 
-    TEST_F( C4CardHandTester, DISABLED_Basic )
+    TEST_F( C4CardHandTester, Basic )
     {
-        NHandUtils::gComputeAllHands = true;
         {
-            //NHandUtils::gComputeAllHands = true;
-            auto p1 = fGame->addPlayer( "Scott" );
-            fGame->setStraightsFlushesCountForSmallHands( true );
+            NHandUtils::C4CardInfo h1( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs, ECard::eDeuce, ESuit::eDiamonds );
+            NHandUtils::C4CardInfo h2( ECard::eSeven, ESuit::eSpades, ECard::eSeven, ESuit::eHearts, ECard::eSeven, ESuit::eClubs, ECard::eSeven, ESuit::eDiamonds );
+            EXPECT_FALSE( h2.lessThan( false, h1 ) );
+            EXPECT_TRUE( h2.greaterThan( false, h1 ) );
+            EXPECT_FALSE( h2.equalTo( false, h1 ) );
 
-            p1->addCard( fGame->getCard( ECard::eTrey, ESuit::eSpades ) );
-            p1->addCard( fGame->getCard( ECard::eDeuce, ESuit::eSpades ) );
-            p1->addCard( fGame->getCard( ECard::eAce, ESuit::eSpades ) );
-            p1->addCard( fGame->getCard( ECard::eFour, ESuit::eSpades ) );
+            EXPECT_TRUE( h1.lessThan( false, h2 ) );
+            EXPECT_FALSE( h1.greaterThan( false, h2 ) );
+            EXPECT_FALSE( h1.equalTo( false, h2 ) );
 
-            EXPECT_TRUE( p1->isFlush() ) << "Cards: " << p1->getHand()->getCards();
-            EXPECT_TRUE( p1->isStraight() ) << "Cards: " << p1->getHand()->getCards();
-            auto hand = p1->determineHand();
-            EXPECT_EQ( EHand::eStraightFlush, std::get< 0 >( hand ) );
+            EXPECT_FALSE( h2.lessThan( true, h1 ) );
+            EXPECT_TRUE( h2.greaterThan( true, h1 ) );
+            EXPECT_FALSE( h2.equalTo( true, h1 ) );
+
+            EXPECT_TRUE( h1.lessThan( true, h2 ) );
+            EXPECT_FALSE( h1.greaterThan( true, h2 ) );
+            EXPECT_FALSE( h1.equalTo( true, h2 ) );
         }
+        {
+            NHandUtils::C4CardInfo h1( ECard::eSeven, ESuit::eSpades, ECard::eSeven, ESuit::eHearts, ECard::eSeven, ESuit::eDiamonds, ECard::eSeven, ESuit::eClubs );
+            NHandUtils::C4CardInfo h2( ECard::eSeven, ESuit::eDiamonds, ECard::eSeven, ESuit::eClubs, ECard::eSix, ESuit::eHearts, ECard::eSix, ESuit::eClubs );
+            EXPECT_TRUE( h2.lessThan( false, h1 ) );
+            EXPECT_FALSE( h2.greaterThan( false, h1 ) );
+            EXPECT_FALSE( h2.equalTo( false, h1 ) );
+
+            EXPECT_FALSE( h1.lessThan( false, h2 ) );
+            EXPECT_TRUE( h1.greaterThan( false, h2 ) );
+            EXPECT_FALSE( h1.equalTo( false, h2 ) );
+
+            EXPECT_TRUE( h2.lessThan( true, h1 ) );
+            EXPECT_FALSE( h2.greaterThan( true, h1 ) );
+            EXPECT_FALSE( h2.equalTo( true, h1 ) );
+
+            EXPECT_FALSE( h1.lessThan( true, h2 ) );
+            EXPECT_TRUE( h1.greaterThan( true, h2 ) );
+            EXPECT_FALSE( h1.equalTo( true, h2 ) );
+        }
+    }
+
+    TEST_F( C4CardHandTester, AllCardHandsHardWay )
+    {
+        std::vector< NHandUtils::C4CardInfo > allHands;
+        size_t numHands = 0;
+        auto allCards = getAllCards();
+
+        size_t num4 = 0;
+        for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
+        {
+            for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
+            {
+                for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
+                {
+                    for ( size_t c4 = c3 + 1; c4 < allCards.size(); ++c4 )
+                    {
+                        if (    ( allCards[ c1 ]->getCard() == allCards[ c2 ]->getCard() )
+                             && ( allCards[ c1 ]->getCard() == allCards[ c3 ]->getCard() )
+                             && ( allCards[ c1 ]->getCard() == allCards[ c4 ]->getCard() ) )
+                        {
+                            //std::cout 
+                            //    << *allCards[ c1 ] << " "
+                            //    << *allCards[ c2 ] << " "
+                            //    << *allCards[ c3 ] << " "
+                            //    << *allCards[ c4 ] << "\n"
+                            //    ;
+
+                            num4++;
+                        }
+
+                        NHandUtils::C4CardInfo cardInfo( allCards[ c1 ]->getCard(), allCards[ c1 ]->getSuit(), allCards[ c2 ]->getCard(), allCards[ c2 ]->getSuit(), allCards[ c3 ]->getCard(), allCards[ c3 ]->getSuit(), allCards[ c4 ]->getCard(), allCards[ c4 ]->getSuit() );
+                        allHands.push_back( cardInfo );
+                        numHands++;
+                    }
+                }
+            }
+        }
+
+        auto num4FoundBefore=0;
+        for ( size_t ii = 0; ii < allHands.size(); ++ii )
+        {
+            if ( allHands[ ii ].isFourOfAKind() )
+            {
+                //std::cout << "ii=" << ii << ": " << allHands[ ii ] << "\n";
+                num4FoundBefore++;
+            }
+        }
+        EXPECT_EQ( num4FoundBefore, num4 );
+
+        auto szBefore = allHands.size();
+
+        std::sort( allHands.begin(), allHands.end(), []( const NHandUtils::C4CardInfo& lhs, const NHandUtils::C4CardInfo& rhs )
+                   { 
+                       bool retVal = lhs.greaterThan( true, rhs );
+
+                       //if ( lhs.isFourOfAKind() || rhs.isFourOfAKind() )
+                       //{
+                       //    std::cout << "LHS=" << lhs << "> RHS=" << rhs << "=" << retVal << "\n";
+                       //}
+
+                       return retVal;
+                   }
+        );
+
+        auto szAfter = allHands.size();
+        EXPECT_EQ( szBefore, szAfter );
+
+        auto num4FoundAfter = 0;
+        for ( size_t ii = 0; ii < allHands.size(); ++ii )
+        {
+            if ( allHands[ ii ].isFourOfAKind() )
+            {
+                //std::cout << "ii=" << ii << ": " << allHands[ ii ] << "\n";
+                num4FoundAfter++;
+            }
+        }
+        EXPECT_EQ( num4FoundAfter, num4 );
+
+        EXPECT_EQ( 270725, numHands );
+        EXPECT_EQ( 270725, allHands.size() );
+
+        std::vector< NHandUtils::C4CardInfo > uniqueHands;
+        auto prevHand = allHands[ 0 ];
+        uniqueHands.push_back( prevHand );
+        for ( size_t ii = 1; ii < allHands.size(); ++ii )
+        {
+            if ( prevHand.equalTo( true, allHands[ ii ] ) )
+                continue;
+            prevHand = allHands[ ii ];
+            uniqueHands.push_back( prevHand );
+        }
+        EXPECT_EQ( 2535, uniqueHands.size() );
+
+        std::map< EHand, size_t > freq;
+        for ( auto&& ii : allHands )
+        {
+            auto hand = ii.getHandType();
+            freq[ hand ]++;
+        }
+        EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 13, freq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 44, freq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 2496, freq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 2772, freq[ EHand::eStraight ] );
+        EXPECT_EQ( 2808, freq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 2816, freq[ EHand::eFlush ] );
+        EXPECT_EQ( 82368, freq[ EHand::ePair ] );
+        EXPECT_EQ( 177408, freq[ EHand::eHighCard ] );
+
+        std::map< EHand, size_t > subFreq;
+        for ( auto&& ii : uniqueHands )
+        {
+            auto hand = ii.getHandType();
+            subFreq[ hand ]++;
+        }
+        EXPECT_EQ( 0, subFreq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 11, subFreq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 11, subFreq[ EHand::eStraight ] );
+        EXPECT_EQ( 13, subFreq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 78, subFreq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 156, subFreq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 704, subFreq[ EHand::eFlush ] );
+        EXPECT_EQ( 704, subFreq[ EHand::eHighCard ] );
+        EXPECT_EQ( 858, subFreq[ EHand::ePair ] );
+
+        //NHandUtils::gComputeAllHands = true;
+        NHandUtils::generateAll4CardHands();
+    }
+
+    TEST_F( C4CardHandTester, OneOfEachHand )
+    {
+        auto h1 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eSpades );
+        EXPECT_TRUE( h1.isStraightFlush() );
+        EXPECT_FALSE( h1.isFourOfAKind() );
+        EXPECT_FALSE( h1.isFullHouse() );
+        EXPECT_TRUE( h1.isFlush() );
+        EXPECT_TRUE( h1.isStraight() );
+        EXPECT_FALSE( h1.isWheel() );
+        EXPECT_FALSE( h1.isThreeOfAKind() );
+        EXPECT_FALSE( h1.isTwoPair() );
+        EXPECT_FALSE( h1.isPair() );
+        EXPECT_FALSE( h1.isHighCard() );
+
+        auto h2 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs, ECard::eDeuce, ESuit::eDiamonds );
+        EXPECT_FALSE( h2.isStraightFlush() );
+        EXPECT_TRUE( h2.isFourOfAKind() );
+        EXPECT_FALSE( h2.isFullHouse() );
+        EXPECT_FALSE( h2.isFlush() );
+        EXPECT_FALSE( h2.isStraight() );
+        EXPECT_FALSE( h2.isWheel() );
+        EXPECT_FALSE( h2.isThreeOfAKind() );
+        EXPECT_FALSE( h2.isTwoPair() );
+        EXPECT_FALSE( h2.isPair() );
+        EXPECT_FALSE( h2.isHighCard() );
+
+        auto h3 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eSix, ESuit::eSpades );
+        EXPECT_FALSE( h3.isStraightFlush() );
+        EXPECT_FALSE( h3.isFourOfAKind() );
+        EXPECT_FALSE( h3.isFullHouse() );
+        EXPECT_TRUE( h3.isFlush() );
+        EXPECT_FALSE( h3.isStraight() );
+        EXPECT_FALSE( h3.isWheel() );
+        EXPECT_FALSE( h3.isThreeOfAKind() );
+        EXPECT_FALSE( h3.isTwoPair() );
+        EXPECT_FALSE( h3.isPair() );
+        EXPECT_FALSE( h3.isHighCard() );
+
+        auto h4 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eHearts );
+        EXPECT_FALSE( h4.isStraightFlush() );
+        EXPECT_FALSE( h4.isFourOfAKind() );
+        EXPECT_FALSE( h4.isFullHouse() );
+        EXPECT_FALSE( h4.isFlush() );
+        EXPECT_TRUE( h4.isStraight() );
+        EXPECT_FALSE( h4.isWheel() );
+        EXPECT_FALSE( h4.isThreeOfAKind() );
+        EXPECT_FALSE( h4.isTwoPair() );
+        EXPECT_FALSE( h4.isPair() );
+        EXPECT_FALSE( h4.isHighCard() );
+
+        auto h5 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eAce, ESuit::eHearts );
+        EXPECT_FALSE( h5.isStraightFlush() );
+        EXPECT_FALSE( h5.isFourOfAKind() );
+        EXPECT_FALSE( h5.isFullHouse() );
+        EXPECT_FALSE( h5.isFlush() );
+        EXPECT_TRUE( h5.isStraight() );
+        EXPECT_TRUE( h5.isWheel() );
+        EXPECT_FALSE( h5.isThreeOfAKind() );
+        EXPECT_FALSE( h5.isTwoPair() );
+        EXPECT_FALSE( h5.isPair() );
+        EXPECT_FALSE( h5.isHighCard() );
+
+        auto h6 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs, ECard::eTrey, ESuit::eDiamonds );
+        EXPECT_FALSE( h6.isStraightFlush() );
+        EXPECT_FALSE( h6.isFourOfAKind() );
+        EXPECT_FALSE( h6.isFullHouse() );
+        EXPECT_FALSE( h6.isFlush() );
+        EXPECT_FALSE( h6.isStraight() );
+        EXPECT_FALSE( h6.isWheel() );
+        EXPECT_TRUE( h6.isThreeOfAKind() );
+        EXPECT_FALSE( h6.isTwoPair() );
+        EXPECT_FALSE( h6.isPair() );
+        EXPECT_FALSE( h6.isHighCard() );
+
+        auto h7 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eTrey, ESuit::eClubs, ECard::eTrey, ESuit::eDiamonds );
+        EXPECT_FALSE( h7.isStraightFlush() );
+        EXPECT_FALSE( h7.isFourOfAKind() );
+        EXPECT_FALSE( h7.isFullHouse() );
+        EXPECT_FALSE( h7.isFlush() );
+        EXPECT_FALSE( h7.isStraight() );
+        EXPECT_FALSE( h7.isWheel() );
+        EXPECT_FALSE( h7.isThreeOfAKind() );
+        EXPECT_TRUE( h7.isTwoPair() );
+        EXPECT_FALSE( h7.isPair() );
+        EXPECT_FALSE( h7.isHighCard() );
+
+        auto h8 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eTrey, ESuit::eClubs, ECard::eAce, ESuit::eDiamonds );
+        EXPECT_FALSE( h8.isStraightFlush() );
+        EXPECT_FALSE( h8.isFourOfAKind() );
+        EXPECT_FALSE( h8.isFullHouse() );
+        EXPECT_FALSE( h8.isFlush() );
+        EXPECT_FALSE( h8.isStraight() );
+        EXPECT_FALSE( h8.isWheel() );
+        EXPECT_FALSE( h8.isThreeOfAKind() );
+        EXPECT_FALSE( h8.isTwoPair() );
+        EXPECT_TRUE( h8.isPair() );
+        EXPECT_FALSE( h8.isHighCard() );
+
+        auto h9 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eFive, ESuit::eHearts, ECard::eTrey, ESuit::eClubs, ECard::eAce, ESuit::eDiamonds );
+        EXPECT_FALSE( h9.isStraightFlush() );
+        EXPECT_FALSE( h9.isFourOfAKind() );
+        EXPECT_FALSE( h9.isFullHouse() );
+        EXPECT_FALSE( h9.isFlush() );
+        EXPECT_FALSE( h9.isStraight() );
+        EXPECT_FALSE( h9.isWheel() );
+        EXPECT_FALSE( h9.isThreeOfAKind() );
+        EXPECT_FALSE( h9.isTwoPair() );
+        EXPECT_FALSE( h9.isPair() );
+        EXPECT_TRUE( h9.isHighCard() );
+
+        EXPECT_TRUE( h1.greaterThan( true, h2 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h3 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h4 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h6 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h7 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h8 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h9 ) );
+
+        EXPECT_TRUE( h2.lessThan( true, h1 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h3 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h4 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h6 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h7 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h8 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h9 ) );
+
+        EXPECT_TRUE( h3.lessThan( true, h1 ) );
+        EXPECT_TRUE( h3.lessThan( true, h2 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h4 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h6 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h7 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h8 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h9 ) );
+
+        EXPECT_TRUE( h4.lessThan( true, h1 ) );
+        EXPECT_TRUE( h4.lessThan( true, h2 ) );
+        EXPECT_TRUE( h4.lessThan( true, h3 ) );
+        EXPECT_TRUE( h4.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h4.greaterThan( true, h6 ) );
+        EXPECT_TRUE( h4.greaterThan( true, h7 ) );
+        EXPECT_TRUE( h4.greaterThan( true, h8 ) );
+        EXPECT_TRUE( h4.greaterThan( true, h9 ) );
+
+        EXPECT_TRUE( h5.lessThan( true, h1 ) );
+        EXPECT_TRUE( h5.lessThan( true, h2 ) );
+        EXPECT_TRUE( h5.lessThan( true, h3 ) );
+        EXPECT_TRUE( h5.lessThan( true, h4 ) );
+        EXPECT_TRUE( h5.greaterThan( true, h6 ) );
+        EXPECT_TRUE( h5.greaterThan( true, h7 ) );
+        EXPECT_TRUE( h5.greaterThan( true, h8 ) );
+        EXPECT_TRUE( h5.greaterThan( true, h9 ) );
+
+        EXPECT_TRUE( h6.lessThan( true, h1 ) );
+        EXPECT_TRUE( h6.lessThan( true, h2 ) );
+        EXPECT_TRUE( h6.lessThan( true, h3 ) );
+        EXPECT_TRUE( h6.lessThan( true, h4 ) );
+        EXPECT_TRUE( h6.lessThan( true, h5 ) );
+        EXPECT_TRUE( h6.greaterThan( true, h7 ) );
+        EXPECT_TRUE( h6.greaterThan( true, h8 ) );
+        EXPECT_TRUE( h6.greaterThan( true, h9 ) );
+
+        EXPECT_TRUE( h7.lessThan( true, h1 ) );
+        EXPECT_TRUE( h7.lessThan( true, h2 ) );
+        EXPECT_TRUE( h7.lessThan( true, h3 ) );
+        EXPECT_TRUE( h7.lessThan( true, h4 ) );
+        EXPECT_TRUE( h7.lessThan( true, h5 ) );
+        EXPECT_TRUE( h7.lessThan( true, h6 ) );
+        EXPECT_TRUE( h7.greaterThan( true, h8 ) );
+        EXPECT_TRUE( h7.greaterThan( true, h9 ) );
+
+        EXPECT_TRUE( h8.lessThan( true, h1 ) );
+        EXPECT_TRUE( h8.lessThan( true, h2 ) );
+        EXPECT_TRUE( h8.lessThan( true, h3 ) );
+        EXPECT_TRUE( h8.lessThan( true, h4 ) );
+        EXPECT_TRUE( h8.lessThan( true, h5 ) );
+        EXPECT_TRUE( h8.lessThan( true, h6 ) );
+        EXPECT_TRUE( h8.lessThan( true, h7 ) );
+        EXPECT_TRUE( h8.greaterThan( true, h9 ) );
+
+        EXPECT_TRUE( h9.lessThan( true, h1 ) );
+        EXPECT_TRUE( h9.lessThan( true, h2 ) );
+        EXPECT_TRUE( h9.lessThan( true, h3 ) );
+        EXPECT_TRUE( h9.lessThan( true, h4 ) );
+        EXPECT_TRUE( h9.lessThan( true, h5 ) );
+        EXPECT_TRUE( h9.lessThan( true, h6 ) );
+        EXPECT_TRUE( h9.lessThan( true, h7 ) );
+        EXPECT_TRUE( h9.lessThan( true, h8 ) );
+    }
+
+    TEST_F( C4CardHandTester, Basic2 )
+    {
+        //NHandUtils::gComputeAllHands = true;
+        auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsFlushesCountForSmallHands( true );
+
+        p1->addCard( fGame->getCard( ECard::eTrey, ESuit::eSpades ) );
+        p1->addCard( fGame->getCard( ECard::eDeuce, ESuit::eSpades ) );
+        p1->addCard( fGame->getCard( ECard::eAce, ESuit::eSpades ) );
+        p1->addCard( fGame->getCard( ECard::eFour, ESuit::eSpades ) );
+
+        EXPECT_TRUE( p1->isFlush() ) << "Cards: " << p1->getHand()->getCards();
+        EXPECT_TRUE( p1->isStraight() ) << "Cards: " << p1->getHand()->getCards();
+        auto hand = p1->determineHand();
+        EXPECT_EQ( EHand::eStraightFlush, std::get< 0 >( hand ) );
     }
 
     //TEST_F( C4CardHandTester, StraightFlushes )
@@ -1676,6 +2493,154 @@ namespace NHandTester
     //    EXPECT_EQ( ECard::eFour, *card.begin() );
     //    EXPECT_EQ( ECard::eKing, *kickers.begin() );
     //}
+
+    TEST_F( C4CardHandTester, AllCardHands )
+    {
+        //auto p1 = fGame->addPlayer( "Scott" );
+        //fGame->setStraightsFlushesCountForSmallHands( true );
+
+        //std::vector< std::shared_ptr< CHand > > allHands;
+        //size_t numHands = 0;
+        //auto allCards = getAllCards();
+        //for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
+        //{
+        //    for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
+        //    {
+        //        for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
+        //        {
+        //            for ( size_t c4 = c3 + 1; c4 < allCards.size(); ++c4 )
+        //            {
+        //                auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ], allCards[ c4 ] } ), fGame->playInfo() );
+        //                allHands.push_back( hand );
+        //                numHands++;
+        //            }
+        //        }
+        //    }
+        //}
+
+        //std::sort( allHands.begin(), allHands.end(), []( const std::shared_ptr< CHand >& lhs, const std::shared_ptr< CHand >& rhs )
+        //           { return lhs->operator>( *rhs ); }
+        //);
+
+        //EXPECT_EQ( 270725, numHands );
+        //EXPECT_EQ( 270725, allHands.size() );
+
+        //std::vector< std::shared_ptr< CHand > > uniqueHands;
+        //std::shared_ptr< CHand > prevHand;
+        //for ( size_t ii = 0; ii < allHands.size(); ++ii )
+        //{
+        //    if ( prevHand && ( prevHand->operator==( *allHands[ ii ] ) ) )
+        //        continue;
+        //    prevHand = allHands[ ii ];
+        //    uniqueHands.push_back( prevHand );
+        //}
+        //EXPECT_EQ( 741, uniqueHands.size() );
+
+        //std::map< EHand, size_t > freq;
+        //for ( auto&& ii : allHands )
+        //{
+        //    auto hand = ii->determineHand();
+        //    freq[ std::get< 0 >( hand ) ]++;
+        //}
+        //EXPECT_EQ( 0, freq[ EHand::eFourOfAKind ] );
+        //EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
+        //EXPECT_EQ( 0, freq[ EHand::eTwoPair ] );
+        //EXPECT_EQ( 48, freq[ EHand::eStraightFlush ] );
+        //EXPECT_EQ( 52, freq[ EHand::eThreeOfAKind ] );
+        //EXPECT_EQ( 720, freq[ EHand::eStraight ] );
+        //EXPECT_EQ( 1096, freq[ EHand::eFlush ] );
+        //EXPECT_EQ( 3744, freq[ EHand::ePair ] );
+        //EXPECT_EQ( 16440, freq[ EHand::eHighCard ] );
+
+        //std::map< EHand, size_t > subFreq;
+        //for ( auto&& ii : uniqueHands )
+        //{
+        //    auto hand = ii->determineHand();
+        //    subFreq[ std::get< 0 >( hand ) ]++;
+        //}
+        //EXPECT_EQ( 12, subFreq[ EHand::eStraightFlush ] );
+        //EXPECT_EQ( 0, subFreq[ EHand::eFourOfAKind ] );
+        //EXPECT_EQ( 0, subFreq[ EHand::eFullHouse ] );
+        //EXPECT_EQ( 274, subFreq[ EHand::eFlush ] );
+        //EXPECT_EQ( 12, subFreq[ EHand::eStraight ] );
+        //EXPECT_EQ( 13, subFreq[ EHand::eThreeOfAKind ] );
+        //EXPECT_EQ( 0, subFreq[ EHand::eTwoPair ] );
+        //EXPECT_EQ( 156, subFreq[ EHand::ePair ] );
+        //EXPECT_EQ( 274, subFreq[ EHand::eHighCard ] );
+    }
+
+    TEST_F( C4CardHandTester, AllCardHands_NoStraightsFlushes )
+    {
+        //auto p1 = fGame->addPlayer( "Scott" );
+        //fGame->setStraightsFlushesCountForSmallHands( false );
+
+        //std::vector< std::shared_ptr< CHand > > allHands;
+        //size_t numHands = 0;
+        //auto allCards = getAllCards();
+        //for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
+        //{
+        //    for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
+        //    {
+        //        for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
+        //        {
+        //            auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ] } ), fGame->playInfo() );
+        //            allHands.push_back( hand );
+        //            numHands++;
+        //        }
+        //    }
+        //}
+
+        //std::sort( allHands.begin(), allHands.end(), []( const std::shared_ptr< CHand >& lhs, const std::shared_ptr< CHand >& rhs )
+        //           { return lhs->operator>( *rhs ); }
+        //);
+
+        //EXPECT_EQ( 22100, numHands );
+        //EXPECT_EQ( 22100, allHands.size() );
+
+        //std::vector< std::shared_ptr< CHand > > uniqueHands;
+        //std::shared_ptr< CHand > prevHand;
+        //for ( size_t ii = 0; ii < allHands.size(); ++ii )
+        //{
+        //    if ( prevHand && ( prevHand->operator==( *allHands[ ii ] ) ) )
+        //        continue;
+        //    prevHand = allHands[ ii ];
+        //    uniqueHands.push_back( prevHand );
+        //}
+        //EXPECT_EQ( 455, uniqueHands.size() );
+
+        //std::map< EHand, size_t > freq;
+        //for ( auto&& ii : allHands )
+        //{
+        //    auto hand = ii->determineHand();
+        //    freq[ std::get< 0 >( hand ) ]++;
+        //}
+        //EXPECT_EQ( 0, freq[ EHand::eStraightFlush ] );
+        //EXPECT_EQ( 0, freq[ EHand::eFourOfAKind ] );
+        //EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
+        //EXPECT_EQ( 0, freq[ EHand::eFlush ] );
+        //EXPECT_EQ( 0, freq[ EHand::eStraight ] );
+        //EXPECT_EQ( 52, freq[ EHand::eThreeOfAKind ] );
+        //EXPECT_EQ( 0, freq[ EHand::eTwoPair ] );
+        //EXPECT_EQ( 3744, freq[ EHand::ePair ] );
+        //EXPECT_EQ( 18304, freq[ EHand::eHighCard ] );
+
+        //std::map< EHand, size_t > subFreq;
+        //for ( auto&& ii : uniqueHands )
+        //{
+        //    auto hand = ii->determineHand();
+        //    subFreq[ std::get< 0 >( hand ) ]++;
+        //}
+        //EXPECT_EQ( 0, subFreq[ EHand::eStraightFlush ] );
+        //EXPECT_EQ( 0, subFreq[ EHand::eFourOfAKind ] );
+        //EXPECT_EQ( 0, subFreq[ EHand::eFullHouse ] );
+        //EXPECT_EQ( 0, subFreq[ EHand::eFlush ] );
+        //EXPECT_EQ( 0, subFreq[ EHand::eStraight ] );
+        //EXPECT_EQ( 13, subFreq[ EHand::eThreeOfAKind ] );
+        //EXPECT_EQ( 0, subFreq[ EHand::eTwoPair ] );
+        //EXPECT_EQ( 156, subFreq[ EHand::ePair ] );
+        //EXPECT_EQ( 286, subFreq[ EHand::eHighCard ] );
+    }
+
 
     class C5CardHandTester : public CHandTester
     {

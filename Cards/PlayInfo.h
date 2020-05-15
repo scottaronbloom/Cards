@@ -35,7 +35,7 @@ struct SPlayInfo
     }
     std::unordered_set< std::shared_ptr< CCard > > fWildCards;
     bool fLowBall{ false };
-    bool fStraightsFlushesCountForSmallHands{ false };
+    bool fStraightsFlushesCount{ false };
 };
 
 #endif 

@@ -36,9 +36,9 @@
 namespace NHandUtils
 {
     // No Flushes/Straights
-    static std::map< S3CardInfo::THand, uint32_t > sCardMap =
+    static std::map< C3CardInfo::THand, uint32_t > sCardMap =
     {
-         { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts }, { ECard::eAce, ESuit::eDiamonds } }, 1 } // trips
+         { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts }, { ECard::eAce, ESuit::eDiamonds } }, 1 } // EHand::eThreeOfAKind
         ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts }, { ECard::eKing, ESuit::eDiamonds } }, 2 }
         ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts }, { ECard::eQueen, ESuit::eDiamonds } }, 3 }
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts }, { ECard::eJack, ESuit::eDiamonds } }, 4 }
@@ -50,9 +50,8 @@ namespace NHandUtils
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eFive, ESuit::eHearts }, { ECard::eFive, ESuit::eDiamonds } }, 10 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eFour, ESuit::eHearts }, { ECard::eFour, ESuit::eDiamonds } }, 11 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eTrey, ESuit::eHearts }, { ECard::eTrey, ESuit::eDiamonds } }, 12 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts }, { ECard::eDeuce, ESuit::eDiamonds } }, 13 }// trips
-        
-        ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 14 } // pairs
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts }, { ECard::eDeuce, ESuit::eDiamonds } }, 13 } // EHand::eThreeOfAKind
+        ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 14 } // EHand::ePair
         ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 15 }
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 16 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 17 }
@@ -207,9 +206,8 @@ namespace NHandUtils
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 166 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 167 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 168 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 169 } // pairs
-        
-        ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 170 } // highcard
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 169 } // EHand::ePair
+        ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 170 } // EHand::eHighCard
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 171 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 172 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 173 }
@@ -494,13 +492,13 @@ namespace NHandUtils
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 452 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 453 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 454 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } }, 455 } // high card
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } }, 455 } // EHand::eHighCard
     };
 
     // Flushes/Straights
-    static std::map< S3CardInfo::THand, uint32_t > sCardMapStraightsAndFlushesCount =
+    static std::map< C3CardInfo::THand, uint32_t > sCardMapStraightsAndFlushesCount =
     {
-         { { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 1 } // straight flush
+         { { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 1 } // EHand::eStraightFlush
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 2 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 3 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 4 }
@@ -511,9 +509,8 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 9 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 10 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } }, 11 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 12 } // straight flush
-
-        ,{ { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts }, { ECard::eAce, ESuit::eDiamonds } }, 13 } // trips
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 12 } // EHand::eStraightFlush
+        ,{ { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts }, { ECard::eAce, ESuit::eDiamonds } }, 13 } // EHand::eThreeOfAKind
         ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts }, { ECard::eKing, ESuit::eDiamonds } }, 14 }
         ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts }, { ECard::eQueen, ESuit::eDiamonds } }, 15 }
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts }, { ECard::eJack, ESuit::eDiamonds } }, 16 }
@@ -525,9 +522,8 @@ namespace NHandUtils
         ,{ { { ECard::eFive, ESuit::eSpades }, { ECard::eFive, ESuit::eHearts }, { ECard::eFive, ESuit::eDiamonds } }, 22 }
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eFour, ESuit::eHearts }, { ECard::eFour, ESuit::eDiamonds } }, 23 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eTrey, ESuit::eHearts }, { ECard::eTrey, ESuit::eDiamonds } }, 24 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts }, { ECard::eDeuce, ESuit::eDiamonds } }, 25 } // trips
-
-        ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 26 } //straights
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts }, { ECard::eDeuce, ESuit::eDiamonds } }, 25 } // EHand::eThreeOfAKind
+        ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 26 } // EHand::eStraight
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts } }, 27 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts } }, 28 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts } }, 29 }
@@ -538,9 +534,8 @@ namespace NHandUtils
         ,{ { { ECard::eFour, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades }, { ECard::eSix, ESuit::eHearts } }, 34 }
         ,{ { { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades }, { ECard::eFive, ESuit::eHearts } }, 35 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eHearts } }, 36 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 37 } // straights
-
-        ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 38 } // flushes
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 37 } // EHand::eStraight
+        ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 38 } // EHand::eFlush
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 39 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 40 }
         ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 41 }
@@ -813,9 +808,8 @@ namespace NHandUtils
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 308 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades } }, 309 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 310 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 311 } // flushes
-
-        ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 312 } // pairs
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades } }, 311 } // EHand::eFlush
+        ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 312 } // EHand::ePair
         ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 313 }
         ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 314 }
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 315 }
@@ -970,8 +964,8 @@ namespace NHandUtils
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eSix, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 464 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFive, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 465 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 466 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 467 }
-        ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 468 }
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eDeuce, ESuit::eHearts } }, 467 } // EHand::ePair
+        ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 468 } // EHand::eHighCard
         ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 469 }
         ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 470 }
         ,{ { { ECard::eEight, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } }, 471 }
@@ -1244,7 +1238,7 @@ namespace NHandUtils
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades }, { ECard::eSix, ESuit::eHearts } }, 738 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eSix, ESuit::eHearts } }, 739 }
         ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades }, { ECard::eFive, ESuit::eHearts } }, 740 }
-        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFive, ESuit::eHearts } }, 741 } // high card
+        ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFive, ESuit::eHearts } }, 741 } // EHand::eHighCard
     };
 
     static std::vector< uint32_t > sFlushes =
@@ -2255,7 +2249,7 @@ namespace NHandUtils
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26
     };
 
-    static std::unordered_map< int64_t, int16_t > sHighCardProductMap =
+    static std::unordered_map< int64_t, int16_t > sProductMap =
     {
          { 8, 13 }
         ,{ 12, 169 }
@@ -2428,7 +2422,7 @@ namespace NHandUtils
         ,{ 68921, 1 }
     };
 
-    static std::unordered_map< int64_t, int16_t > sStraitsProductMap =
+    static std::unordered_map< int64_t, int16_t > sStraitsAndFlushesProductMap =
     {
          { 8, 25 }
         ,{ 12, 467 }
@@ -2601,32 +2595,82 @@ namespace NHandUtils
         ,{ 68921, 13 }
     };
 
+    uint32_t evaluate3CardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo )
+    {
+        if ( cards.size() != 3 )
+            return -1;
 
-    S3CardInfo::S3CardInfo() :
-        S3CardInfo( THand( TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ) ) )
+        auto cardsValue = getCardsValue( cards );
+        if ( playInfo && playInfo->fStraightsFlushesCount )
+        {
+            if ( isFlush( cards ) )
+                return sFlushes[ cardsValue ];
+        }
+
+        auto straightOrHighCard = playInfo->fStraightsFlushesCount ? sStraightsUnique[ cardsValue ] : sHighCardUnique[ cardsValue ];
+        if ( straightOrHighCard )
+            return straightOrHighCard;
+
+        auto product = computeHandProduct( cards );
+        auto productMap = playInfo->fStraightsFlushesCount ? sStraitsAndFlushesProductMap : sProductMap;
+        auto pos = productMap.find( product );
+        if ( pos == productMap.end() )
+            return -1;
+        return ( *pos ).second;
+    }
+
+    EHand rankTo3CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo )
+    {
+        EHand hand;
+        if ( !playInfo->fStraightsFlushesCount )
+        {
+            if ( rank >= 170U )
+                hand = EHand::eHighCard;
+            else if ( rank >= 14U )
+                hand = EHand::ePair;
+            else /* if ( rank >= 1U ) */
+                hand = EHand::eThreeOfAKind;
+        }
+        else
+        {
+            if ( rank >= 468U )
+                hand = EHand::eHighCard;
+            else if ( rank >= 312U )
+                hand = EHand::ePair;
+            else if ( rank >= 38U )
+                hand = EHand::eFlush;
+            else if ( rank >= 26U )
+                hand = EHand::eStraight;
+            else if ( rank >= 13U )
+                hand = EHand::eThreeOfAKind;
+            else /* if ( rank >= 1U ) */
+                hand = EHand::eStraightFlush;
+        }
+        return hand;
+    }
+
+    C3CardInfo::C3CardInfo() :
+        C3CardInfo( THand( TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ) ) )
     {
 
     }
 
-    S3CardInfo::S3CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2, ECard c3, ESuit s3 ) :
-        S3CardInfo( THand( TCard( c1, s1 ), TCard( c2, s2 ), TCard( c3, s3 ) ) )
+    C3CardInfo::C3CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2, ECard c3, ESuit s3 ) :
+        C3CardInfo( THand( TCard( c1, s1 ), TCard( c2, s2 ), TCard( c3, s3 ) ) )
     {
 
     }
 
-    S3CardInfo::S3CardInfo( const THand& cards ) :
-        fCard1( std::get< 0 >( cards ) ),
-        fCard2( std::get< 1 >( cards ) ),
-        fCard3( std::get< 2 >( cards ) )
+    C3CardInfo::C3CardInfo( const THand& cards )
     {
-        auto cardsVector = std::vector< TCard >( { fCard1, fCard2, fCard3 } );
-        fIsFlush = NHandUtils::isFlush( cardsVector );
-        fIsPair = NHandUtils::isCount( cardsVector, 2 );
-        fIsThreeOfAKind = NHandUtils::isCount( cardsVector, 3 );
-        fStraightType = NHandUtils::isStraight( cardsVector );
+        fHandOrder = { EHand::eStraightFlush, EHand::eThreeOfAKind, EHand::eStraight, EHand::eFlush, EHand::ePair, EHand::eHighCard };
 
-        auto sortedCards = cardsVector;
-        std::sort( sortedCards.begin(), sortedCards.end(), []( TCard lhs, TCard rhs ) { return lhs.first > rhs.first; } );
+        auto sortedCards = setOrigCards( { std::get< 0 >( cards ), std::get< 1 >( cards ), std::get< 2 >( cards ) } );
+
+        fIsFlush = NHandUtils::isFlush( fOrigCards );
+        fIsPair = NHandUtils::isCount( fOrigCards, 2 );
+        fIsThreeOfAKind = NHandUtils::isCount( fOrigCards, 3 );
+        fStraightType = NHandUtils::isStraight( fOrigCards );
 
         fCards.push_back( sortedCards[ 0 ].first );
         fKickers.push_back( sortedCards[ 1 ].first );
@@ -2650,229 +2694,26 @@ namespace NHandUtils
                     fKickers.push_back( ii.first );
             }
         }
-
-        fBitValues.resize( 3 );
-        fBitValues[ 0 ] = NHandUtils::computeBitValue( fCard1.first, fCard1.second );
-        fBitValues[ 1 ] = NHandUtils::computeBitValue( fCard2.first, fCard2.second );
-        fBitValues[ 2 ] = NHandUtils::computeBitValue( fCard3.first, fCard3.second );
     }
 
-    bool S3CardInfo::isWheel() const
+    void generateAll3CardHands()
     {
-        return fStraightType.has_value() && ( fStraightType.value() == EStraightType::eWheel );
-    }
-
-    bool S3CardInfo::compareJustCards( bool flushStraightCount, const S3CardInfo& rhs ) const
-    {
-        if ( fIsThreeOfAKind && rhs.fIsThreeOfAKind )
-            return *(fCards.begin()) < *(rhs.fCards.begin());
-        if ( !fIsThreeOfAKind && rhs.fIsThreeOfAKind )
-            return true;
-        if ( fIsThreeOfAKind && !rhs.fIsThreeOfAKind )
-            return false;
-
-        if ( fIsPair && rhs.fIsPair )
-            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
-
-        if ( !fIsPair && rhs.fIsPair )
-            return true;
-        if ( fIsPair && !rhs.fIsPair )
-            return false;
-
-        if ( flushStraightCount )
+        static bool sAllHandsComputed{ false };
+        if ( NHandUtils::gComputeAllHands && !sAllHandsComputed )
         {
-            auto straightCompare = NHandUtils::compareStraight( fStraightType, rhs.fStraightType );
-            if ( straightCompare.has_value() )
-                return straightCompare.value();
-        }
+            sAllHandsComputed = true;
 
-        return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
-    }
+            using TCardToInfoMap = std::map< C3CardInfo::THand, C3CardInfo >;
+            auto gFlushStraightsCount = []( const C3CardInfo& lhs, const C3CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
+            auto gJustCardsCount = []( const C3CardInfo& lhs, const C3CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
 
-    bool S3CardInfo::lessThan( bool flushStraightCount, const S3CardInfo& rhs ) const
-    {
-        if ( !flushStraightCount )
-            return compareJustCards( flushStraightCount, rhs );
+            using TCardsCountMap = std::map< C3CardInfo, uint32_t, decltype( gJustCardsCount ) >;
+            using TFlushesCountMap = std::map< C3CardInfo, uint32_t, decltype( gFlushStraightsCount ) >;
 
-        if ( isStraightFlush() && !rhs.isStraightFlush() )
-            return false;
-        if ( !isStraightFlush() && rhs.isStraightFlush() )
-            return true;
-        if ( isStraightFlush() && rhs.isStraightFlush() )
-            return compareJustCards( flushStraightCount, rhs ); // which straight flush is bigger
+            static TCardToInfoMap allHands;
+            static TCardsCountMap justCardsCount( gJustCardsCount );
+            static TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
 
-        if ( fIsThreeOfAKind && !rhs.fIsThreeOfAKind )
-            return false;
-        if ( !fIsThreeOfAKind && rhs.fIsThreeOfAKind )
-            return true;
-        if ( fIsThreeOfAKind && rhs.fIsThreeOfAKind )
-            return compareJustCards( flushStraightCount, rhs ); // which best trips
-
-        auto straightCompare = NHandUtils::compareStraight( fStraightType, rhs.fStraightType );
-        if ( straightCompare.has_value() )
-            return straightCompare.value();
-
-        if ( fIsFlush && !rhs.fIsFlush )
-            return false;
-        if ( !fIsFlush && rhs.fIsFlush )
-            return true;
-        
-        // pairs are handled here
-        //if ( fIsFlush && rhs.fIsFlush )
-        return compareJustCards( flushStraightCount, rhs );
-    }
-
-    bool S3CardInfo::equalTo( bool flushStraightCount, const S3CardInfo& rhs ) const
-    {
-        if ( fIsThreeOfAKind && rhs.fIsThreeOfAKind )
-            return fCards == rhs.fCards && fKickers == rhs.fKickers;
-        if ( fIsPair && rhs.fIsPair )
-            return fCards == rhs.fCards && fKickers == rhs.fKickers;
-
-        if ( flushStraightCount )
-        {
-            if ( fIsFlush != rhs.fIsFlush )
-                return false;
-
-            auto straightsEqual = NHandUtils::straightsEqual( fStraightType, rhs.fStraightType );
-            if ( straightsEqual.has_value() )
-                return straightsEqual.value();
-        }
-        return ( fCards == rhs.fCards ) && ( fKickers == rhs.fKickers );
-    }
-
-    uint16_t S3CardInfo::getCardsValue() const
-    {
-        return NHandUtils::getCardsValue( fBitValues );
-    }
-    
-    uint64_t S3CardInfo::handProduct() const
-    {
-        return NHandUtils::computeHandProduct( fBitValues );
-    }
-
-    std::ostream& operator<<( std::ostream& oss, const S3CardInfo& obj )
-    {
-        oss << obj.fCard1.first << obj.fCard1.second
-            << " "
-            << obj.fCard2.first << obj.fCard2.second
-            << " "
-            << obj.fCard3.first << obj.fCard3.second
-            ;
-        return oss;
-    }
-
-    static void dumpMap( std::ostream& oss, const std::map< uint64_t, uint16_t > & values, const std::string& varName )
-    {
-        oss
-            << "    " << "static std::unordered_map< int64_t, int16_t > " << varName << " = \n"
-            << "    {\n"
-            ;
-        bool first = true;
-        for( auto && ii : values )
-        {
-            oss << "        ";
-
-            if ( !first )
-                oss << ",";
-            else
-                oss << " ";
-            first = false;
-            oss << "{ " << ii.first << ", " << ii.second << " }\n";
-        }
-        oss << "    };\n\n";
-        oss.flush();
-    }
-
-    static void dumpTable( std::ostream& oss, const std::vector< uint32_t >& values, const std::string & varName )
-    {
-        oss 
-            << "    " << "static std::vector< uint32_t > " << varName << " = \n"
-            << "    {\n"
-            ;
-        size_t numChars = 0;
-        for( size_t ii = 0; ii < values.size(); ++ii )
-        {
-            if ( numChars == 0 )
-                oss << "        ";
-
-            auto tmp = std::to_string( values[ ii ] );
-            oss << tmp;
-            numChars += tmp.size();
-            if ( ii != ( values.size() -1 ) )
-            {
-                oss << ", ";
-                numChars += 2;
-            }
-
-            if ( numChars >= 66 )
-            {
-                numChars = 0;
-                oss << "\n";
-            }
-        }
-        oss << "\n    };\n\n";
-        oss.flush();
-    }
-
-    template< typename T>
-    void computeAndDumpMap( std::ostream & oss, T & map, const std::string & varName, const std::string & header )
-    {
-        int num = 1;
-        //std::optional< S3CardInfo > prev;
-        for ( auto&& ii : map )
-        {
-            //if ( prev.has_value() && ( *prev->equalTo( ii.first ) ) )
-            //    num++;
-            //prev = ii.first;
-            ii.second = num++;
-        }
-
-        oss
-            << "    // " << header << "\n"
-            << "    static std::map< S3CardInfo::THand, uint32_t > " << varName << " = \n"
-            << "    {\n"
-            ;
-
-        bool first = true;
-        for ( auto&& ii : map )
-        {
-            oss << "        ";
-            if ( first )
-                oss << " ";
-            else
-                oss << ",";
-            first = false;
-            auto firstCard = ii.first.fCard1;
-            auto secondCard = ii.first.fCard2;
-            auto thirdCard = ii.first.fCard3;
-            if ( ( firstCard.first == ECard::eDeuce ) && ( secondCard.first == ECard::eAce ) )
-                std::swap( firstCard, secondCard );
-            oss << "{ { "
-                     << "{ " << qPrintable( ::asEnum( firstCard.first ) ) << ", " << qPrintable( ::asEnum( firstCard.second ) ) << " }, "
-                     << "{ " << qPrintable( ::asEnum( secondCard.first ) ) << ", " << qPrintable( ::asEnum( secondCard.second ) ) << " }, "
-                     << "{ " << qPrintable( ::asEnum( thirdCard.first ) ) << ", " << qPrintable( ::asEnum( thirdCard.second ) ) << " } "
-                     << "}, " << ii.second << " }\n";
-        }
-        oss << "    };\n\n";
-        oss.flush();
-    }
-
-    uint32_t evaluate3CardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo > & playInfo )
-    {
-        using TCardToInfoMap = std::map< S3CardInfo::THand, S3CardInfo >;
-        auto gFlushStraightsCount = []( const S3CardInfo& lhs, const S3CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
-        auto gJustCardsCount = []( const S3CardInfo& lhs, const S3CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
-
-        using TCardsCountMap = std::map< S3CardInfo, uint32_t, decltype( gJustCardsCount ) >;
-        using TFlushesCountMap = std::map< S3CardInfo, uint32_t, decltype( gFlushStraightsCount ) >;
-
-        static TCardToInfoMap allHands;
-        static TCardsCountMap justCardsCount( gJustCardsCount );
-        static TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
-
-        if ( NHandUtils::gComputeAllHands && allHands.empty() )
-        {
             auto numHands = 52 * 51 * 50;
             std::cout << "Generating: " << numHands << "\n";
 
@@ -2901,8 +2742,8 @@ namespace NHandUtils
                         if ( ( handCount % ( numHands / 10 ) ) == 0 )
                             std::cout << "   Generating: Hand #" << handCount << " of " << numHands << "\n";
 
-                        auto curr = S3CardInfo::THand( TCard( c1->getCard(), c1->getSuit() ), TCard( c2->getCard(), c2->getSuit() ), TCard( c3->getCard(), c3->getSuit() ) );
-                        S3CardInfo cardInfo( curr );
+                        auto curr = C3CardInfo::THand( TCard( c1->getCard(), c1->getSuit() ), TCard( c2->getCard(), c2->getSuit() ), TCard( c3->getCard(), c3->getSuit() ) );
+                        C3CardInfo cardInfo( curr );
                         allHands[ curr ] = cardInfo;
 
                         justCardsCount.insert( std::make_pair( cardInfo, -1 ) );
@@ -2918,8 +2759,7 @@ namespace NHandUtils
             std::ofstream ofs( "3CardDump.cpp" );
             std::ostream* oss = &ofs; //&std::cout;
 
-            computeAndDumpMap( *oss, justCardsCount, "sCardMap", "No Flushes/Straights" );
-            computeAndDumpMap( *oss, flushesAndStraightsCount, "sCardMapStraightsAndFlushesCount", "Flushes/Straights" );
+            CCardInfo::computeAndGenerateMaps( *oss, 3, justCardsCount, flushesAndStraightsCount );
 
             std::vector< uint32_t > flushes;
             flushes.resize( maxCardsValue + 1 );
@@ -2933,7 +2773,7 @@ namespace NHandUtils
             std::map< uint64_t, uint16_t > highCardProductMap;
             std::map< uint64_t, uint16_t > straightsProductMap;
 
-            for( auto && ii : allHands )
+            for ( auto&& ii : allHands )
             {
                 auto cardValue = ii.second.getCardsValue();
 
@@ -2945,11 +2785,11 @@ namespace NHandUtils
                 Q_ASSERT( pos2 != justCardsCount.end() );
                 auto highCardValue = ( *pos2 ).second;
 
-                if ( ii.second.fIsFlush )
+                if ( ii.second.isFlush() )
                 {
                     flushes[ cardValue ] = straightsValue;
                 }
-                else if ( !ii.second.fIsPair && !ii.second.fIsThreeOfAKind )
+                else if ( ii.second.allCardsUnique() )
                 {
                     straightsUnique[ cardValue ] = straightsValue;
                     highCardUnique[ cardValue ] = highCardValue;
@@ -2961,63 +2801,14 @@ namespace NHandUtils
                     highCardProductMap[ productValue ] = highCardValue;
                 }
             }
-            dumpTable( *oss, flushes, "sFlushes" );
-            dumpTable( *oss, highCardUnique, "sHighCardUnique" );
-            dumpTable( *oss, straightsUnique, "sStraightsUnique" );
-            dumpMap( *oss, highCardProductMap, "sHighCardProductMap" );
-            dumpMap( *oss, straightsProductMap, "sStraitsProductMap" );
+            CCardInfo::generateTable( *oss, flushes, "sFlushes" );
+            CCardInfo::generateTable( *oss, highCardUnique, "sHighCardUnique" );
+            CCardInfo::generateTable( *oss, straightsUnique, "sStraightsUnique" );
+            CCardInfo::generateMap( *oss, highCardProductMap, "sProductMap" );
+            CCardInfo::generateMap( *oss, straightsProductMap, "sStraitsAndFlushesProductMap" );
+
+            CCardInfo::generateEvaluateFunction( *oss, 3 );
+            CCardInfo::generateRankFunction( *oss, 3, justCardsCount, flushesAndStraightsCount );
         }
-    
-        if ( cards.size() != 3 )
-            return -1;
-
-        auto cardsValue = getCardsValue( cards );
-        if ( playInfo && playInfo->fStraightsFlushesCountForSmallHands )
-        {
-            if ( isFlush( cards ) )
-                return sFlushes[ cardsValue ];
-        }
-
-        auto straightOrHighCard = playInfo->fStraightsFlushesCountForSmallHands ? sStraightsUnique[ cardsValue ] : sHighCardUnique[ cardsValue ];
-        if ( straightOrHighCard )
-            return straightOrHighCard;
-
-        auto product = computeHandProduct( cards );
-        auto && productMap = playInfo->fStraightsFlushesCountForSmallHands ? sStraitsProductMap : sHighCardProductMap;
-        auto pos = productMap.find( product );
-        if ( pos == productMap.end() )
-            return -1;
-        return (*pos).second;
     }
-
-    EHand rankTo3CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )
-    {
-        EHand hand;
-        if ( !playInfo->fStraightsFlushesCountForSmallHands )
-        {
-            if ( rank > 169U )
-                hand = EHand::eHighCard;
-            else if ( rank > 13U )
-                hand = EHand::ePair;
-            else
-                hand = EHand::eThreeOfAKind;
-        }
-        else
-        {
-            if ( rank > 467U )
-                hand = EHand::eHighCard;
-            else if ( rank > 311U )
-                hand = EHand::ePair;
-            else if ( rank > 37U )
-                hand = EHand::eFlush;
-            else if ( rank > 25U )
-                hand = EHand::eStraight;
-            else if ( rank > 12U )
-                hand = EHand::eThreeOfAKind;
-            else 
-                hand = EHand::eStraightFlush;
-        }
-        return hand;
-    }
-
 }

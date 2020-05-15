@@ -23,7 +23,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "Card.h"
+#include "CardInfo.h"
 #include "HandUtils.h"
 #include <memory>
 #include <optional>
@@ -32,45 +32,16 @@ struct SPlayInfo;
 
 namespace NHandUtils
 {
-    struct S3CardInfo
+    class C3CardInfo : public CCardInfo
     {
+    public:
         using THand = std::tuple< TCard, TCard, TCard >;
-        S3CardInfo();
-        S3CardInfo( const THand& cards );
-        S3CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2, ECard c3, ESuit s3 );
-
-        bool compareJustCards( bool flushStraightCount, const S3CardInfo& rhs ) const;
-        uint16_t getCardsValue() const;
-        uint64_t handProduct() const;
-        // 2 card ranking
-        // pair A->2
-        // straight AK -> A2
-        // flush AK -> A2
-        // high card -> AK -> A2
-        bool lessThan( bool flushStraightCount, const S3CardInfo& rhs ) const;
-        bool greaterThan( bool flushStraightCount, const S3CardInfo& rhs ) const
-        {
-            return !lessThan( flushStraightCount, rhs ) && !equalTo( flushStraightCount, rhs );
-        }
-        bool equalTo( bool flushStraightCount, const S3CardInfo& rhs ) const;
-
-        bool isWheel() const;
-        bool isStraightFlush() const{ return fStraightType.has_value() && fIsFlush; }
-
-        bool fIsFlush{ false };
-        std::optional< EStraightType > fStraightType;
-        bool fIsPair{ false };
-        bool fIsThreeOfAKind{ false };
-        std::list< ECard > fCards;
-        std::list< ECard > fKickers;
-        TCard fCard1;
-        TCard fCard2;
-        TCard fCard3;
-
-        std::vector< TCardBitType > fBitValues;
+        C3CardInfo();
+        C3CardInfo( const THand& cards );
+        C3CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2, ECard c3, ESuit s3 );
     };
-    std::ostream& operator<<( std::ostream& oss, const S3CardInfo& obj );
 
+    void generateAll3CardHands();
     uint32_t evaluate3CardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo );
     EHand rankTo3CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
 }

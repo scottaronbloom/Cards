@@ -223,22 +223,46 @@ namespace NHandUtils
         return ( *pos ).second;
     }
 
-    bool isCount( const std::vector< TCard >& cards, uint8_t count )
+    bool isCount( const std::vector< TCard >& cards, const std::unordered_multiset< uint8_t > & counts )
     {
+        std::unordered_multimap< uint8_t, bool > countHits;
+        for( auto && ii : counts )
+        {
+            countHits.insert( std::make_pair( ii, false ) );
+        }
         std::map< ECard, uint8_t > cardHits;
         for ( auto && card : cards )
             cardHits[ card.first ]++;
 
-        int numAtCount = 0;
         for ( auto&& ii : cardHits )
         {
             if ( ii.second == 1 )
                 continue;
-            if ( ii.second != count ) // looking for a two, got a 3
+            auto range = countHits.equal_range( ii.second );
+            bool found = false;
+            for( auto ii = range.first; ii != range.second; ++ii )
+            {
+                if ( (*ii).second == false )// looking for a count of this size that hasnt been set yet
+                {
+                    found = true;
+                    (*ii).second = true;
+                    break;
+                }
+            }
+            if ( !found )
                 return false;
-            numAtCount++;
         }
-        return numAtCount == 1;
+        for( auto && ii : countHits )
+        {
+            if ( ii.second == false )
+                return false;
+        }
+        return true;
+    }
+
+    bool isCount( const std::vector< TCard >& cards, uint8_t count )
+    {
+        return isCount( cards, std::unordered_multiset< uint8_t >( { count } ) );
     }
 
     bool isStraight( const std::vector< std::shared_ptr< CCard > >& cards )
@@ -330,6 +354,27 @@ namespace NHandUtils
         if ( ii == lhs.second.end() && jj != rhs.second.end() )
             return false;
 
+        return false;
+    }
+
+    bool isStraightOrFlush( EHand handType )
+    {
+        switch ( handType )
+        {
+            case EHand::eNoCards:
+            case EHand::eHighCard:
+            case EHand::ePair:
+            case EHand::eTwoPair:
+            case EHand::eThreeOfAKind:
+            case EHand::eFullHouse:
+            case EHand::eFourOfAKind:
+            case EHand::eFiveOfAKind:
+                return false;
+            case EHand::eStraight:
+            case EHand::eFlush:
+            case EHand::eStraightFlush:
+                return true;
+        }
         return false;
     }
 

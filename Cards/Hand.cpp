@@ -64,6 +64,24 @@ QString toString( EHand hand, bool format )
     return QString();
 }
 
+std::string toCPPString( EHand hand )
+{
+    switch ( hand )
+    {
+        case EHand::eFiveOfAKind: return "EHand::eFiveOfAKind";
+        case EHand::eStraightFlush: return "EHand::eStraightFlush";
+        case EHand::eFourOfAKind: return "EHand::eFourOfAKind";
+        case EHand::eFullHouse: return "EHand::eFullHouse";
+        case EHand::eFlush: return "EHand::eFlush";
+        case EHand::eStraight: return "EHand::eStraight";
+        case EHand::eThreeOfAKind: return "EHand::eThreeOfAKind";
+        case EHand::eTwoPair: return "EHand::eTwoPair";
+        case EHand::ePair: return "EHand::ePair";
+        case EHand::eHighCard: return "EHand::eHighCard";
+        case EHand::eNoCards: return "EHand::eNoCards";
+    }
+    return std::string();
+}
 std::ostream & operator<<( std::ostream& oss, EHand value )
 {
     oss << toString( value, false ).toStdString();

@@ -118,6 +118,7 @@ namespace NHandUtils
     };
 
     bool isCount( const std::vector< TCard > & cards, uint8_t count );
+    bool isCount( const std::vector< TCard >& cards, const std::unordered_multiset< uint8_t > & counts );
     std::optional< EStraightType > isStraight( const std::vector< TCard > & cards );
     std::optional< EStraightType > isWheel( const std::vector< TCard >& cards );
 
@@ -125,6 +126,8 @@ namespace NHandUtils
     std::optional< bool > straightsEqual( const std::optional< EStraightType >& lhs, const std::optional< EStraightType >& rhs );
 
     bool compareCards( const std::pair< std::list< ECard >, std::list< ECard > > & lhs, const std::pair< std::list< ECard >, std::list< ECard > > & rhs );
+
+    bool isStraightOrFlush( EHand handType );
 
     extern bool gComputeAllHands;
 }
