@@ -7832,7 +7832,17 @@ namespace NHandUtils
 
     C4CardInfo::C4CardInfo( const THand& cards )
     {
-        fHandOrder = { EHand::eFourOfAKind, EHand::eStraightFlush, EHand::eThreeOfAKind, EHand::eStraight, EHand::eTwoPair, EHand::eFlush, EHand::ePair, EHand::eHighCard };
+        fHandOrder = 
+        { 
+            EHand::eFourOfAKind, 
+            EHand::eStraightFlush, 
+            EHand::eThreeOfAKind, 
+            EHand::eStraight, 
+            EHand::eTwoPair, 
+            EHand::eFlush, 
+            EHand::ePair, 
+            EHand::eHighCard 
+        };
 
         auto sortedCards = setOrigCards( { std::get< 0 >( cards ), std::get< 1 >( cards ), std::get< 2 >( cards ), std::get< 3 >( cards ) } );
         fIsFlush = NHandUtils::isFlush( fOrigCards );

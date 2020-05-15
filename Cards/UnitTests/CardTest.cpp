@@ -23,6 +23,7 @@
 #include "CardTest.h"
 #include "Cards/Game.h"
 #include "Cards/Card.h"
+#include "Cards/CardInfo.h"
 
 std::ostream& operator<<( std::ostream& os, const QString& data )
 {
@@ -95,5 +96,24 @@ namespace NHandTester
             expected++;
         }
         return true;
+    }
+
+    bool CHandTester::CompareHandOrder( const std::map< EHand, size_t >& freq, const NHandUtils::CCardInfo& cardInfo ) const
+    {
+        std::map< size_t, EHand > leastToMost;
+        for ( auto&& ii : freq )
+        {
+            leastToMost[ ii.second ] = ii.first;
+        }
+        auto handOrder = cardInfo.handOrder();
+        auto ii = leastToMost.begin();
+        auto jj = handOrder.begin();
+        bool retVal = true;
+        for ( ; ii != leastToMost.end() && jj != handOrder.end(); ++ii, ++jj )
+        {
+            retVal = retVal && ( ( *ii ).second == *jj );
+            EXPECT_EQ( ( *ii ).second, *jj );
+        }
+        return retVal;
     }
 }

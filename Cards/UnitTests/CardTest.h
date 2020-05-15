@@ -35,6 +35,12 @@ std::ostream& operator<<( std::ostream& os, const QString & data );
 
 void PrintTo( const QString& data, std::ostream * os );
 
+namespace NHandUtils
+{
+    class CCardInfo;
+}
+
+enum class EHand;
 namespace NHandTester
 {
     class CHandTester : public ::testing::Test
@@ -48,6 +54,7 @@ namespace NHandTester
         virtual void SetUp();
         virtual void TearDown();
         bool isStraight( std::vector< ECard > cards ) const;
+        bool CompareHandOrder( const std::map< EHand, size_t > & freq, const NHandUtils::CCardInfo & cardInfo ) const;
     public:
         CGame * fGame{nullptr};
     };

@@ -2663,7 +2663,15 @@ namespace NHandUtils
 
     C3CardInfo::C3CardInfo( const THand& cards )
     {
-        fHandOrder = { EHand::eStraightFlush, EHand::eThreeOfAKind, EHand::eStraight, EHand::eFlush, EHand::ePair, EHand::eHighCard };
+        fHandOrder = 
+            { 
+                EHand::eStraightFlush, 
+                EHand::eThreeOfAKind, 
+                EHand::eStraight, 
+                EHand::eFlush, 
+                EHand::ePair, 
+                EHand::eHighCard 
+            };
 
         auto sortedCards = setOrigCards( { std::get< 0 >( cards ), std::get< 1 >( cards ), std::get< 2 >( cards ) } );
 

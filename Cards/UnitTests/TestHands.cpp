@@ -94,6 +94,9 @@ namespace NHandTester
             auto hand = ii.getHandType();
             freq[ hand ]++;
         }
+
+        CompareHandOrder( freq, NHandUtils::C2CardInfo() );
+
         EXPECT_EQ( 52, freq[ EHand::eStraightFlush ] );
         EXPECT_EQ( 0, freq[ EHand::eFourOfAKind ] );
         EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
@@ -832,6 +835,9 @@ namespace NHandTester
             auto hand = ii.getHandType();
             freq[ hand ]++;
         }
+
+        CompareHandOrder( freq, NHandUtils::C3CardInfo() );
+
         EXPECT_EQ( 0, freq[ EHand::eFourOfAKind ] );
         EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
         EXPECT_EQ( 0, freq[ EHand::eTwoPair ] );
@@ -986,194 +992,138 @@ namespace NHandTester
     
     TEST_F( C3CardHandTester, OneOfEachHand )
     {
-        //auto h1 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eSpades );
-        //EXPECT_TRUE( h1.isStraightFlush() );
-        //EXPECT_FALSE( h1.isFourOfAKind() );
-        //EXPECT_FALSE( h1.isFullHouse() );
-        //EXPECT_TRUE( h1.isFlush() );
-        //EXPECT_TRUE( h1.isStraight() );
-        //EXPECT_FALSE( h1.isWheel() );
-        //EXPECT_FALSE( h1.isThreeOfAKind() );
-        //EXPECT_FALSE( h1.isTwoPair() );
-        //EXPECT_FALSE( h1.isPair() );
-        //EXPECT_FALSE( h1.isHighCard() );
+        auto h1 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades );
+        EXPECT_TRUE( h1.isStraightFlush() );
+        EXPECT_FALSE( h1.isFourOfAKind() );
+        EXPECT_FALSE( h1.isFullHouse() );
+        EXPECT_TRUE( h1.isFlush() );
+        EXPECT_TRUE( h1.isStraight() );
+        EXPECT_FALSE( h1.isWheel() );
+        EXPECT_FALSE( h1.isThreeOfAKind() );
+        EXPECT_FALSE( h1.isTwoPair() );
+        EXPECT_FALSE( h1.isPair() );
+        EXPECT_FALSE( h1.isHighCard() );
 
-        //auto h2 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs, ECard::eDeuce, ESuit::eDiamonds );
-        //EXPECT_FALSE( h2.isStraightFlush() );
-        //EXPECT_TRUE( h2.isFourOfAKind() );
-        //EXPECT_FALSE( h2.isFullHouse() );
-        //EXPECT_FALSE( h2.isFlush() );
-        //EXPECT_FALSE( h2.isStraight() );
-        //EXPECT_FALSE( h2.isWheel() );
-        //EXPECT_FALSE( h2.isThreeOfAKind() );
-        //EXPECT_FALSE( h2.isTwoPair() );
-        //EXPECT_FALSE( h2.isPair() );
-        //EXPECT_FALSE( h2.isHighCard() );
+        auto h2 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs );
+        EXPECT_FALSE( h2.isStraightFlush() );
+        EXPECT_FALSE( h2.isFourOfAKind() );
+        EXPECT_FALSE( h2.isFullHouse() );
+        EXPECT_FALSE( h2.isFlush() );
+        EXPECT_FALSE( h2.isStraight() );
+        EXPECT_FALSE( h2.isWheel() );
+        EXPECT_TRUE( h2.isThreeOfAKind() );
+        EXPECT_FALSE( h2.isTwoPair() );
+        EXPECT_FALSE( h2.isPair() );
+        EXPECT_FALSE( h2.isHighCard() );
 
-        //auto h3 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eSix, ESuit::eSpades );
-        //EXPECT_FALSE( h3.isStraightFlush() );
-        //EXPECT_FALSE( h3.isFourOfAKind() );
-        //EXPECT_FALSE( h3.isFullHouse() );
-        //EXPECT_TRUE( h3.isFlush() );
-        //EXPECT_FALSE( h3.isStraight() );
-        //EXPECT_FALSE( h3.isWheel() );
-        //EXPECT_FALSE( h3.isThreeOfAKind() );
-        //EXPECT_FALSE( h3.isTwoPair() );
-        //EXPECT_FALSE( h3.isPair() );
-        //EXPECT_FALSE( h3.isHighCard() );
+        auto h3 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eHearts );
+        EXPECT_FALSE( h3.isStraightFlush() );
+        EXPECT_FALSE( h3.isFourOfAKind() );
+        EXPECT_FALSE( h3.isFullHouse() );
+        EXPECT_FALSE( h3.isFlush() );
+        EXPECT_TRUE( h3.isStraight() );
+        EXPECT_FALSE( h3.isWheel() );
+        EXPECT_FALSE( h3.isThreeOfAKind() );
+        EXPECT_FALSE( h3.isTwoPair() );
+        EXPECT_FALSE( h3.isPair() );
+        EXPECT_FALSE( h3.isHighCard() );
 
-        //auto h4 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eHearts );
-        //EXPECT_FALSE( h4.isStraightFlush() );
-        //EXPECT_FALSE( h4.isFourOfAKind() );
-        //EXPECT_FALSE( h4.isFullHouse() );
-        //EXPECT_FALSE( h4.isFlush() );
-        //EXPECT_TRUE( h4.isStraight() );
-        //EXPECT_FALSE( h4.isWheel() );
-        //EXPECT_FALSE( h4.isThreeOfAKind() );
-        //EXPECT_FALSE( h4.isTwoPair() );
-        //EXPECT_FALSE( h4.isPair() );
-        //EXPECT_FALSE( h4.isHighCard() );
+        auto h4 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eAce, ESuit::eHearts );
+        EXPECT_FALSE( h4.isStraightFlush() );
+        EXPECT_FALSE( h4.isFourOfAKind() );
+        EXPECT_FALSE( h4.isFullHouse() );
+        EXPECT_FALSE( h4.isFlush() );
+        EXPECT_TRUE( h4.isStraight() );
+        EXPECT_TRUE( h4.isWheel() );
+        EXPECT_FALSE( h4.isThreeOfAKind() );
+        EXPECT_FALSE( h4.isTwoPair() );
+        EXPECT_FALSE( h4.isPair() );
+        EXPECT_FALSE( h4.isHighCard() );
 
-        //auto h5 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eAce, ESuit::eHearts );
-        //EXPECT_FALSE( h5.isStraightFlush() );
-        //EXPECT_FALSE( h5.isFourOfAKind() );
-        //EXPECT_FALSE( h5.isFullHouse() );
-        //EXPECT_FALSE( h5.isFlush() );
-        //EXPECT_TRUE( h5.isStraight() );
-        //EXPECT_TRUE( h5.isWheel() );
-        //EXPECT_FALSE( h5.isThreeOfAKind() );
-        //EXPECT_FALSE( h5.isTwoPair() );
-        //EXPECT_FALSE( h5.isPair() );
-        //EXPECT_FALSE( h5.isHighCard() );
+        auto h5 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFive, ESuit::eSpades );
+        EXPECT_FALSE( h5.isStraightFlush() );
+        EXPECT_FALSE( h5.isFourOfAKind() );
+        EXPECT_FALSE( h5.isFullHouse() );
+        EXPECT_TRUE( h5.isFlush() );
+        EXPECT_FALSE( h5.isStraight() );
+        EXPECT_FALSE( h5.isWheel() );
+        EXPECT_FALSE( h5.isThreeOfAKind() );
+        EXPECT_FALSE( h5.isTwoPair() );
+        EXPECT_FALSE( h5.isPair() );
+        EXPECT_FALSE( h5.isHighCard() );
 
-        //auto h6 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs, ECard::eTrey, ESuit::eDiamonds );
-        //EXPECT_FALSE( h6.isStraightFlush() );
-        //EXPECT_FALSE( h6.isFourOfAKind() );
-        //EXPECT_FALSE( h6.isFullHouse() );
-        //EXPECT_FALSE( h6.isFlush() );
-        //EXPECT_FALSE( h6.isStraight() );
-        //EXPECT_FALSE( h6.isWheel() );
-        //EXPECT_TRUE( h6.isThreeOfAKind() );
-        //EXPECT_FALSE( h6.isTwoPair() );
-        //EXPECT_FALSE( h6.isPair() );
-        //EXPECT_FALSE( h6.isHighCard() );
+        auto h6 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eTrey, ESuit::eClubs );
+        EXPECT_FALSE( h6.isStraightFlush() );
+        EXPECT_FALSE( h6.isFourOfAKind() );
+        EXPECT_FALSE( h6.isFullHouse() );
+        EXPECT_FALSE( h6.isFlush() );
+        EXPECT_FALSE( h6.isStraight() );
+        EXPECT_FALSE( h6.isWheel() );
+        EXPECT_FALSE( h6.isThreeOfAKind() );
+        EXPECT_FALSE( h6.isTwoPair() );
+        EXPECT_TRUE( h6.isPair() );
+        EXPECT_FALSE( h6.isHighCard() );
 
-        //auto h7 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eTrey, ESuit::eClubs, ECard::eTrey, ESuit::eDiamonds );
-        //EXPECT_FALSE( h7.isStraightFlush() );
-        //EXPECT_FALSE( h7.isFourOfAKind() );
-        //EXPECT_FALSE( h7.isFullHouse() );
-        //EXPECT_FALSE( h7.isFlush() );
-        //EXPECT_FALSE( h7.isStraight() );
-        //EXPECT_FALSE( h7.isWheel() );
-        //EXPECT_FALSE( h7.isThreeOfAKind() );
-        //EXPECT_TRUE( h7.isTwoPair() );
-        //EXPECT_FALSE( h7.isPair() );
-        //EXPECT_FALSE( h7.isHighCard() );
+        auto h7 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eFive, ESuit::eHearts, ECard::eTrey, ESuit::eClubs );
+        EXPECT_FALSE( h7.isStraightFlush() );
+        EXPECT_FALSE( h7.isFourOfAKind() );
+        EXPECT_FALSE( h7.isFullHouse() );
+        EXPECT_FALSE( h7.isFlush() );
+        EXPECT_FALSE( h7.isStraight() );
+        EXPECT_FALSE( h7.isWheel() );
+        EXPECT_FALSE( h7.isThreeOfAKind() );
+        EXPECT_FALSE( h7.isTwoPair() );
+        EXPECT_FALSE( h7.isPair() );
+        EXPECT_TRUE( h7.isHighCard() );
 
-        //auto h8 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eTrey, ESuit::eClubs, ECard::eAce, ESuit::eDiamonds );
-        //EXPECT_FALSE( h8.isStraightFlush() );
-        //EXPECT_FALSE( h8.isFourOfAKind() );
-        //EXPECT_FALSE( h8.isFullHouse() );
-        //EXPECT_FALSE( h8.isFlush() );
-        //EXPECT_FALSE( h8.isStraight() );
-        //EXPECT_FALSE( h8.isWheel() );
-        //EXPECT_FALSE( h8.isThreeOfAKind() );
-        //EXPECT_FALSE( h8.isTwoPair() );
-        //EXPECT_TRUE( h8.isPair() );
-        //EXPECT_FALSE( h8.isHighCard() );
+        EXPECT_TRUE( h1.greaterThan( true, h2 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h3 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h4 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h6 ) );
+        EXPECT_TRUE( h1.greaterThan( true, h7 ) );
 
-        //auto h9 = NHandUtils::C3CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eFive, ESuit::eHearts, ECard::eTrey, ESuit::eClubs, ECard::eAce, ESuit::eDiamonds );
-        //EXPECT_FALSE( h9.isStraightFlush() );
-        //EXPECT_FALSE( h9.isFourOfAKind() );
-        //EXPECT_FALSE( h9.isFullHouse() );
-        //EXPECT_FALSE( h9.isFlush() );
-        //EXPECT_FALSE( h9.isStraight() );
-        //EXPECT_FALSE( h9.isWheel() );
-        //EXPECT_FALSE( h9.isThreeOfAKind() );
-        //EXPECT_FALSE( h9.isTwoPair() );
-        //EXPECT_FALSE( h9.isPair() );
-        //EXPECT_TRUE( h9.isHighCard() );
+        EXPECT_TRUE( h2.lessThan( true, h1 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h3 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h4 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h6 ) );
+        EXPECT_TRUE( h2.greaterThan( true, h7 ) );
 
-        //EXPECT_TRUE( h1.greaterThan( true, h2 ) );
-        //EXPECT_TRUE( h1.greaterThan( true, h3 ) );
-        //EXPECT_TRUE( h1.greaterThan( true, h4 ) );
-        //EXPECT_TRUE( h1.greaterThan( true, h5 ) );
-        //EXPECT_TRUE( h1.greaterThan( true, h6 ) );
-        //EXPECT_TRUE( h1.greaterThan( true, h7 ) );
-        //EXPECT_TRUE( h1.greaterThan( true, h8 ) );
-        //EXPECT_TRUE( h1.greaterThan( true, h9 ) );
+        EXPECT_TRUE( h3.lessThan( true, h1 ) );
+        EXPECT_TRUE( h3.lessThan( true, h2 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h4 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h6 ) );
+        EXPECT_TRUE( h3.greaterThan( true, h7 ) );
 
-        //EXPECT_TRUE( h2.lessThan( true, h1 ) );
-        //EXPECT_TRUE( h2.greaterThan( true, h3 ) );
-        //EXPECT_TRUE( h2.greaterThan( true, h4 ) );
-        //EXPECT_TRUE( h2.greaterThan( true, h5 ) );
-        //EXPECT_TRUE( h2.greaterThan( true, h6 ) );
-        //EXPECT_TRUE( h2.greaterThan( true, h7 ) );
-        //EXPECT_TRUE( h2.greaterThan( true, h8 ) );
-        //EXPECT_TRUE( h2.greaterThan( true, h9 ) );
+        EXPECT_TRUE( h4.lessThan( true, h1 ) );
+        EXPECT_TRUE( h4.lessThan( true, h2 ) );
+        EXPECT_TRUE( h4.lessThan( true, h3 ) );
+        EXPECT_TRUE( h4.greaterThan( true, h5 ) );
+        EXPECT_TRUE( h4.greaterThan( true, h6 ) );
+        EXPECT_TRUE( h4.greaterThan( true, h7 ) );
 
-        //EXPECT_TRUE( h3.lessThan( true, h1 ) );
-        //EXPECT_TRUE( h3.lessThan( true, h2 ) );
-        //EXPECT_TRUE( h3.greaterThan( true, h4 ) );
-        //EXPECT_TRUE( h3.greaterThan( true, h5 ) );
-        //EXPECT_TRUE( h3.greaterThan( true, h6 ) );
-        //EXPECT_TRUE( h3.greaterThan( true, h7 ) );
-        //EXPECT_TRUE( h3.greaterThan( true, h8 ) );
-        //EXPECT_TRUE( h3.greaterThan( true, h9 ) );
+        EXPECT_TRUE( h5.lessThan( true, h1 ) );
+        EXPECT_TRUE( h5.lessThan( true, h2 ) );
+        EXPECT_TRUE( h5.lessThan( true, h3 ) );
+        EXPECT_TRUE( h5.lessThan( true, h4 ) );
+        EXPECT_TRUE( h5.greaterThan( true, h6 ) );
+        EXPECT_TRUE( h5.greaterThan( true, h7 ) );
 
-        //EXPECT_TRUE( h4.lessThan( true, h1 ) );
-        //EXPECT_TRUE( h4.lessThan( true, h2 ) );
-        //EXPECT_TRUE( h4.lessThan( true, h3 ) );
-        //EXPECT_TRUE( h4.greaterThan( true, h5 ) );
-        //EXPECT_TRUE( h4.greaterThan( true, h6 ) );
-        //EXPECT_TRUE( h4.greaterThan( true, h7 ) );
-        //EXPECT_TRUE( h4.greaterThan( true, h8 ) );
-        //EXPECT_TRUE( h4.greaterThan( true, h9 ) );
+        EXPECT_TRUE( h6.lessThan( true, h1 ) );
+        EXPECT_TRUE( h6.lessThan( true, h2 ) );
+        EXPECT_TRUE( h6.lessThan( true, h3 ) );
+        EXPECT_TRUE( h6.lessThan( true, h4 ) );
+        EXPECT_TRUE( h6.lessThan( true, h5 ) );
+        EXPECT_TRUE( h6.greaterThan( true, h7 ) );
 
-        //EXPECT_TRUE( h5.lessThan( true, h1 ) );
-        //EXPECT_TRUE( h5.lessThan( true, h2 ) );
-        //EXPECT_TRUE( h5.lessThan( true, h3 ) );
-        //EXPECT_TRUE( h5.lessThan( true, h4 ) );
-        //EXPECT_TRUE( h5.greaterThan( true, h6 ) );
-        //EXPECT_TRUE( h5.greaterThan( true, h7 ) );
-        //EXPECT_TRUE( h5.greaterThan( true, h8 ) );
-        //EXPECT_TRUE( h5.greaterThan( true, h9 ) );
-
-        //EXPECT_TRUE( h6.lessThan( true, h1 ) );
-        //EXPECT_TRUE( h6.lessThan( true, h2 ) );
-        //EXPECT_TRUE( h6.lessThan( true, h3 ) );
-        //EXPECT_TRUE( h6.lessThan( true, h4 ) );
-        //EXPECT_TRUE( h6.lessThan( true, h5 ) );
-        //EXPECT_TRUE( h6.greaterThan( true, h7 ) );
-        //EXPECT_TRUE( h6.greaterThan( true, h8 ) );
-        //EXPECT_TRUE( h6.greaterThan( true, h9 ) );
-
-        //EXPECT_TRUE( h7.lessThan( true, h1 ) );
-        //EXPECT_TRUE( h7.lessThan( true, h2 ) );
-        //EXPECT_TRUE( h7.lessThan( true, h3 ) );
-        //EXPECT_TRUE( h7.lessThan( true, h4 ) );
-        //EXPECT_TRUE( h7.lessThan( true, h5 ) );
-        //EXPECT_TRUE( h7.lessThan( true, h6 ) );
-        //EXPECT_TRUE( h7.greaterThan( true, h8 ) );
-        //EXPECT_TRUE( h7.greaterThan( true, h9 ) );
-
-        //EXPECT_TRUE( h8.lessThan( true, h1 ) );
-        //EXPECT_TRUE( h8.lessThan( true, h2 ) );
-        //EXPECT_TRUE( h8.lessThan( true, h3 ) );
-        //EXPECT_TRUE( h8.lessThan( true, h4 ) );
-        //EXPECT_TRUE( h8.lessThan( true, h5 ) );
-        //EXPECT_TRUE( h8.lessThan( true, h6 ) );
-        //EXPECT_TRUE( h8.lessThan( true, h7 ) );
-        //EXPECT_TRUE( h8.greaterThan( true, h9 ) );
-
-        //EXPECT_TRUE( h9.lessThan( true, h1 ) );
-        //EXPECT_TRUE( h9.lessThan( true, h2 ) );
-        //EXPECT_TRUE( h9.lessThan( true, h3 ) );
-        //EXPECT_TRUE( h9.lessThan( true, h4 ) );
-        //EXPECT_TRUE( h9.lessThan( true, h5 ) );
-        //EXPECT_TRUE( h9.lessThan( true, h6 ) );
-        //EXPECT_TRUE( h9.lessThan( true, h7 ) );
-        //EXPECT_TRUE( h9.lessThan( true, h8 ) );
+        EXPECT_TRUE( h7.lessThan( true, h1 ) );
+        EXPECT_TRUE( h7.lessThan( true, h2 ) );
+        EXPECT_TRUE( h7.lessThan( true, h3 ) );
+        EXPECT_TRUE( h7.lessThan( true, h4 ) );
+        EXPECT_TRUE( h7.lessThan( true, h5 ) );
+        EXPECT_TRUE( h7.lessThan( true, h6 ) );
     }
 
     TEST_F( C3CardHandTester, StraightFlushes )
@@ -1613,7 +1563,6 @@ namespace NHandTester
         size_t numHands = 0;
         auto allCards = getAllCards();
 
-        size_t num4 = 0;
         for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
         {
             for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
@@ -1622,20 +1571,6 @@ namespace NHandTester
                 {
                     for ( size_t c4 = c3 + 1; c4 < allCards.size(); ++c4 )
                     {
-                        if (    ( allCards[ c1 ]->getCard() == allCards[ c2 ]->getCard() )
-                             && ( allCards[ c1 ]->getCard() == allCards[ c3 ]->getCard() )
-                             && ( allCards[ c1 ]->getCard() == allCards[ c4 ]->getCard() ) )
-                        {
-                            //std::cout 
-                            //    << *allCards[ c1 ] << " "
-                            //    << *allCards[ c2 ] << " "
-                            //    << *allCards[ c3 ] << " "
-                            //    << *allCards[ c4 ] << "\n"
-                            //    ;
-
-                            num4++;
-                        }
-
                         NHandUtils::C4CardInfo cardInfo( allCards[ c1 ]->getCard(), allCards[ c1 ]->getSuit(), allCards[ c2 ]->getCard(), allCards[ c2 ]->getSuit(), allCards[ c3 ]->getCard(), allCards[ c3 ]->getSuit(), allCards[ c4 ]->getCard(), allCards[ c4 ]->getSuit() );
                         allHands.push_back( cardInfo );
                         numHands++;
@@ -1644,45 +1579,11 @@ namespace NHandTester
             }
         }
 
-        auto num4FoundBefore=0;
-        for ( size_t ii = 0; ii < allHands.size(); ++ii )
-        {
-            if ( allHands[ ii ].isFourOfAKind() )
-            {
-                //std::cout << "ii=" << ii << ": " << allHands[ ii ] << "\n";
-                num4FoundBefore++;
-            }
-        }
-        EXPECT_EQ( num4FoundBefore, num4 );
-
-        auto szBefore = allHands.size();
-
         std::sort( allHands.begin(), allHands.end(), []( const NHandUtils::C4CardInfo& lhs, const NHandUtils::C4CardInfo& rhs )
                    { 
-                       bool retVal = lhs.greaterThan( true, rhs );
-
-                       //if ( lhs.isFourOfAKind() || rhs.isFourOfAKind() )
-                       //{
-                       //    std::cout << "LHS=" << lhs << "> RHS=" << rhs << "=" << retVal << "\n";
-                       //}
-
-                       return retVal;
+                       return lhs.greaterThan( true, rhs );
                    }
         );
-
-        auto szAfter = allHands.size();
-        EXPECT_EQ( szBefore, szAfter );
-
-        auto num4FoundAfter = 0;
-        for ( size_t ii = 0; ii < allHands.size(); ++ii )
-        {
-            if ( allHands[ ii ].isFourOfAKind() )
-            {
-                //std::cout << "ii=" << ii << ": " << allHands[ ii ] << "\n";
-                num4FoundAfter++;
-            }
-        }
-        EXPECT_EQ( num4FoundAfter, num4 );
 
         EXPECT_EQ( 270725, numHands );
         EXPECT_EQ( 270725, allHands.size() );
@@ -1705,6 +1606,9 @@ namespace NHandTester
             auto hand = ii.getHandType();
             freq[ hand ]++;
         }
+
+        CompareHandOrder( freq, NHandUtils::C4CardInfo() );
+
         EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
         EXPECT_EQ( 13, freq[ EHand::eFourOfAKind ] );
         EXPECT_EQ( 44, freq[ EHand::eStraightFlush ] );
@@ -1737,38 +1641,38 @@ namespace NHandTester
 
     TEST_F( C4CardHandTester, OneOfEachHand )
     {
-        auto h1 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eSpades );
-        EXPECT_TRUE( h1.isStraightFlush() );
-        EXPECT_FALSE( h1.isFourOfAKind() );
+        auto h1 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs, ECard::eDeuce, ESuit::eDiamonds );
+        EXPECT_FALSE( h1.isStraightFlush() );
+        EXPECT_TRUE( h1.isFourOfAKind() );
         EXPECT_FALSE( h1.isFullHouse() );
-        EXPECT_TRUE( h1.isFlush() );
-        EXPECT_TRUE( h1.isStraight() );
+        EXPECT_FALSE( h1.isFlush() );
+        EXPECT_FALSE( h1.isStraight() );
         EXPECT_FALSE( h1.isWheel() );
         EXPECT_FALSE( h1.isThreeOfAKind() );
         EXPECT_FALSE( h1.isTwoPair() );
         EXPECT_FALSE( h1.isPair() );
         EXPECT_FALSE( h1.isHighCard() );
 
-        auto h2 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs, ECard::eDeuce, ESuit::eDiamonds );
-        EXPECT_FALSE( h2.isStraightFlush() );
-        EXPECT_TRUE( h2.isFourOfAKind() );
+        auto h2 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eFive, ESuit::eSpades ); 
+        EXPECT_TRUE( h2.isStraightFlush() );
+        EXPECT_FALSE( h2.isFourOfAKind() );
         EXPECT_FALSE( h2.isFullHouse() );
-        EXPECT_FALSE( h2.isFlush() );
-        EXPECT_FALSE( h2.isStraight() );
+        EXPECT_TRUE( h2.isFlush() );
+        EXPECT_TRUE( h2.isStraight() );
         EXPECT_FALSE( h2.isWheel() );
         EXPECT_FALSE( h2.isThreeOfAKind() );
         EXPECT_FALSE( h2.isTwoPair() );
         EXPECT_FALSE( h2.isPair() );
         EXPECT_FALSE( h2.isHighCard() );
 
-        auto h3 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eSix, ESuit::eSpades );
+        auto h3 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs, ECard::eTrey, ESuit::eDiamonds );
         EXPECT_FALSE( h3.isStraightFlush() );
         EXPECT_FALSE( h3.isFourOfAKind() );
         EXPECT_FALSE( h3.isFullHouse() );
-        EXPECT_TRUE( h3.isFlush() );
+        EXPECT_FALSE( h3.isFlush() );
         EXPECT_FALSE( h3.isStraight() );
         EXPECT_FALSE( h3.isWheel() );
-        EXPECT_FALSE( h3.isThreeOfAKind() );
+        EXPECT_TRUE( h3.isThreeOfAKind() );
         EXPECT_FALSE( h3.isTwoPair() );
         EXPECT_FALSE( h3.isPair() );
         EXPECT_FALSE( h3.isHighCard() );
@@ -1797,27 +1701,27 @@ namespace NHandTester
         EXPECT_FALSE( h5.isPair() );
         EXPECT_FALSE( h5.isHighCard() );
 
-        auto h6 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eDeuce, ESuit::eClubs, ECard::eTrey, ESuit::eDiamonds );
+        auto h6 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eTrey, ESuit::eClubs, ECard::eTrey, ESuit::eDiamonds );
         EXPECT_FALSE( h6.isStraightFlush() );
         EXPECT_FALSE( h6.isFourOfAKind() );
         EXPECT_FALSE( h6.isFullHouse() );
         EXPECT_FALSE( h6.isFlush() );
         EXPECT_FALSE( h6.isStraight() );
         EXPECT_FALSE( h6.isWheel() );
-        EXPECT_TRUE( h6.isThreeOfAKind() );
-        EXPECT_FALSE( h6.isTwoPair() );
+        EXPECT_FALSE( h6.isThreeOfAKind() );
+        EXPECT_TRUE( h6.isTwoPair() );
         EXPECT_FALSE( h6.isPair() );
         EXPECT_FALSE( h6.isHighCard() );
 
-        auto h7 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eDeuce, ESuit::eHearts, ECard::eTrey, ESuit::eClubs, ECard::eTrey, ESuit::eDiamonds );
+        auto h7 = NHandUtils::C4CardInfo( ECard::eDeuce, ESuit::eSpades, ECard::eTrey, ESuit::eSpades, ECard::eFour, ESuit::eSpades, ECard::eSix, ESuit::eSpades );
         EXPECT_FALSE( h7.isStraightFlush() );
         EXPECT_FALSE( h7.isFourOfAKind() );
         EXPECT_FALSE( h7.isFullHouse() );
-        EXPECT_FALSE( h7.isFlush() );
+        EXPECT_TRUE( h7.isFlush() );
         EXPECT_FALSE( h7.isStraight() );
         EXPECT_FALSE( h7.isWheel() );
         EXPECT_FALSE( h7.isThreeOfAKind() );
-        EXPECT_TRUE( h7.isTwoPair() );
+        EXPECT_FALSE( h7.isTwoPair() );
         EXPECT_FALSE( h7.isPair() );
         EXPECT_FALSE( h7.isHighCard() );
 
@@ -1944,701 +1848,515 @@ namespace NHandTester
         EXPECT_EQ( EHand::eStraightFlush, std::get< 0 >( hand ) );
     }
 
-    //TEST_F( C4CardHandTester, StraightFlushes )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+    TEST_F( C4CardHandTester, StraightFlushes )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsFlushesCountForSmallHands( true );
 
-    //    for ( auto suit : ESuit() )
-    //    {
-    //        for ( auto&& highCard : ECard() )
-    //        {
-    //            if ( highCard <= ECard::eFour )
-    //                continue;
+        for ( auto suit : ESuit() )
+        {
+            for ( auto&& highCard : ECard() )
+            {
+                if ( highCard <= ECard::eFour )
+                    continue;
 
-    //            p1->clearCards();
+                p1->clearCards();
 
-    //            if ( highCard == ECard::eFive )
-    //            {
-    //                p1->addCard( fGame->getCard( highCard, suit ) );
-    //                p1->addCard( fGame->getCard( ECard::eFour, suit ) );
-    //                p1->addCard( fGame->getCard( ECard::eTrey, suit ) );
-    //                p1->addCard( fGame->getCard( ECard::eDeuce, suit ) );
-    //                p1->addCard( fGame->getCard( ECard::eAce, suit ) );
-    //            }
-    //            else
-    //            {
-    //                for ( auto currCard = ( highCard - 4 ); currCard <= highCard; ++currCard )
-    //                {
-    //                    p1->addCard( fGame->getCard( currCard, suit ) );
-    //                }
-    //            }
-    //            EXPECT_TRUE( p1->isFlush() );
-    //            EXPECT_TRUE( p1->isStraight() );
-    //            auto hand = p1->determineHand();
-    //            EXPECT_EQ( EHand::eStraightFlush, std::get< 0 >( hand ) );
-    //            ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
-    //            ASSERT_EQ( 4, std::get< 2 >( hand ).size() );
-    //            EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
-    //        }
-    //    }
-    //}
+                if ( highCard == ECard::eFour )
+                {
+                    p1->addCard( fGame->getCard( highCard, suit ) );
+                    p1->addCard( fGame->getCard( ECard::eTrey, suit ) );
+                    p1->addCard( fGame->getCard( ECard::eDeuce, suit ) );
+                    p1->addCard( fGame->getCard( ECard::eAce, suit ) );
+                }
+                else
+                {
+                    for ( auto currCard = ( highCard - 3 ); currCard <= highCard; ++currCard )
+                    {
+                        p1->addCard( fGame->getCard( currCard, suit ) );
+                    }
+                }
+                EXPECT_TRUE( p1->isFlush() ) << "Cards: " << p1->getHand()->getCards();
+                EXPECT_TRUE( p1->isStraight() ) << "Cards: " << p1->getHand()->getCards();
+                auto hand = p1->determineHand();
+                EXPECT_EQ( EHand::eStraightFlush, std::get< 0 >( hand ) );
+                ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
+                ASSERT_EQ( 3, std::get< 2 >( hand ).size() );
+                EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
+            }
+        }
+    }
 
-    //TEST_F( C4CardHandTester, FourOfAKind )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+    TEST_F( C4CardHandTester, FourOfAKind )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
 
-    //    for ( auto&& highCard : ECard() )
-    //    {
-    //        for ( auto&& kicker : ECard() )
-    //        {
-    //            if ( kicker == highCard )
-    //                continue;
+        for ( auto&& highCard : ECard() )
+        {
+            p1->clearCards();
 
-    //            for ( auto suit : ESuit() )
-    //            {
-    //                p1->clearCards();
+            p1->addCard( fGame->getCard( highCard, ESuit::eClubs ) );
+            p1->addCard( fGame->getCard( highCard, ESuit::eSpades ) );
+            p1->addCard( fGame->getCard( highCard, ESuit::eHearts ) );
+            p1->addCard( fGame->getCard( highCard, ESuit::eDiamonds ) );
 
-    //                p1->addCard( fGame->getCard( highCard, ESuit::eClubs ) );
-    //                p1->addCard( fGame->getCard( highCard, ESuit::eSpades ) );
-    //                p1->addCard( fGame->getCard( highCard, ESuit::eHearts ) );
-    //                p1->addCard( fGame->getCard( highCard, ESuit::eDiamonds ) );
+            auto hand = p1->determineHand();
+            EXPECT_EQ( EHand::eFourOfAKind, std::get< 0 >( hand ) ) << "4 of Kind: " << highCard;
+            ASSERT_EQ( 1, std::get< 1 >( hand ).size() ) << "4 of Kind: " << highCard;
+            ASSERT_EQ( 0, std::get< 2 >( hand ).size() ) << "4 of Kind: " << highCard;
+            EXPECT_EQ( highCard, std::get< 1 >( hand ).front() ) << "4 of Kind: " << highCard;
+        }
+    }
 
-    //                p1->addCard( fGame->getCard( kicker, suit ) );
+    TEST_F( C4CardHandTester, Flush )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsFlushesCountForSmallHands( true );
 
-    //                auto hand = p1->determineHand();
-    //                EXPECT_EQ( EHand::eFourOfAKind, std::get< 0 >( hand ) ) << "4 of Kind: " << highCard << " Kicker: " << kicker << " Suit: " << suit;
-    //                ASSERT_EQ( 1, std::get< 1 >( hand ).size() ) << "4 of Kind: " << highCard << " Kicker: " << kicker << " Suit: " << suit;
-    //                ASSERT_EQ( 1, std::get< 2 >( hand ).size() ) << "4 of Kind: " << highCard << " Kicker: " << kicker << " Suit: " << suit;
-    //                EXPECT_EQ( highCard, std::get< 1 >( hand ).front() ) << "4 of Kind: " << highCard << " Kicker: " << kicker << " Suit: " << suit;
-    //                EXPECT_EQ( kicker, std::get< 2 >( hand ).front() ) << "4 of Kind: " << highCard << " Kicker: " << kicker << " Suit: " << suit;
-    //            }
-    //        }
-    //    }
-    //}
-    //TEST_F( C4CardHandTester, Flush )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+        for ( auto suit : ESuit() )
+        {
+            for ( auto&& highCard : ECard() )
+            {
+                if ( highCard <= ECard::eFour ) // for a flush, the high card can only be a 5 or above, otherwise its a striaght flush
+                    continue;
 
-    //    for ( auto suit : ESuit() )
-    //    {
-    //        for ( auto&& highCard : ECard() )
-    //        {
-    //            if ( highCard <= ECard::eFive ) // for a flush, the high card can only be a 6 or above, otherwise its a striaght flush
-    //                continue;
+                p1->clearCards();
 
-    //            p1->clearCards();
+                p1->addCard( fGame->getCard( highCard, suit ) );
+                p1->addCard( fGame->getCard( highCard - 2, suit ) );
+                p1->addCard( fGame->getCard( highCard - 3, suit ) );
+                if ( highCard == ECard::eFive )
+                {
+                    p1->addCard( fGame->getCard( ECard::eAce, suit ) );
+                    highCard = ECard::eAce;
+                }
+                else
+                    p1->addCard( fGame->getCard( highCard - 4, suit ) );
 
-    //            p1->addCard( fGame->getCard( highCard, suit ) );
-    //            p1->addCard( fGame->getCard( highCard - 2, suit ) );
-    //            p1->addCard( fGame->getCard( highCard - 3, suit ) );
-    //            p1->addCard( fGame->getCard( highCard - 4, suit ) );
-    //            if ( highCard == ECard::eSix )
-    //            {
-    //                p1->addCard( fGame->getCard( ECard::eAce, suit ) );
-    //                highCard = ECard::eAce;
-    //            }
-    //            else
-    //                p1->addCard( fGame->getCard( highCard - 5, suit ) );
+                EXPECT_TRUE( p1->isFlush() );
+                auto hand = p1->determineHand();
+                EXPECT_EQ( EHand::eFlush, std::get< 0 >( hand ) );
+                ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
+                ASSERT_EQ( 3, std::get< 2 >( hand ).size() );
+                EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
+            }
+        }
+    }
 
-    //            EXPECT_TRUE( p1->isFlush() );
-    //            auto hand = p1->determineHand();
-    //            EXPECT_EQ( EHand::eFlush, std::get< 0 >( hand ) );
-    //            ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
-    //            ASSERT_EQ( 4, std::get< 2 >( hand ).size() );
-    //            EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
-    //        }
-    //    }
-    //}
+    TEST_F( C4CardHandTester, Straight )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsFlushesCountForSmallHands( true );
 
-    //TEST_F( C4CardHandTester, Straight )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+        for ( auto&& highCard : ECard() )
+        {
+            if ( highCard <= ECard::eTrey )
+                continue;
 
-    //    for ( auto&& highCard : ECard() )
-    //    {
-    //        if ( highCard <= ECard::eFour )
-    //            continue;
+            for ( auto&& suit : ESuit() )
+            {
+                p1->clearCards();
 
-    //        for ( auto&& suit : ESuit() )
-    //        {
-    //            p1->clearCards();
+                p1->addCard( fGame->getCard( highCard, ESuit::eClubs ) );
+                p1->addCard( fGame->getCard( highCard - 1, ESuit::eDiamonds ) );
+                p1->addCard( fGame->getCard( highCard - 2, ESuit::eHearts ) );
+                if ( highCard == ECard::eFour )
+                    p1->addCard( fGame->getCard( ECard::eAce, suit ) );
+                else
+                    p1->addCard( fGame->getCard( highCard - 3, suit ) );
 
-    //            p1->addCard( fGame->getCard( highCard, ESuit::eClubs ) );
-    //            p1->addCard( fGame->getCard( highCard - 1, ESuit::eDiamonds ) );
-    //            p1->addCard( fGame->getCard( highCard - 2, ESuit::eHearts ) );
-    //            p1->addCard( fGame->getCard( highCard - 3, ESuit::eSpades ) );
-    //            if ( highCard == ECard::eFive )
-    //                p1->addCard( fGame->getCard( ECard::eAce, suit ) );
-    //            else
-    //                p1->addCard( fGame->getCard( highCard - 4, suit ) );
+                EXPECT_TRUE( p1->isStraight() );
+                auto hand = p1->determineHand();
+                EXPECT_EQ( EHand::eStraight, std::get< 0 >( hand ) );
+                ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
+                ASSERT_EQ( 3, std::get< 2 >( hand ).size() );
+                EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
+            }
+        }
+    }
 
-    //            EXPECT_TRUE( p1->isStraight() );
-    //            auto hand = p1->determineHand();
-    //            EXPECT_EQ( EHand::eStraight, std::get< 0 >( hand ) );
-    //            ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
-    //            ASSERT_EQ( 4, std::get< 2 >( hand ).size() );
-    //            EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
-    //        }
-    //    }
-    //}
+    TEST_F( C4CardHandTester, ThreeOfAKind )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
 
-    //TEST_F( C4CardHandTester, ThreeOfAKind )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+        for ( auto&& highCard : ECard() )
+        {
+            for ( auto&& suit : ESuit() )
+            {
+                for ( auto&& kickCard1 : ECard() )
+                {
+                    if ( kickCard1 == highCard )
+                        continue;
+                    for ( auto&& kickSuit1 : ESuit() )
+                    {
+                        p1->clearCards();
+                        for ( auto&& skipSuit : ESuit() )
+                        {
+                            if ( suit == skipSuit )
+                                continue;
 
-    //    for ( auto&& highCard : ECard() )
-    //    {
-    //        for ( auto&& suit : ESuit() )
-    //        {
-    //            for ( auto&& kickCard1 : ECard() )
-    //            {
-    //                if ( kickCard1 == highCard )
-    //                    continue;
-    //                for ( auto&& kickCard2 : ECard() )
-    //                {
-    //                    if ( kickCard1 == kickCard2 )
-    //                        continue;
+                            p1->addCard( fGame->getCard( highCard, skipSuit ) );
+                        }
+                        // now have 3 of a kind
 
-    //                    if ( kickCard2 == highCard )
-    //                        continue;
+                        p1->addCard( fGame->getCard( kickCard1, kickSuit1 ) );
 
-    //                    for ( auto&& kickSuit1 : ESuit() )
-    //                    {
-    //                        for ( auto&& kickSuit2 : ESuit() )
-    //                        {
-    //                            p1->clearCards();
-    //                            for ( auto&& skipSuit : ESuit() )
-    //                            {
-    //                                if ( suit == skipSuit )
-    //                                    continue;
+                        auto hand = p1->determineHand();
+                        EXPECT_EQ( EHand::eThreeOfAKind, std::get< 0 >( hand ) );
+                        ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
+                        ASSERT_EQ( 1, std::get< 2 >( hand ).size() );
+                        EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
+                        EXPECT_EQ( kickCard1, std::get< 2 >( hand ).front() );
+                    }
+                }
+            }
+        }
+    }
 
-    //                                p1->addCard( fGame->getCard( highCard, skipSuit ) );
-    //                            }
-    //                            // now have 3 of a kind
+    TEST_F( C4CardHandTester, TwoPair )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
 
-    //                            p1->addCard( fGame->getCard( kickCard1, kickSuit1 ) );
-    //                            p1->addCard( fGame->getCard( kickCard2, kickSuit2 ) );
+        for ( auto&& highCard : ECard() )
+        {
+            for ( auto&& highSuit1 : ESuit() )
+            {
+                for ( auto&& highSuit2 : ESuit() )
+                {
+                    if ( highSuit1 == highSuit2 )
+                        continue;
 
-    //                            auto hand = p1->determineHand();
-    //                            EXPECT_EQ( EHand::eThreeOfAKind, std::get< 0 >( hand ) );
-    //                            ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
-    //                            ASSERT_EQ( 2, std::get< 2 >( hand ).size() );
-    //                            EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
-    //                            if ( kickCard1 > kickCard2 )
-    //                            {
-    //                                EXPECT_EQ( kickCard1, std::get< 2 >( hand ).front() );
-    //                                EXPECT_EQ( kickCard2, std::get< 2 >( hand ).back() );
-    //                            }
-    //                            else
-    //                            {
-    //                                EXPECT_EQ( kickCard2, std::get< 2 >( hand ).front() );
-    //                                EXPECT_EQ( kickCard1, std::get< 2 >( hand ).back() );
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
+                    for ( auto&& lowCard : ECard() )
+                    {
+                        if ( lowCard == highCard )
+                            continue;
 
-    //TEST_F( C4CardHandTester, TwoPair )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+                        for ( auto&& lowSuit1 : ESuit() )
+                        {
+                            for ( auto&& lowSuit2 : ESuit() )
+                            {
+                                if ( lowSuit1 == lowSuit2 )
+                                    continue;
 
-    //    for ( auto&& highCard : ECard() )
-    //    {
-    //        for ( auto&& highSuit1 : ESuit() )
-    //        {
-    //            for ( auto&& highSuit2 : ESuit() )
-    //            {
-    //                if ( highSuit1 == highSuit2 )
-    //                    continue;
+                                p1->clearCards();
 
-    //                for ( auto&& lowCard : ECard() )
-    //                {
-    //                    if ( lowCard == highCard )
-    //                        continue;
+                                p1->addCard( fGame->getCard( highCard, highSuit1 ) );
+                                p1->addCard( fGame->getCard( highCard, highSuit2 ) );
+                                p1->addCard( fGame->getCard( lowCard, lowSuit1 ) );
+                                p1->addCard( fGame->getCard( lowCard, lowSuit2 ) );
 
-    //                    for ( auto&& lowSuit1 : ESuit() )
-    //                    {
-    //                        for ( auto&& lowSuit2 : ESuit() )
-    //                        {
-    //                            if ( lowSuit1 == lowSuit2 )
-    //                                continue;
+                                auto hand = p1->determineHand();
+                                EXPECT_EQ( EHand::eTwoPair, std::get< 0 >( hand ) );
+                                ASSERT_EQ( 2, std::get< 1 >( hand ).size() );
+                                ASSERT_EQ( 0, std::get< 2 >( hand ).size() );
 
-    //                            for ( auto&& kicker : ECard() )
-    //                            {
-    //                                if ( ( kicker == highCard ) || ( kicker == lowCard ) )
-    //                                    continue;
-    //                                for ( auto&& kickSuit1 : ESuit() )
-    //                                {
-    //                                    p1->clearCards();
+                                if ( highCard > lowCard )
+                                {
+                                    EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
+                                    EXPECT_EQ( lowCard, std::get< 1 >( hand ).back() );
+                                }
+                                else
+                                {
+                                    EXPECT_EQ( lowCard, std::get< 1 >( hand ).front() );
+                                    EXPECT_EQ( highCard, std::get< 1 >( hand ).back() );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-    //                                    p1->addCard( fGame->getCard( highCard, highSuit1 ) );
-    //                                    p1->addCard( fGame->getCard( highCard, highSuit2 ) );
-    //                                    p1->addCard( fGame->getCard( lowCard, lowSuit1 ) );
-    //                                    p1->addCard( fGame->getCard( lowCard, lowSuit2 ) );
-    //                                    p1->addCard( fGame->getCard( kicker, kickSuit1 ) );
+    TEST_F( C4CardHandTester, Pair )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
 
-    //                                    auto hand = p1->determineHand();
-    //                                    EXPECT_EQ( EHand::eTwoPair, std::get< 0 >( hand ) );
-    //                                    ASSERT_EQ( 2, std::get< 1 >( hand ).size() );
-    //                                    ASSERT_EQ( 1, std::get< 2 >( hand ).size() );
+        for ( auto&& highCard : ECard() )
+        {
+            for ( auto&& highSuit1 : ESuit() )
+            {
+                for ( auto&& highSuit2 : ESuit() )
+                {
+                    if ( highSuit1 == highSuit2 )
+                        continue;
 
-    //                                    if ( highCard > lowCard )
-    //                                    {
-    //                                        EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
-    //                                        EXPECT_EQ( lowCard, std::get< 1 >( hand ).back() );
-    //                                    }
-    //                                    else
-    //                                    {
-    //                                        EXPECT_EQ( lowCard, std::get< 1 >( hand ).front() );
-    //                                        EXPECT_EQ( highCard, std::get< 1 >( hand ).back() );
-    //                                    }
-    //                                    EXPECT_EQ( kicker, std::get< 2 >( hand ).front() );
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
+                    for ( auto&& kicker1 : ECard() )
+                    {
+                        if ( kicker1 == highCard )
+                            continue;
+                        for ( auto&& kickerSuit1 : ESuit() )
+                        {
+                            for ( auto&& kicker2 : ECard() )
+                            {
+                                if ( ( kicker2 == highCard ) || ( kicker2 == kicker1 ) )
+                                    continue;
 
-    //TEST_F( C4CardHandTester, Pair )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+                                for ( auto&& kickerSuit2 : ESuit() )
+                                {
+                                    p1->clearCards();
 
-    //    for ( auto&& highCard : ECard() )
-    //    {
-    //        for ( auto&& highSuit1 : ESuit() )
-    //        {
-    //            for ( auto&& highSuit2 : ESuit() )
-    //            {
-    //                if ( highSuit1 == highSuit2 )
-    //                    continue;
+                                    p1->addCard( fGame->getCard( highCard, highSuit1 ) );
+                                    p1->addCard( fGame->getCard( highCard, highSuit2 ) );
+                                    p1->addCard( fGame->getCard( kicker1, kickerSuit1 ) );
+                                    p1->addCard( fGame->getCard( kicker2, kickerSuit2 ) );
 
-    //                for ( auto&& kicker1 : ECard() )
-    //                {
-    //                    if ( kicker1 == highCard )
-    //                        continue;
-    //                    for ( auto&& kickerSuit1 : ESuit() )
-    //                    {
-    //                        for ( auto&& kicker2 : ECard() )
-    //                        {
-    //                            if ( ( kicker2 == highCard ) || ( kicker2 == kicker1 ) )
-    //                                continue;
+                                    auto hand = p1->determineHand();
+                                    EXPECT_EQ( EHand::ePair, std::get< 0 >( hand ) );
+                                    ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
 
-    //                            for ( auto&& kickerSuit2 : ESuit() )
-    //                            {
-    //                                for ( auto&& kicker3 : ECard() )
-    //                                {
-    //                                    if ( ( kicker3 == highCard ) || ( kicker3 == kicker1 ) || ( kicker3 == kicker2 ) )
-    //                                        continue;
-    //                                    for ( auto&& kickerSuit3 : ESuit() )
-    //                                    {
-    //                                        p1->clearCards();
+                                    EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
+                                    auto kickers = std::vector< ECard >( { kicker1, kicker2 } );
+                                    std::sort( kickers.begin(), kickers.end(), []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
+                                    EXPECT_EQ( kickers, std::get< 2 >( hand ) );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-    //                                        p1->addCard( fGame->getCard( highCard, highSuit1 ) );
-    //                                        p1->addCard( fGame->getCard( highCard, highSuit2 ) );
-    //                                        p1->addCard( fGame->getCard( kicker1, kickerSuit1 ) );
-    //                                        p1->addCard( fGame->getCard( kicker2, kickerSuit2 ) );
-    //                                        p1->addCard( fGame->getCard( kicker3, kickerSuit3 ) );
+    TEST_F( C4CardHandTester, HighCard )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
 
-    //                                        auto hand = p1->determineHand();
-    //                                        EXPECT_EQ( EHand::ePair, std::get< 0 >( hand ) );
-    //                                        ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
+        for ( auto&& card1 : ECard() )
+        {
+            for ( auto&& suit1 : ESuit() )
+            {
+                for ( auto&& card2 : ECard() )
+                {
+                    if ( card1 == card2 )
+                        continue;
+                    for ( auto&& suit2 : ESuit() )
+                    {
+                        for ( auto&& card3 : ECard() )
+                        {
+                            if (
+                                ( card1 == card2 )
+                                || ( card1 == card3 )
+                                || ( card2 == card3 )
+                                )
+                                continue;
 
-    //                                        EXPECT_EQ( highCard, std::get< 1 >( hand ).front() );
-    //                                        auto kickers = std::vector< ECard >( { kicker1, kicker2, kicker3 } );
-    //                                        std::sort( kickers.begin(), kickers.end(), []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
-    //                                        EXPECT_EQ( kickers, std::get< 2 >( hand ) );
-    //                                    }
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
+                            for ( auto&& suit3 : ESuit() )
+                            {
+                                for ( auto&& card4 : ECard() )
+                                {
+                                    if (
+                                        ( card1 == card2 )
+                                        || ( card1 == card3 )
+                                        || ( card1 == card4 )
+                                        || ( card2 == card3 )
+                                        || ( card2 == card4 )
+                                        || ( card3 == card4 )
+                                        )
+                                        continue;
+                                    for ( auto&& suit4 : ESuit() )
+                                    {
+                                        if ( isStraight( std::vector< ECard >( { card1, card2, card3, card4 } ) ) )
+                                            continue;
 
-    //TEST_F( C4CardHandTester, DISABLED_HighCard )
-    //{
-    //    auto p1 = fGame->addPlayer( "Scott" );
+                                        if ( suit1 == suit4 )
+                                            continue; // prevent flush
 
-    //    for ( auto&& card1 : ECard() )
-    //    {
-    //        for ( auto&& suit1 : ESuit() )
-    //        {
-    //            for ( auto&& card2 : ECard() )
-    //            {
-    //                if ( card1 == card2 )
-    //                    continue;
-    //                for ( auto&& suit2 : ESuit() )
-    //                {
-    //                    for ( auto&& card3 : ECard() )
-    //                    {
-    //                        if (
-    //                            ( card1 == card2 )
-    //                            || ( card1 == card3 )
-    //                            || ( card2 == card3 )
-    //                            )
-    //                            continue;
+                                        p1->clearCards();
 
-    //                        for ( auto&& suit3 : ESuit() )
-    //                        {
-    //                            for ( auto&& card4 : ECard() )
-    //                            {
-    //                                if (
-    //                                    ( card1 == card2 )
-    //                                    || ( card1 == card3 )
-    //                                    || ( card1 == card4 )
-    //                                    || ( card2 == card3 )
-    //                                    || ( card2 == card4 )
-    //                                    || ( card3 == card4 )
-    //                                    )
-    //                                    continue;
-    //                                for ( auto&& suit4 : ESuit() )
-    //                                {
-    //                                    for ( auto&& card5 : ECard() )
-    //                                    {
-    //                                        if (
-    //                                            ( card1 == card2 )
-    //                                            || ( card1 == card3 )
-    //                                            || ( card1 == card4 )
-    //                                            || ( card1 == card5 )
-    //                                            || ( card2 == card3 )
-    //                                            || ( card2 == card4 )
-    //                                            || ( card2 == card5 )
-    //                                            || ( card3 == card4 )
-    //                                            || ( card3 == card5 )
-    //                                            || ( card4 == card5 )
-    //                                            )
-    //                                            continue;
+                                        p1->addCard( fGame->getCard( card1, suit1 ) );
+                                        p1->addCard( fGame->getCard( card2, suit2 ) );
+                                        p1->addCard( fGame->getCard( card3, suit3 ) );
+                                        p1->addCard( fGame->getCard( card4, suit4 ) );
 
-    //                                        if ( isStraight( std::vector< ECard >( { card1, card2, card3, card4, card5 } ) ) )
-    //                                            continue;
+                                        auto hand = p1->determineHand();
+                                        EXPECT_EQ( EHand::eHighCard, std::get< 0 >( hand ) )
+                                            << "Cards: "
+                                            << card1 << suit1 << " "
+                                            << card2 << suit2 << " "
+                                            << card3 << suit3 << " "
+                                            << card4 << suit4 << " "
+                                            ;
 
-    //                                        for ( auto&& suit5 : ESuit() )
-    //                                        {
-    //                                            if ( suit1 == suit5 )
-    //                                                continue; // prevent flush
+                                        auto cards = std::vector< ECard >( { card1, card2, card3, card4 } );
+                                        std::sort( cards.begin(), cards.end(), []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
+                                        auto kickers = cards;
+                                        kickers.erase( kickers.begin(), ++kickers.begin() );
+                                        cards.erase( ++cards.begin(), cards.end() );
 
-    //                                            p1->clearCards();
+                                        EXPECT_EQ( cards, std::get< 1 >( hand ) )
+                                            << "Cards: "
+                                            << card1 << suit1 << " "
+                                            << card2 << suit2 << " "
+                                            << card3 << suit3 << " "
+                                            << card4 << suit4 << " "
+                                            ;
 
-    //                                            p1->addCard( fGame->getCard( card1, suit1 ) );
-    //                                            p1->addCard( fGame->getCard( card2, suit2 ) );
-    //                                            p1->addCard( fGame->getCard( card3, suit3 ) );
-    //                                            p1->addCard( fGame->getCard( card4, suit4 ) );
-    //                                            p1->addCard( fGame->getCard( card5, suit5 ) );
-
-    //                                            auto hand = p1->determineHand();
-    //                                            EXPECT_EQ( EHand::eHighCard, std::get< 0 >( hand ) )
-    //                                                << "Cards: "
-    //                                                << card1 << suit1 << " "
-    //                                                << card2 << suit2 << " "
-    //                                                << card3 << suit3 << " "
-    //                                                << card4 << suit4 << " "
-    //                                                << card5 << suit5 << " "
-    //                                                ;
-
-    //                                            auto cards = std::vector< ECard >( { card1, card2, card3, card4, card5 } );
-    //                                            std::sort( cards.begin(), cards.end(), []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
-    //                                            auto kickers = cards;
-    //                                            kickers.erase( kickers.begin(), ++kickers.begin() );
-    //                                            cards.erase( ++cards.begin(), cards.end() );
-
-    //                                            EXPECT_EQ( cards, std::get< 1 >( hand ) )
-    //                                                << "Cards: "
-    //                                                << card1 << suit1 << " "
-    //                                                << card2 << suit2 << " "
-    //                                                << card3 << suit3 << " "
-    //                                                << card4 << suit4 << " "
-    //                                                << card5 << suit5 << " "
-    //                                                ;
-
-    //                                            EXPECT_EQ( kickers, std::get< 2 >( hand ) )
-    //                                                << "Cards: "
-    //                                                << card1 << suit1 << " "
-    //                                                << card2 << suit2 << " "
-    //                                                << card3 << suit3 << " "
-    //                                                << card4 << suit4 << " "
-    //                                                << card5 << suit5 << " "
-    //                                                ;
-    //                                        }
-    //                                    }
-    //                                }
-    //                            }
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-
-    //TEST_F( C4CardHandTester, All3CardHands )
-    //{
-    //    std::vector< std::shared_ptr< CHand > > allHands;
-    //    size_t numHands = 0;
-    //    auto allCards = getAllCards();
-    //    for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
-    //    {
-    //        for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
-    //        {
-    //            for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
-    //            {
-    //                for ( size_t c4 = c3 + 1; c4 < allCards.size(); ++c4 )
-    //                {
-    //                    for ( size_t c5 = c4 + 1; c5 < allCards.size(); ++c5 )
-    //                    {
-    //                        auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ], allCards[ c4 ], allCards[ c5 ] } ), nullptr );
-    //                        allHands.push_back( hand );
-    //                        numHands++;
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-
-    //    std::sort( allHands.begin(), allHands.end(), []( const std::shared_ptr< CHand >& lhs, const std::shared_ptr< CHand >& rhs )
-    //               { return lhs->operator>( *rhs ); }
-    //    );
-
-    //    EXPECT_EQ( 2598960, numHands );
-    //    EXPECT_EQ( 2598960, allHands.size() );
-
-    //    std::vector< std::shared_ptr< CHand > > uniqueHands;
-    //    std::shared_ptr< CHand > prevHand;
-    //    for ( size_t ii = 0; ii < allHands.size(); ++ii )
-    //    {
-    //        if ( prevHand && ( prevHand->operator==( *allHands[ ii ] ) ) )
-    //            continue;
-    //        prevHand = allHands[ ii ];
-    //        uniqueHands.push_back( prevHand );
-    //    }
-    //    EXPECT_EQ( 7462, uniqueHands.size() );
-
-    //    std::map< EHand, size_t > freq;
-    //    for ( auto&& ii : allHands )
-    //    {
-    //        auto hand = ii->determineHand();
-    //        freq[ std::get< 0 >( hand ) ]++;
-    //    }
-    //    EXPECT_EQ( 40, freq[ EHand::eStraightFlush ] );
-    //    EXPECT_EQ( 624, freq[ EHand::eFourOfAKind ] );
-    //    EXPECT_EQ( 3744, freq[ EHand::eFullHouse ] );
-    //    EXPECT_EQ( 5108, freq[ EHand::eFlush ] );
-    //    EXPECT_EQ( 10200, freq[ EHand::eStraight ] );
-    //    EXPECT_EQ( 54912, freq[ EHand::eThreeOfAKind ] );
-    //    EXPECT_EQ( 123552, freq[ EHand::eTwoPair ] );
-    //    EXPECT_EQ( 1098240, freq[ EHand::ePair ] );
-    //    EXPECT_EQ( 1302540, freq[ EHand::eHighCard ] );
-
-    //    std::map< EHand, size_t > subFreq;
-    //    for ( auto&& ii : uniqueHands )
-    //    {
-    //        auto hand = ii->determineHand();
-    //        subFreq[ std::get< 0 >( hand ) ]++;
-    //    }
-    //    EXPECT_EQ( 10, subFreq[ EHand::eStraightFlush ] );
-    //    EXPECT_EQ( 156, subFreq[ EHand::eFourOfAKind ] );
-    //    EXPECT_EQ( 156, subFreq[ EHand::eFullHouse ] );
-    //    EXPECT_EQ( 1277, subFreq[ EHand::eFlush ] );
-    //    EXPECT_EQ( 10, subFreq[ EHand::eStraight ] );
-    //    EXPECT_EQ( 858, subFreq[ EHand::eThreeOfAKind ] );
-    //    EXPECT_EQ( 858, subFreq[ EHand::eTwoPair ] );
-    //    EXPECT_EQ( 2860, subFreq[ EHand::ePair ] );
-    //    EXPECT_EQ( 1277, subFreq[ EHand::eHighCard ] );
-    //}
-
-    //TEST_F( C4CardHandTester, Find3CardWinner )
-    //{
-    //    fGame->addPlayer( "Scott" )->setCards( fGame->getCards( "7D AS 4D QH JC 3C 2C" ) ); // ace high, QJ74
-    //    fGame->addPlayer( "Craig" )->setCards( fGame->getCards( "JC TC 8D 5D 4H 3H 2H" ) ); // J high, T854
-    //    fGame->addPlayer( "Eric" )->setCards( fGame->getCards( "JH TS 8H 5C 4S 3D 2D" ) ); // J high, T854
-    //    fGame->addPlayer( "Keith" )->setCards( fGame->getCards( "KD QS 8C 7S 5C 4C 3S 2S" ) ); // K high, Q875
-
-    //    auto winners = fGame->findWinners();
-    //    EXPECT_EQ( 1, winners.size() );
-    //    EXPECT_EQ( "Scott", winners.front()->name() );
-    //    ASSERT_TRUE( winners.front()->getHand()->bestHand().has_value() );
-    //    EXPECT_EQ( "Cards: 7D AS 4D QH JC", winners.front()->getHand()->bestHand().value().second->toString() );
-    //    EXPECT_EQ( "High Card 'Ace' : Queen, Jack, Seven, Four kickers", winners.front()->getHand()->bestHand().value().second->determineHandName( true ) );
-    //}
-
-    //TEST_F( C4CardHandTester, Find3CardHandWild )
-    //{
-    //    auto hand = std::make_shared< CHand >( fGame->getCards( "3C 4D 7H KH 4H 2C 2H" ), nullptr ); // Ace H flush
-    //    //hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eClubs ) );
-    //    //hand->addWildCard( fGame->getCard( ECard::eTwo, ESuit::eHearts ) );
-
-    //    EHand handValue;
-    //    std::vector< ECard > card;
-    //    std::vector< ECard > kickers;
-    //    std::tie( handValue, card, kickers ) = hand->determineHand();
-    //    EXPECT_EQ( EHand::eTwoPair, handValue );
-    //    EXPECT_EQ( ECard::eFour, *card.begin() );
-    //    EXPECT_EQ( ECard::eDeuce, *card.rbegin() );
-    //    EXPECT_EQ( ECard::eKing, *kickers.begin() );
-
-    //    hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eClubs ) );
-    //    hand->addWildCard( fGame->getCard( ECard::eDeuce, ESuit::eHearts ) );
-    //    std::tie( handValue, card, kickers ) = hand->determineHand();
-    //    EXPECT_EQ( EHand::eFourOfAKind, handValue );
-    //    EXPECT_EQ( ECard::eFour, *card.begin() );
-    //    EXPECT_EQ( ECard::eKing, *kickers.begin() );
-    //}
+                                        EXPECT_EQ( kickers, std::get< 2 >( hand ) )
+                                            << "Cards: "
+                                            << card1 << suit1 << " "
+                                            << card2 << suit2 << " "
+                                            << card3 << suit3 << " "
+                                            << card4 << suit4 << " "
+                                            ;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     TEST_F( C4CardHandTester, AllCardHands )
     {
-        //auto p1 = fGame->addPlayer( "Scott" );
-        //fGame->setStraightsFlushesCountForSmallHands( true );
+        auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsFlushesCountForSmallHands( true );
 
-        //std::vector< std::shared_ptr< CHand > > allHands;
-        //size_t numHands = 0;
-        //auto allCards = getAllCards();
-        //for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
-        //{
-        //    for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
-        //    {
-        //        for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
-        //        {
-        //            for ( size_t c4 = c3 + 1; c4 < allCards.size(); ++c4 )
-        //            {
-        //                auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ], allCards[ c4 ] } ), fGame->playInfo() );
-        //                allHands.push_back( hand );
-        //                numHands++;
-        //            }
-        //        }
-        //    }
-        //}
+        std::vector< std::shared_ptr< CHand > > allHands;
+        size_t numHands = 0;
+        auto allCards = getAllCards();
+        for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
+        {
+            for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
+            {
+                for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
+                {
+                    for ( size_t c4 = c3 + 1; c4 < allCards.size(); ++c4 )
+                    {
+                        auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ], allCards[ c4 ] } ), fGame->playInfo() );
+                        allHands.push_back( hand );
+                        numHands++;
+                    }
+                }
+            }
+        }
 
-        //std::sort( allHands.begin(), allHands.end(), []( const std::shared_ptr< CHand >& lhs, const std::shared_ptr< CHand >& rhs )
-        //           { return lhs->operator>( *rhs ); }
-        //);
+        std::sort( allHands.begin(), allHands.end(), []( const std::shared_ptr< CHand >& lhs, const std::shared_ptr< CHand >& rhs )
+                   { return lhs->operator>( *rhs ); }
+        );
 
-        //EXPECT_EQ( 270725, numHands );
-        //EXPECT_EQ( 270725, allHands.size() );
+        EXPECT_EQ( 270725, numHands );
+        EXPECT_EQ( 270725, allHands.size() );
 
-        //std::vector< std::shared_ptr< CHand > > uniqueHands;
-        //std::shared_ptr< CHand > prevHand;
-        //for ( size_t ii = 0; ii < allHands.size(); ++ii )
-        //{
-        //    if ( prevHand && ( prevHand->operator==( *allHands[ ii ] ) ) )
-        //        continue;
-        //    prevHand = allHands[ ii ];
-        //    uniqueHands.push_back( prevHand );
-        //}
-        //EXPECT_EQ( 741, uniqueHands.size() );
+        std::vector< std::shared_ptr< CHand > > uniqueHands;
+        std::shared_ptr< CHand > prevHand;
+        for ( size_t ii = 0; ii < allHands.size(); ++ii )
+        {
+            if ( prevHand && ( prevHand->operator==( *allHands[ ii ] ) ) )
+                continue;
+            prevHand = allHands[ ii ];
+            uniqueHands.push_back( prevHand );
+        }
+        EXPECT_EQ( 2535, uniqueHands.size() );
 
-        //std::map< EHand, size_t > freq;
-        //for ( auto&& ii : allHands )
-        //{
-        //    auto hand = ii->determineHand();
-        //    freq[ std::get< 0 >( hand ) ]++;
-        //}
-        //EXPECT_EQ( 0, freq[ EHand::eFourOfAKind ] );
-        //EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
-        //EXPECT_EQ( 0, freq[ EHand::eTwoPair ] );
-        //EXPECT_EQ( 48, freq[ EHand::eStraightFlush ] );
-        //EXPECT_EQ( 52, freq[ EHand::eThreeOfAKind ] );
-        //EXPECT_EQ( 720, freq[ EHand::eStraight ] );
-        //EXPECT_EQ( 1096, freq[ EHand::eFlush ] );
-        //EXPECT_EQ( 3744, freq[ EHand::ePair ] );
-        //EXPECT_EQ( 16440, freq[ EHand::eHighCard ] );
+        std::map< EHand, size_t > freq;
+        for ( auto&& ii : allHands )
+        {
+            auto hand = ii->determineHand();
+            freq[ std::get< 0 >( hand ) ]++;
+        }
+        EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 13, freq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 44, freq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 2496, freq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 2772, freq[ EHand::eStraight ] );
+        EXPECT_EQ( 2808, freq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 2816, freq[ EHand::eFlush ] );
+        EXPECT_EQ( 82368, freq[ EHand::ePair ] );
+        EXPECT_EQ( 177408, freq[ EHand::eHighCard ] );
 
-        //std::map< EHand, size_t > subFreq;
-        //for ( auto&& ii : uniqueHands )
-        //{
-        //    auto hand = ii->determineHand();
-        //    subFreq[ std::get< 0 >( hand ) ]++;
-        //}
-        //EXPECT_EQ( 12, subFreq[ EHand::eStraightFlush ] );
-        //EXPECT_EQ( 0, subFreq[ EHand::eFourOfAKind ] );
-        //EXPECT_EQ( 0, subFreq[ EHand::eFullHouse ] );
-        //EXPECT_EQ( 274, subFreq[ EHand::eFlush ] );
-        //EXPECT_EQ( 12, subFreq[ EHand::eStraight ] );
-        //EXPECT_EQ( 13, subFreq[ EHand::eThreeOfAKind ] );
-        //EXPECT_EQ( 0, subFreq[ EHand::eTwoPair ] );
-        //EXPECT_EQ( 156, subFreq[ EHand::ePair ] );
-        //EXPECT_EQ( 274, subFreq[ EHand::eHighCard ] );
+        std::map< EHand, size_t > subFreq;
+        for ( auto&& ii : uniqueHands )
+        {
+            auto hand = ii->determineHand();
+            subFreq[ std::get< 0 >( hand ) ]++;
+        }
+        EXPECT_EQ( 0, subFreq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 11, subFreq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 11, subFreq[ EHand::eStraight ] );
+        EXPECT_EQ( 13, subFreq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 78, subFreq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 156, subFreq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 704, subFreq[ EHand::eFlush ] );
+        EXPECT_EQ( 704, subFreq[ EHand::eHighCard ] );
+        EXPECT_EQ( 858, subFreq[ EHand::ePair ] );
     }
 
     TEST_F( C4CardHandTester, AllCardHands_NoStraightsFlushes )
     {
-        //auto p1 = fGame->addPlayer( "Scott" );
-        //fGame->setStraightsFlushesCountForSmallHands( false );
+        auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsFlushesCountForSmallHands( false );
 
-        //std::vector< std::shared_ptr< CHand > > allHands;
-        //size_t numHands = 0;
-        //auto allCards = getAllCards();
-        //for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
-        //{
-        //    for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
-        //    {
-        //        for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
-        //        {
-        //            auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ] } ), fGame->playInfo() );
-        //            allHands.push_back( hand );
-        //            numHands++;
-        //        }
-        //    }
-        //}
+        std::vector< std::shared_ptr< CHand > > allHands;
+        size_t numHands = 0;
+        auto allCards = getAllCards();
+        for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
+        {
+            for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
+            {
+                for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
+                {
+                    for ( size_t c4 = c3 + 1; c4 < allCards.size(); ++c4 )
+                    {
+                        auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ], allCards[ c4 ] } ), fGame->playInfo() );
+                        allHands.push_back( hand );
+                        numHands++;
+                    }
+                }
+            }
+        }
 
-        //std::sort( allHands.begin(), allHands.end(), []( const std::shared_ptr< CHand >& lhs, const std::shared_ptr< CHand >& rhs )
-        //           { return lhs->operator>( *rhs ); }
-        //);
+        std::sort( allHands.begin(), allHands.end(), []( const std::shared_ptr< CHand >& lhs, const std::shared_ptr< CHand >& rhs )
+                   { return lhs->operator>( *rhs ); }
+        );
 
-        //EXPECT_EQ( 22100, numHands );
-        //EXPECT_EQ( 22100, allHands.size() );
+        EXPECT_EQ( 270725, numHands );
+        EXPECT_EQ( 270725, allHands.size() );
 
-        //std::vector< std::shared_ptr< CHand > > uniqueHands;
-        //std::shared_ptr< CHand > prevHand;
-        //for ( size_t ii = 0; ii < allHands.size(); ++ii )
-        //{
-        //    if ( prevHand && ( prevHand->operator==( *allHands[ ii ] ) ) )
-        //        continue;
-        //    prevHand = allHands[ ii ];
-        //    uniqueHands.push_back( prevHand );
-        //}
-        //EXPECT_EQ( 455, uniqueHands.size() );
+        std::vector< std::shared_ptr< CHand > > uniqueHands;
+        std::shared_ptr< CHand > prevHand;
+        for ( size_t ii = 0; ii < allHands.size(); ++ii )
+        {
+            if ( prevHand && ( prevHand->operator==( *allHands[ ii ] ) ) )
+                continue;
+            prevHand = allHands[ ii ];
+            uniqueHands.push_back( prevHand );
+        }
+        EXPECT_EQ( 1820, uniqueHands.size() );
 
-        //std::map< EHand, size_t > freq;
-        //for ( auto&& ii : allHands )
-        //{
-        //    auto hand = ii->determineHand();
-        //    freq[ std::get< 0 >( hand ) ]++;
-        //}
-        //EXPECT_EQ( 0, freq[ EHand::eStraightFlush ] );
-        //EXPECT_EQ( 0, freq[ EHand::eFourOfAKind ] );
-        //EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
-        //EXPECT_EQ( 0, freq[ EHand::eFlush ] );
-        //EXPECT_EQ( 0, freq[ EHand::eStraight ] );
-        //EXPECT_EQ( 52, freq[ EHand::eThreeOfAKind ] );
-        //EXPECT_EQ( 0, freq[ EHand::eTwoPair ] );
-        //EXPECT_EQ( 3744, freq[ EHand::ePair ] );
-        //EXPECT_EQ( 18304, freq[ EHand::eHighCard ] );
+        std::map< EHand, size_t > freq;
+        for ( auto&& ii : allHands )
+        {
+            auto hand = ii->determineHand();
+            freq[ std::get< 0 >( hand ) ]++;
+        }
+        EXPECT_EQ( 0, freq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 13, freq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 0, freq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 0, freq[ EHand::eFlush ] );
+        EXPECT_EQ( 0, freq[ EHand::eStraight ] );
+        EXPECT_EQ( 2496, freq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 2808, freq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 82368, freq[ EHand::ePair ] );
+        EXPECT_EQ( 183040, freq[ EHand::eHighCard ] );
 
-        //std::map< EHand, size_t > subFreq;
-        //for ( auto&& ii : uniqueHands )
-        //{
-        //    auto hand = ii->determineHand();
-        //    subFreq[ std::get< 0 >( hand ) ]++;
-        //}
-        //EXPECT_EQ( 0, subFreq[ EHand::eStraightFlush ] );
-        //EXPECT_EQ( 0, subFreq[ EHand::eFourOfAKind ] );
-        //EXPECT_EQ( 0, subFreq[ EHand::eFullHouse ] );
-        //EXPECT_EQ( 0, subFreq[ EHand::eFlush ] );
-        //EXPECT_EQ( 0, subFreq[ EHand::eStraight ] );
-        //EXPECT_EQ( 13, subFreq[ EHand::eThreeOfAKind ] );
-        //EXPECT_EQ( 0, subFreq[ EHand::eTwoPair ] );
-        //EXPECT_EQ( 156, subFreq[ EHand::ePair ] );
-        //EXPECT_EQ( 286, subFreq[ EHand::eHighCard ] );
+        std::map< EHand, size_t > subFreq;
+        for ( auto&& ii : uniqueHands )
+        {
+            auto hand = ii->determineHand();
+            subFreq[ std::get< 0 >( hand ) ]++;
+        }
+        EXPECT_EQ( 0, subFreq[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 13, subFreq[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 0, subFreq[ EHand::eFullHouse ] );
+        EXPECT_EQ( 0, subFreq[ EHand::eFlush ] );
+        EXPECT_EQ( 0, subFreq[ EHand::eStraight ] );
+        EXPECT_EQ( 156, subFreq[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 78, subFreq[ EHand::eTwoPair ] );
+        EXPECT_EQ( 858, subFreq[ EHand::ePair ] );
+        EXPECT_EQ( 715, subFreq[ EHand::eHighCard ] );
     }
 
 

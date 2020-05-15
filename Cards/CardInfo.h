@@ -62,6 +62,8 @@ namespace NHandUtils
         virtual EHand getHandType( bool flushStraightCount = true ) const final;
         virtual bool allCardsUnique() const final;
 
+        virtual const std::list< EHand >& handOrder() const final{ return fHandOrder; }
+
         template< typename T1, typename T2>
         static void computeAndGenerateMaps( std::ostream& oss, size_t size, T1& justCardsCount, T2& flushesAndStraightsCount );
         template< typename T1, typename T2 >
