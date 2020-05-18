@@ -24,7 +24,6 @@
 // SOFTWARE.
 
 #include "CardInfo.h"
-#include "HandUtils.h"
 #include <memory>
 #include <optional>
 enum class EHand;

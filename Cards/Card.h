@@ -74,7 +74,8 @@ ECard fromBitValue( uint16_t value );
 uint8_t toRankValue( ECard card );
 std::ostream & operator<<( std::ostream& oss, ECard card );
 
-std::vector< std::shared_ptr< CCard > > getAllCards();
+std::list< std::shared_ptr< CCard > > getAllCardsList();
+std::vector< std::shared_ptr< CCard > > getAllCardsVector();
 using TCardBitType = std::bitset< 29 >;
 class CCard
 {

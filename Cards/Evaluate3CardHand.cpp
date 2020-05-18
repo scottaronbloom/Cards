@@ -2673,35 +2673,12 @@ namespace NHandUtils
                 EHand::eHighCard 
             };
 
-        auto sortedCards = setOrigCards( { std::get< 0 >( cards ), std::get< 1 >( cards ), std::get< 2 >( cards ) } );
+        setOrigCards( { std::get< 0 >( cards ), std::get< 1 >( cards ), std::get< 2 >( cards ) } );
 
         fIsFlush = NHandUtils::isFlush( fOrigCards );
         fIsPair = NHandUtils::isCount( fOrigCards, 2 );
         fIsThreeOfAKind = NHandUtils::isCount( fOrigCards, 3 );
         fStraightType = NHandUtils::isStraight( fOrigCards );
-
-        fCards.push_back( sortedCards[ 0 ].first );
-        fKickers.push_back( sortedCards[ 1 ].first );
-        fKickers.push_back( sortedCards[ 2 ].first );
-
-        if ( fIsPair )
-        {
-            fCards.clear();
-            fKickers.clear();
-            std::map< ECard, uint8_t > cardHits;
-            for ( auto && card : sortedCards )
-            {
-                cardHits[ card.first ]++;
-            }
-
-            for ( auto&& ii : cardHits )
-            {
-                if ( ii.second > 1 )
-                    fCards = { ii.first };
-                else
-                    fKickers.push_back( ii.first );
-            }
-        }
     }
 
     void generateAll3CardHands()
@@ -2764,7 +2741,7 @@ namespace NHandUtils
 
             std::cout << "Finished Generating: " << numHands << "\n";
 
-            std::ofstream ofs( "3CardDump.cpp" );
+            std::ofstream ofs( "E:/DropBox/Documents/sb/github/scottaronbloom/CardGame/Cards/3CardDump.cpp" );
             std::ostream* oss = &ofs; //&std::cout;
 
             CCardInfo::computeAndGenerateMaps( *oss, 3, justCardsCount, flushesAndStraightsCount );

@@ -24,7 +24,6 @@
 // SOFTWARE.
 
 #include "CardInfo.h"
-#include "HandUtils.h"
 #include <memory>
 enum class EHand;
 struct SPlayInfo;

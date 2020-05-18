@@ -25,6 +25,11 @@
 #include "PlayInfo.h"
 #include "HandUtils.h"
 
+#include "Evaluate2CardHand.h"
+#include "Evaluate3CardHand.h"
+#include "Evaluate4CardHand.h"
+#include "Evaluate5CardHand.h"
+
 #include <map>
 #include <set>
 #include <optional>
@@ -37,6 +42,23 @@ namespace NHandUtils
 {
     CCardInfo::CCardInfo()
     {
+    }
+
+    NHandUtils::CCardInfo CCardInfo::createCardInfo( const std::vector< TCard >& hand )
+    {
+        switch ( hand.size() )
+        {
+            case 2:
+                return NHandUtils::C2CardInfo( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second );
+            case 3:
+                return NHandUtils::C3CardInfo( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second, hand[ 2 ].first, hand[ 2 ].second );
+            case 4:
+                return NHandUtils::C4CardInfo( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second, hand[ 2 ].first, hand[ 2 ].second, hand[ 3 ].first, hand[ 3 ].second );
+            case 5:
+                return NHandUtils::C5CardInfo( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second, hand[ 2 ].first, hand[ 2 ].second, hand[ 3 ].first, hand[ 3 ].second, hand[ 4 ].first, hand[ 4 ].second );
+            default:
+                return CCardInfo();
+        }
     }
 
     bool CCardInfo::isStraight() const
@@ -94,7 +116,7 @@ namespace NHandUtils
                     {
                         if ( !fIsFullHouse && rhs.fIsFullHouse )
                             return true;
-                        if ( fIsThreeOfAKind && !rhs.fIsFullHouse )
+                        if ( fIsFullHouse && !rhs.fIsFullHouse )
                             return false;
                         if ( fIsFullHouse && rhs.fIsFullHouse )
                             return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
@@ -110,16 +132,16 @@ namespace NHandUtils
                             return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
                     }
                     break;
-                    //case EHand::eFiveOfAKind:
-                    //    {
-                    //        if ( !fIsF && rhs.fIsFourOfAKind )
-                    //            return true;
-                    //        if ( fIsFourOfAKind && !rhs.fIsFourOfAKind )
-                    //            return false;
-                    //        if ( fIsFourOfAKind && rhs.fIsFourOfAKind )
-                    //            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
-                    //    }
-                    //    break;
+                    case EHand::eFiveOfAKind:
+                        {
+                            if ( !fIsFiveOfAKind && rhs.fIsFiveOfAKind )
+                                return true;
+                            if ( fIsFiveOfAKind && !rhs.fIsFiveOfAKind )
+                                return false;
+                            if ( fIsFiveOfAKind && rhs.fIsFiveOfAKind )
+                                return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
+                        }
+                        break;
                 case EHand::eStraight:
                     {
                         auto straightCompare = NHandUtils::compareStraight( fStraightType, rhs.fStraightType );
@@ -165,6 +187,8 @@ namespace NHandUtils
 
     bool CCardInfo::equalTo( bool flushStraightCount, const CCardInfo& rhs ) const
     {
+        if ( fIsFiveOfAKind && rhs.fIsFiveOfAKind )
+            return fCards == rhs.fCards && fKickers == rhs.fKickers;
         if ( fIsFourOfAKind && rhs.fIsFourOfAKind )
             return fCards == rhs.fCards && fKickers == rhs.fKickers;
         if ( fIsThreeOfAKind && rhs.fIsThreeOfAKind )
@@ -310,21 +334,63 @@ namespace NHandUtils
 
     bool CCardInfo::allCardsUnique() const
     {
-        return !fIsFourOfAKind && !fIsFullHouse && !fIsThreeOfAKind && !fIsTwoPair && !fIsPair;
+        return !fIsFiveOfAKind && !fIsFourOfAKind && !fIsFullHouse && !fIsThreeOfAKind && !fIsTwoPair && !fIsPair;
     }
 
-    std::vector< TCard > CCardInfo::setOrigCards( const std::vector< TCard >& cards )
+    void CCardInfo::setOrigCards( const std::vector< TCard >& cards )
     {
         fOrigCards = cards;
         fBitValues.resize( fOrigCards.size() );
         for ( size_t ii = 0; ii < fOrigCards.size(); ++ii )
             fBitValues[ ii ] = NHandUtils::computeBitValue( fOrigCards[ ii ].first, fOrigCards[ ii ].second );
 
-        auto sortedCards = fOrigCards;
-        std::sort( sortedCards.begin(), sortedCards.end(), []( TCard lhs, TCard rhs ) { return lhs.first > rhs.first; } );
-        return sortedCards;
+        setupKickers();
     }
     
+    void CCardInfo::setupKickers()
+    {
+        if ( fOrigCards.empty() )
+            return;
+
+        auto sortedCards = fOrigCards;
+        std::sort( sortedCards.begin(), sortedCards.end(), []( TCard lhs, TCard rhs ) { return lhs.first > rhs.first; } );
+
+        std::map< ECard, uint8_t > cardHits;
+        for ( auto&& card : sortedCards )
+        {
+            cardHits[ card.first ]++;
+        }
+        std::map< uint8_t, std::list< ECard > > numHitsToCard;
+        for ( auto ii : cardHits )
+        {
+            numHitsToCard[ ii.second ].push_back( ii.first );
+        }
+
+        for( auto && ii : numHitsToCard )
+        {
+            ii.second.sort( []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
+        }
+
+        for ( auto ii = numHitsToCard.rbegin(); ii != numHitsToCard.rend(); ++ii )
+        {
+            if ( (*ii).first > 1 )
+            {
+                for( auto && jj : ( *ii ).second )
+                    fCards.push_back( jj );
+            }
+            else
+            {
+                for ( auto && jj : ( *ii ).second )
+                    fKickers.push_back( jj );
+            }
+        }
+        if ( fCards.empty() )
+        {
+            fCards.push_back( *fKickers.begin() );
+            fKickers.erase( fKickers.begin() );
+        }
+    }
+
     std::ostream& operator<<( std::ostream& oss, const CCardInfo& obj )
     {
         bool first = true;

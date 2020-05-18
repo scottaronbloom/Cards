@@ -180,7 +180,7 @@ namespace NHandUtils
     uint32_t evaluateHandInternal( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo > & playInfo )
     {
         if ( cards.size() == 2 )
-            return evaluate2CardHand( cards, playInfo );
+            return C2CardInfo::evaluate2CardHand( cards, playInfo );
         else if ( cards.size() == 3 )
             return evaluate3CardHand( cards, playInfo );
         else if ( cards.size() == 4 )
@@ -575,7 +575,7 @@ namespace NHandUtils
     EHand rankToHand( uint32_t rank, size_t numCards, const std::shared_ptr< SPlayInfo > & playInfo )
     {
         if ( numCards == 2 )
-            return rankTo2CardHand( rank, playInfo );
+            return C2CardInfo::rankTo2CardHand( rank, playInfo );
         else if ( numCards == 3 )
             return rankTo3CardHand( rank, playInfo );
         else if ( numCards == 4 )

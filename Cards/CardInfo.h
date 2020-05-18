@@ -38,6 +38,8 @@ namespace NHandUtils
     public:
         CCardInfo();
 
+        static CCardInfo createCardInfo( const std::vector< TCard > & card );
+
         virtual uint16_t getCardsValue() const;
         virtual uint64_t handProduct() const;
 
@@ -45,10 +47,15 @@ namespace NHandUtils
         virtual bool greaterThan( bool flushStraightCount, const CCardInfo& rhs ) const final;
         virtual bool equalTo( bool flushStraightCount, const CCardInfo& rhs ) const;
 
+        bool operator<( const CCardInfo & rhs ) const { return lessThan( true, rhs ); }
+        bool operator>( const CCardInfo& rhs ) const { return greaterThan( true, rhs ); }
+        bool operator==( const CCardInfo& rhs ) const { return equalTo( true, rhs ); }
+
         const std::vector< TCard > & origCards() const{ return fOrigCards; }
 
         const std::optional< EStraightType > & straightType() const{ return fStraightType; }
 
+        virtual bool isFiveOfAKind() const final { return fIsFiveOfAKind; }
         virtual bool isStraightFlush() const final { return fStraightType.has_value() && fIsFlush; }
         virtual bool isFourOfAKind() const final { return fIsFourOfAKind; }
         virtual bool isFullHouse() const final { return fIsFullHouse; }
@@ -73,13 +80,15 @@ namespace NHandUtils
         static void generateTable( std::ostream& oss, const std::vector< uint32_t >& values, const std::string& varName );
         static void generateEvaluateFunction( std::ostream& oss, size_t size );
     protected:
-        std::vector< TCard > setOrigCards( const std::vector< TCard >& cards ); // returns the cards sorted
+        void setOrigCards( const std::vector< TCard >& cards ); // returns the cards sorted
         template< typename T >
         static void generateITE( std::ostream& oss, const T& map, bool flushStraightCount );
         template< typename T>
         static void computeAndGenerateMap( std::ostream& oss, size_t size, T& map, bool flushStraightCount );
+        void setupKickers();
 
         std::optional< EStraightType > fStraightType;
+        bool fIsFiveOfAKind{ false };
         bool fIsFourOfAKind{ false };
         bool fIsFullHouse{ false };
         bool fIsThreeOfAKind{ false };

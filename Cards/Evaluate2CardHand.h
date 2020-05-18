@@ -24,8 +24,8 @@
 // SOFTWARE.
 
 #include "CardInfo.h"
-#include "HandUtils.h"
 #include <memory>
+#include <unordered_map>
 enum class EHand;
 struct SPlayInfo;
 
@@ -38,11 +38,20 @@ namespace NHandUtils
         C2CardInfo();
         C2CardInfo( const THand & cards );
         C2CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2 );
-    };
 
-    void generateAll2CardHands();
-    uint32_t evaluate2CardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo );
-    EHand rankTo2CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
+        static void generateAll2CardHands();
+        static uint32_t evaluate2CardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo );
+        static EHand rankTo2CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
+
+        static std::unordered_map< int64_t, int16_t > sStraitsAndFlushesProductMap;
+        static std::vector< uint32_t > sFlushes;
+        static std::map< THand, uint32_t > sCardMap;
+        static std::map< THand, uint32_t > sCardMapStraightsAndFlushesCount;
+        static std::vector< uint32_t > sHighCardUnique;
+        static std::vector< uint32_t > sStraightsUnique;
+        static std::unordered_map< int64_t, int16_t > sProductMap;
+        static bool sAllHandsComputed;
+    };
 }
 
 #endif

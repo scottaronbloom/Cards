@@ -217,9 +217,9 @@ std::ostream& operator<<( std::ostream& oss, const CCard& card )
     return oss;
 }
 
-std::vector< std::shared_ptr< CCard > > getAllCards()
+std::list< std::shared_ptr< CCard > > getAllCardsList()
 {
-    std::vector< std::shared_ptr< CCard > > retVal;
+    std::list< std::shared_ptr< CCard > > retVal;
     for ( auto&& card : ECard() )
     {
         for ( auto&& suit : ESuit() )
@@ -227,6 +227,13 @@ std::vector< std::shared_ptr< CCard > > getAllCards()
             retVal.push_back( std::make_shared< CCard >( card, suit ) );
         }
     }
+    return retVal;
+}
+
+std::vector< std::shared_ptr< CCard > > getAllCardsVector()
+{
+    auto tmp = getAllCardsList();
+    auto retVal = std::vector< std::shared_ptr< CCard > >( tmp.begin(), tmp.end() );
     return retVal;
 }
 
