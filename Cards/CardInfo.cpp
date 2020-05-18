@@ -243,7 +243,7 @@ namespace NHandUtils
     void CCardInfo::generateTable( std::ostream& oss, const std::vector< uint32_t >& values, const std::string & varName )
     {
         oss 
-            << "" << "static std::vector< uint32_t > " << varName << " = \n"
+            << "" << "std::vector< uint32_t > " << varName << " = \n"
             << "{\n"
             ;
         size_t numChars = 0;
@@ -278,10 +278,10 @@ namespace NHandUtils
             << "    if ( cards.size() != " << size << " )\n"
             << "        return -1;\n"
             << "\n"
-            << "    auto cardsValue = getCardsValue( cards );\n"
+            << "    auto cardsValue = NHandUtils::getCardsValue( cards );\n"
             << "    if ( playInfo && playInfo->fStraightsFlushesCount )\n"
             << "    {\n"
-            << "        if ( isFlush( cards ) )\n"
+            << "        if ( NHandUtils::isFlush( cards ) )\n"
             << "            return sFlushes[ cardsValue ];\n"
             << "    }\n"
             << "\n"

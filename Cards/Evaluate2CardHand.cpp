@@ -109,9 +109,19 @@ namespace NHandUtils
             std::cout << "Finished Generating: " << numHands << "\n";
 
             std::ofstream ofs( "E:/DropBox/Documents/sb/github/scottaronbloom/CardGame/Cards/2CardHandTables.cpp" );
-            std::ostream* oss = &ofs; //&std::cout;
+            std::ostream & oss = ofs; //&std::cout;
 
-            CCardInfo::computeAndGenerateMaps( *oss, 2, justCardsCount, flushesAndStraightsCount );
+            oss << "#include \"Evaluate2CardHand.h\"\n"
+                << "#include \"PlayInfo.h\"\n"
+                << "#include \"Hand.h\"\n"
+                << "\n"
+                << "#include <map>\n"
+                << "\n"
+                << "namespace NHandUtils\n"
+                << "{\n"
+                ;
+
+            CCardInfo::computeAndGenerateMaps( oss, 2, justCardsCount, flushesAndStraightsCount );
 
             std::vector< uint32_t > flushes;
             flushes.resize( maxCardsValue + 1 );
@@ -153,14 +163,15 @@ namespace NHandUtils
                     highCardProductMap[ productValue ] = highCardValue;
                 }
             }
-            CCardInfo::generateTable( *oss, flushes, "sFlushes" );
-            CCardInfo::generateTable( *oss, highCardUnique, "sHighCardUnique" );
-            CCardInfo::generateTable( *oss, straightsUnique, "sStraightsUnique" );
-            CCardInfo::generateMap( *oss, highCardProductMap, "sProductMap" );
-            CCardInfo::generateMap( *oss, straightsProductMap, "sStraitsAndFlushesProductMap" );
+            CCardInfo::generateTable( oss, flushes, "C2CardInfo::sFlushes" );
+            CCardInfo::generateTable( oss, highCardUnique, "C2CardInfo::sHighCardUnique" );
+            CCardInfo::generateTable( oss, straightsUnique, "C2CardInfo::sStraightsUnique" );
+            CCardInfo::generateMap( oss, highCardProductMap, "C2CardInfo::sProductMap" );
+            CCardInfo::generateMap( oss, straightsProductMap, "C2CardInfo::sStraitsAndFlushesProductMap" );
 
-            CCardInfo::generateEvaluateFunction( *oss, 2 );
-            CCardInfo::generateRankFunction( *oss, 2, justCardsCount, flushesAndStraightsCount );
+            CCardInfo::generateEvaluateFunction( oss, 2 );
+            CCardInfo::generateRankFunction( oss, 2, justCardsCount, flushesAndStraightsCount );
+            oss << "}\n\n";
         }
     }
 }

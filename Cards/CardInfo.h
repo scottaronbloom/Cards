@@ -118,7 +118,7 @@ namespace NHandUtils
         auto header = flushStraightCount ? "Flushes/Straights" : "No Flushes/Straights";
         oss
             << "// " << header << "\n"
-            << "static std::map< C" << size << "CardInfo::THand, uint32_t > " << varName << " = \n"
+            << "std::map< C" << size << "CardInfo::THand, uint32_t > " << varName << " = \n"
             << "{\n"
             ;
 
