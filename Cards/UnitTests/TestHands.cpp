@@ -90,7 +90,7 @@ namespace NHandTester
         EXPECT_EQ( 65, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
 
         NHandUtils::gComputeAllHands = true;
-        NHandUtils::C2CardInfo::generateAll2CardHands();
+        NHandUtils::C2CardInfo::generateAllCardHands();
     }
 
     TEST_F( C2CardHandTester, Basic )
@@ -737,7 +737,7 @@ namespace NHandTester
         EXPECT_EQ( 274, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
 
         NHandUtils::gComputeAllHands = true;
-        NHandUtils::generateAll3CardHands();
+        NHandUtils::C3CardInfo::generateAllCardHands();
     }
 
     TEST_F( C3CardHandTester, Basic )

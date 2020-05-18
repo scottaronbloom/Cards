@@ -1163,7 +1163,7 @@ std::unordered_map< int64_t, int16_t > C2CardInfo::sStraitsAndFlushesProductMap 
     ,{ 1681, 14 }
 };
 
-uint32_t C2CardInfo::evaluate2CardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )
+uint32_t C2CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )
 {
     if ( cards.size() != 2 )
         return -1;
@@ -1187,7 +1187,7 @@ uint32_t C2CardInfo::evaluate2CardHand( const std::vector< std::shared_ptr< CCar
     return ( *pos ).second;
 }
 
-EHand C2CardInfo::rankTo2CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )
+EHand C2CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )
 {
     EHand hand;
     if ( !playInfo->fStraightsFlushesCount )

@@ -79,6 +79,8 @@ namespace NHandUtils
         static void generateMap( std::ostream& oss, const std::map< uint64_t, uint16_t >& values, const std::string& varName );
         static void generateTable( std::ostream& oss, const std::vector< uint32_t >& values, const std::string& varName );
         static void generateEvaluateFunction( std::ostream& oss, size_t size );
+        static void generateHeader( std::ostream & oss, size_t size );
+        static void generateFooter( std::ostream &oss );
     protected:
         void setOrigCards( const std::vector< TCard >& cards ); // returns the cards sorted
         template< typename T >
@@ -210,7 +212,7 @@ namespace NHandUtils
     template< typename T1, typename T2 >
     void CCardInfo::generateRankFunction( std::ostream& oss, size_t size, const T1& justCardsCount, const T2& flushesAndStraightsCount )
     {
-        oss << "EHand C" << size << "CardInfo::rankTo" << size << "CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )\n"
+        oss << "EHand C" << size << "CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )\n"
             << "{\n"
             << "    EHand hand;\n"
             << "    if ( !playInfo->fStraightsFlushesCount )\n"

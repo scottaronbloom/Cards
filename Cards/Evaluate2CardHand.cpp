@@ -60,13 +60,13 @@ namespace NHandUtils
         fStraightType = NHandUtils::isStraight( fOrigCards );
     }
 
-    void C2CardInfo::generateAll2CardHands()
+    void C2CardInfo::generateAllCardHands()
     {
         if ( NHandUtils::gComputeAllHands && !sAllHandsComputed )
         {
             sAllHandsComputed = true;
 
-            using TCardToInfoMap = std::map< C2CardInfo::THand, C2CardInfo >;
+            using TCardToInfoMap = std::map< THand, C2CardInfo >;
             auto gFlushStraightsCount = []( const C2CardInfo& lhs, const C2CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
             auto gJustCardsCount = []( const C2CardInfo& lhs, const C2CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
 
@@ -96,7 +96,7 @@ namespace NHandUtils
                     if ( ( handCount % ( numHands / 10 ) ) == 0 )
                         std::cout << "   Generating: Hand #" << handCount << " of " << numHands << "\n";
 
-                    auto curr = C2CardInfo::THand( TCard( c1->getCard(), c1->getSuit() ), TCard( c2->getCard(), c2->getSuit() ) );
+                    auto curr = THand( TCard( c1->getCard(), c1->getSuit() ), TCard( c2->getCard(), c2->getSuit() ) );
                     C2CardInfo cardInfo( curr );
                     allHands[ curr ] = cardInfo;
                     justCardsCount.insert( std::make_pair( cardInfo, -1 ) );
@@ -111,17 +111,8 @@ namespace NHandUtils
             std::ofstream ofs( "E:/DropBox/Documents/sb/github/scottaronbloom/CardGame/Cards/2CardHandTables.cpp" );
             std::ostream & oss = ofs; //&std::cout;
 
-            oss << "#include \"Evaluate2CardHand.h\"\n"
-                << "#include \"PlayInfo.h\"\n"
-                << "#include \"Hand.h\"\n"
-                << "\n"
-                << "#include <map>\n"
-                << "\n"
-                << "namespace NHandUtils\n"
-                << "{\n"
-                ;
-
-            CCardInfo::computeAndGenerateMaps( oss, 2, justCardsCount, flushesAndStraightsCount );
+            generateHeader( oss, 2 );
+            computeAndGenerateMaps( oss, 2, justCardsCount, flushesAndStraightsCount );
 
             std::vector< uint32_t > flushes;
             flushes.resize( maxCardsValue + 1 );
@@ -163,15 +154,15 @@ namespace NHandUtils
                     highCardProductMap[ productValue ] = highCardValue;
                 }
             }
-            CCardInfo::generateTable( oss, flushes, "C2CardInfo::sFlushes" );
-            CCardInfo::generateTable( oss, highCardUnique, "C2CardInfo::sHighCardUnique" );
-            CCardInfo::generateTable( oss, straightsUnique, "C2CardInfo::sStraightsUnique" );
-            CCardInfo::generateMap( oss, highCardProductMap, "C2CardInfo::sProductMap" );
-            CCardInfo::generateMap( oss, straightsProductMap, "C2CardInfo::sStraitsAndFlushesProductMap" );
+            generateTable( oss, flushes, "C2CardInfo::sFlushes" );
+            generateTable( oss, highCardUnique, "C2CardInfo::sHighCardUnique" );
+            generateTable( oss, straightsUnique, "C2CardInfo::sStraightsUnique" );
+            generateMap( oss, highCardProductMap, "C2CardInfo::sProductMap" );
+            generateMap( oss, straightsProductMap, "C2CardInfo::sStraitsAndFlushesProductMap" );
 
-            CCardInfo::generateEvaluateFunction( oss, 2 );
-            CCardInfo::generateRankFunction( oss, 2, justCardsCount, flushesAndStraightsCount );
-            oss << "}\n\n";
+            generateEvaluateFunction( oss, 2 );
+            generateRankFunction( oss, 2, justCardsCount, flushesAndStraightsCount );
+            generateFooter( oss );
         }
     }
 }

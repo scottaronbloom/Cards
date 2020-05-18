@@ -273,7 +273,7 @@ namespace NHandUtils
 
     void CCardInfo::generateEvaluateFunction( std::ostream& oss, size_t size )
     {
-        oss << "uint32_t C" << size << "CardInfo::evaluate" << size << "CardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )\n"
+        oss << "uint32_t C" << size << "CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )\n"
             << "{\n"
             << "    if ( cards.size() != " << size << " )\n"
             << "        return -1;\n"
@@ -296,6 +296,24 @@ namespace NHandUtils
             << "        return -1;\n"
             << "    return ( *pos ).second;\n"
             << "}\n\n";
+    }
+
+    void CCardInfo::generateHeader( std::ostream& oss, size_t size )
+    {
+        oss << "#include \"Evaluate" << size << "CardHand.h\"\n"
+            << "#include \"PlayInfo.h\"\n"
+            << "#include \"Hand.h\"\n"
+            << "\n"
+            << "#include <map>\n"
+            << "\n"
+            << "namespace NHandUtils\n"
+            << "{\n"
+            ;
+    }
+
+    void CCardInfo::generateFooter( std::ostream& oss )
+    {
+        oss << "}\n\n";
     }
 
     bool CCardInfo::isHighCard() const

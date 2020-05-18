@@ -39,9 +39,9 @@ namespace NHandUtils
         C2CardInfo( const THand & cards );
         C2CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2 );
 
-        static void generateAll2CardHands();
-        static uint32_t evaluate2CardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo );
-        static EHand rankTo2CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
+        static void generateAllCardHands();
+        static uint32_t evaluateCardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo );
+        static EHand rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
 
         static std::unordered_map< int64_t, int16_t > sStraitsAndFlushesProductMap;
         static std::vector< uint32_t > sFlushes;
