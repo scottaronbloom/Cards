@@ -210,7 +210,7 @@ namespace NHandUtils
     template< typename T1, typename T2 >
     void CCardInfo::generateRankFunction( std::ostream& oss, size_t size, const T1& justCardsCount, const T2& flushesAndStraightsCount )
     {
-        oss << "EHand rankTo" << size << "CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )\n"
+        oss << "EHand C" << size << "CardInfo::rankTo" << size << "CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )\n"
             << "{\n"
             << "    EHand hand;\n"
             << "    if ( !playInfo->fStraightsFlushesCount )\n"

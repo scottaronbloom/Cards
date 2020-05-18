@@ -221,7 +221,7 @@ namespace NHandUtils
     void CCardInfo::generateMap( std::ostream& oss, const std::map< uint64_t, uint16_t > & values, const std::string& varName )
     {
         oss
-            << "" << "static std::unordered_map< int64_t, int16_t > " << varName << " = \n"
+            << "" << "std::unordered_map< int64_t, int16_t > " << varName << " = \n"
             << "{\n"
             ;
         bool first = true;
@@ -273,7 +273,7 @@ namespace NHandUtils
 
     void CCardInfo::generateEvaluateFunction( std::ostream& oss, size_t size )
     {
-        oss << "uint32_t evaluate" << size << "CardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )\n"
+        oss << "uint32_t C" << size << "CardInfo::evaluate" << size << "CardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )\n"
             << "{\n"
             << "    if ( cards.size() != " << size << " )\n"
             << "        return -1;\n"
