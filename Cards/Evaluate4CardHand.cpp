@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <fstream>
+#include "SABUtils/utils.h"
 
 namespace NHandUtils
 {
@@ -7854,7 +7855,7 @@ namespace NHandUtils
         fStraightType = NHandUtils::isStraight( fOrigCards );
     }
 
-    void generateAll4CardHands()
+    void C4CardInfo::generateAllCardHands()
     {
         static bool sAllHandsComputed{ false };
         if ( NHandUtils::gComputeAllHands && !sAllHandsComputed )
@@ -7868,62 +7869,34 @@ namespace NHandUtils
             using TCardsCountMap = std::map< C4CardInfo, uint32_t, decltype( gJustCardsCount ) >;
             using TFlushesCountMap = std::map< C4CardInfo, uint32_t, decltype( gFlushStraightsCount ) >;
 
-            static TCardToInfoMap allHands;
-            static TCardsCountMap justCardsCount( gJustCardsCount );
-            static TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
+            TCardToInfoMap allHands;
+            TCardsCountMap justCardsCount( gJustCardsCount );
+            TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
 
-            auto numHands = 52 * 51 * 50 * 49;
+            auto numHands = NUtils::numCombinations( 52, 4 );
             std::cout << "Generating: " << numHands << "\n";
 
             size_t maxCardsValue = 0;
 
-            auto&& allCards = CCard::allCardsList();
-            uint64_t handCount = 0;
-
-            for ( auto&& c1 : allCards )
+            auto&& allCardsVector = CCard::allCards();
+            auto allCardCombos = NUtils::allCombinations( allCardsVector, 4 );
+            for ( auto&& ii : allCardCombos )
             {
-                for ( auto&& c2 : allCards )
-                {
-                    if ( *c1 == *c2 )
-                        continue;
+                auto curr = C4CardInfo::THand( TCard( ii[ 0 ]->getCard(), ii[ 0 ]->getSuit() ), TCard( ii[ 1 ]->getCard(), ii[ 1 ]->getSuit() ), TCard( ii[ 2 ]->getCard(), ii[ 2 ]->getSuit() ), TCard( ii[ 3 ]->getCard(), ii[ 3 ]->getSuit() ) );
+                C4CardInfo cardInfo( curr );
+                allHands[ curr ] = cardInfo;
 
-                    for ( auto&& c3 : allCards )
-                    {
-                        if ( *c1 == *c3 )
-                            continue;
-                        if ( *c2 == *c3 )
-                            continue;
+                justCardsCount.insert( std::make_pair( cardInfo, -1 ) );
+                flushesAndStraightsCount.insert( std::make_pair( cardInfo, -1 ) );
 
-                        for ( auto&& c4 : allCards )
-                        {
-                            if ( *c1 == *c4 )
-                                continue;
-                            if ( *c2 == *c4 )
-                                continue;
-                            if ( *c3 == *c4 )
-                                continue;
-
-                            handCount++;
-                            if ( ( handCount % ( numHands / 10 ) ) == 0 )
-                                std::cout << "   Generating: Hand #" << handCount << " of " << numHands << "\n";
-
-                            auto curr = C4CardInfo::THand( TCard( c1->getCard(), c1->getSuit() ), TCard( c2->getCard(), c2->getSuit() ), TCard( c3->getCard(), c3->getSuit() ), TCard( c4->getCard(), c4->getSuit() ) );
-                            C4CardInfo cardInfo( curr );
-                            allHands[ curr ] = cardInfo;
-
-                            justCardsCount.insert( std::make_pair( cardInfo, -1 ) );
-                            flushesAndStraightsCount.insert( std::make_pair( cardInfo, -1 ) );
-
-                            maxCardsValue = std::max( static_cast<size_t>( cardInfo.getCardsValue() ), maxCardsValue );
-                        }
-                    }
-                }
+                maxCardsValue = std::max( static_cast<size_t>( cardInfo.getCardsValue() ), maxCardsValue );
             }
 
             std::cout << "Finished Generating: " << numHands << "\n";
             std::ofstream ofs( "E:/DropBox/Documents/sb/github/scottaronbloom/CardGame/Cards/4CardHandTables.cpp" );
             std::ostream* oss = &ofs; //&std::cout;
 
+            CCardInfo::generateHeader( *oss, 4 );
             CCardInfo::computeAndGenerateMaps( *oss, 4, justCardsCount, flushesAndStraightsCount );
 
             std::vector< uint32_t > flushes;
@@ -7967,14 +7940,15 @@ namespace NHandUtils
                     highCardProductMap[ productValue ] = highCardValue;
                 }
             }
-            CCardInfo::generateTable( *oss, flushes, "sFlushes" );
-            CCardInfo::generateTable( *oss, highCardUnique, "sHighCardUnique" );
-            CCardInfo::generateTable( *oss, straightsUnique, "sStraightsUnique" );
-            CCardInfo::generateMap( *oss, highCardProductMap, "sProductMap" );
-            CCardInfo::generateMap( *oss, straightsProductMap, "sStraitsAndFlushesProductMap" );
+            CCardInfo::generateTable( *oss, flushes, "C4CardInfo::sFlushes" );
+            CCardInfo::generateTable( *oss, highCardUnique, "C4CardInfo::sHighCardUnique" );
+            CCardInfo::generateTable( *oss, straightsUnique, "C4CardInfo::sStraightsUnique" );
+            CCardInfo::generateMap( *oss, highCardProductMap, "C4CardInfo::sProductMap" );
+            CCardInfo::generateMap( *oss, straightsProductMap, "C4CardInfo::sStraitsAndFlushesProductMap" );
 
             CCardInfo::generateEvaluateFunction( *oss, 4 );
             CCardInfo::generateRankFunction( *oss, 4, justCardsCount, flushesAndStraightsCount );
+            CCardInfo::generateFooter( *oss );
         }
     }
 }

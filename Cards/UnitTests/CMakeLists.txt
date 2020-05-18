@@ -24,7 +24,7 @@ SET( QT_LIBRARIES Qt5::Core )
 
 SAB_UNIT_TEST(TestHands
     TestHands.cpp
-    "${QT_LIBRARIES};Cards;gmock"
+    "${QT_LIBRARIES};SABUtils;Cards;gmock"
     CardTest.h;CardTest.cpp
     )
 

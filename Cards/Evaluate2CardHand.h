@@ -43,6 +43,7 @@ namespace NHandUtils
         static uint32_t evaluateCardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo );
         static EHand rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
 
+    private:
         static std::unordered_map< int64_t, int16_t > sStraitsAndFlushesProductMap;
         static std::vector< uint32_t > sFlushes;
         static std::map< THand, uint32_t > sCardMap;

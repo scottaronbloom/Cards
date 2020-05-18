@@ -184,9 +184,9 @@ namespace NHandUtils
         else if ( cards.size() == 3 )
             return C3CardInfo::evaluateCardHand( cards, playInfo );
         else if ( cards.size() == 4 )
-            return evaluate4CardHand( cards, playInfo );
+            return C4CardInfo::evaluateCardHand( cards, playInfo );
         else if ( cards.size() == 5 )
-            return evaluate5CardHand( cards, playInfo );
+            return C5CardInfo::evaluateCardHand( cards, playInfo );
 
         // 6 or greater is permuations of 5
         return -1;
@@ -579,9 +579,9 @@ namespace NHandUtils
         else if ( numCards == 3 )
             return C3CardInfo::rankToCardHand( rank, playInfo );
         else if ( numCards == 4 )
-            return rankTo4CardHand( rank, playInfo );
+            return C4CardInfo::rankToCardHand( rank, playInfo );
         else if ( numCards >= 5 )
-            return rankTo5CardHand( rank, playInfo );
+            return C5CardInfo::rankToCardHand( rank, playInfo );
         else
             return EHand::eNoCards;
     }

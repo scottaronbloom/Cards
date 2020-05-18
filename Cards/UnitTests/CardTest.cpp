@@ -141,10 +141,6 @@ namespace NHandTester
             uniqueHands.push_back( *ii );
         }
         
-        for( auto && ii : sortedMap )
-        {
-            std::cout << ii << "\n";
-        }
         std::map< EHand, size_t > freq;
         for ( auto&& ii : allHands )
         {
@@ -196,20 +192,7 @@ namespace NHandTester
 
     std::vector< std::vector< std::shared_ptr< CCard > > > CHandTester::getAllCards( size_t numCards )
     {
-        auto allCardsList = getAllCardsList();
-        auto tmp3 = std::vector< std::list< std::shared_ptr< CCard > > >( numCards, allCardsList );
-
-        std::function< bool( const std::vector< std::shared_ptr< CCard > >& curr, const std::shared_ptr< CCard >& obj ) > addToResult =
-            []( const std::vector< std::shared_ptr< CCard > >& data, const std::shared_ptr< CCard >& obj )
-        {
-            for ( auto&& ii : data )
-            {
-                if ( *ii == *obj )
-                    return false;
-            }
-            return true;
-        };
-        auto allCards = NUtils::cartiseanProduct( tmp3, addToResult );
+        auto allCards = NUtils::allCombinations( getAllCardsVector(), numCards );
         return allCards;
     }
 

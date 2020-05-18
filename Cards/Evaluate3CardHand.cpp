@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <fstream>
+#include "SABUtils/utils.h"
 
 namespace NHandUtils
 {
@@ -82,48 +83,27 @@ namespace NHandUtils
             using TCardsCountMap = std::map< C3CardInfo, uint32_t, decltype( gJustCardsCount ) >;
             using TFlushesCountMap = std::map< C3CardInfo, uint32_t, decltype( gFlushStraightsCount ) >;
 
-            static TCardToInfoMap allHands;
-            static TCardsCountMap justCardsCount( gJustCardsCount );
-            static TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
+            TCardToInfoMap allHands;
+            TCardsCountMap justCardsCount( gJustCardsCount );
+            TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
 
-            auto numHands = 52 * 51 * 50;
+            auto numHands = NUtils::numCombinations( 52, 3 );
             std::cout << "Generating: " << numHands << "\n";
 
             size_t maxCardsValue = 0;
 
-            auto&& allCards = CCard::allCardsList();
-            uint64_t handCount = 0;
-
-            for ( auto&& c1 : allCards )
+            auto&& allCardsVector = CCard::allCards();
+            auto allCardCombos = NUtils::allCombinations( allCardsVector, 3 );
+            for ( auto&& ii : allCardCombos )
             {
-                for ( auto&& c2 : allCards )
-                {
-                    if ( *c1 == *c2 )
-                        continue;
+                auto curr = THand( TCard( ii[ 0 ]->getCard(), ii[ 0 ]->getSuit() ), TCard( ii[ 1 ]->getCard(), ii[ 1 ]->getSuit() ), TCard( ii[ 2 ]->getCard(), ii[ 2 ]->getSuit() ) );
+                C3CardInfo cardInfo( curr );
+                allHands[ curr ] = cardInfo;
 
-                    for ( auto&& c3 : allCards )
-                    {
-                        if ( *c1 == *c3 )
-                            continue;
-                        if ( *c1 == *c2 )
-                            continue;
-                        if ( *c2 == *c3 )
-                            continue;
+                justCardsCount.insert( std::make_pair( cardInfo, -1 ) );
+                flushesAndStraightsCount.insert( std::make_pair( cardInfo, -1 ) );
 
-                        handCount++;
-                        if ( ( handCount % ( numHands / 10 ) ) == 0 )
-                            std::cout << "   Generating: Hand #" << handCount << " of " << numHands << "\n";
-
-                        auto curr = THand( TCard( c1->getCard(), c1->getSuit() ), TCard( c2->getCard(), c2->getSuit() ), TCard( c3->getCard(), c3->getSuit() ) );
-                        C3CardInfo cardInfo( curr );
-                        allHands[ curr ] = cardInfo;
-
-                        justCardsCount.insert( std::make_pair( cardInfo, -1 ) );
-                        flushesAndStraightsCount.insert( std::make_pair( cardInfo, -1 ) );
-
-                        maxCardsValue = std::max( static_cast<size_t>( cardInfo.getCardsValue() ), maxCardsValue );
-                    }
-                }
+                maxCardsValue = std::max( static_cast<size_t>( cardInfo.getCardsValue() ), maxCardsValue );
             }
 
             std::cout << "Finished Generating: " << numHands << "\n";
