@@ -27,10 +27,10 @@ set(qtproject_SRCS
     Evaluate3CardHand.cpp
     Evaluate4CardHand.cpp
     Evaluate5CardHand.cpp
-    2CardTables.cpp
-    3CardTables.cpp
-    4CardTables.cpp
-    5CardTables.cpp
+    2CardHandTables.cpp
+    3CardHandTables.cpp
+    4CardHandTables.cpp
+    5CardHandTables.cpp
     Game.cpp
     Hand.cpp
     HandImpl.cpp

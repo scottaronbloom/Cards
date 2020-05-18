@@ -7921,7 +7921,7 @@ namespace NHandUtils
             }
 
             std::cout << "Finished Generating: " << numHands << "\n";
-            std::ofstream ofs( "E:/DropBox/Documents/sb/github/scottaronbloom/CardGame/Cards/4CardDump.cpp" );
+            std::ofstream ofs( "E:/DropBox/Documents/sb/github/scottaronbloom/CardGame/Cards/4CardHandTables.cpp" );
             std::ostream* oss = &ofs; //&std::cout;
 
             CCardInfo::computeAndGenerateMaps( *oss, 4, justCardsCount, flushesAndStraightsCount );
