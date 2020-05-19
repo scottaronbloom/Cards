@@ -634,7 +634,7 @@ namespace NHandTester
         auto p1 = fGame->addPlayer( "Scott" );
         fGame->setStraightsAndFlushesCount( true );
 
-        std::list< std::shared_ptr< CHand > > allHands = getAllCHandHands( 2 );
+        auto allHands = getAllCHandHands( 2 );
 
         EXPECT_EQ( 1326, allHands.size() );
 
@@ -736,7 +736,7 @@ namespace NHandTester
         EXPECT_EQ( 156, std::get< 2 >( analyzedHands )[ EHand::ePair ] );
         EXPECT_EQ( 274, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
 
-        NHandUtils::gComputeAllHands = true;
+        //NHandUtils::gComputeAllHands = true;
         NHandUtils::C3CardInfo::generateAllCardHands();
     }
 
@@ -2157,7 +2157,6 @@ namespace NHandTester
         }
 
         auto analyzedHands = getUniqueHands( allHands );
-
     }
 
     TEST_F( C5CardHandTester, AllCardHandsByCardInfo )
@@ -2192,7 +2191,7 @@ namespace NHandTester
         EXPECT_EQ( 2860, std::get< 2 >( analyzedHands )[ EHand::ePair ] );
         EXPECT_EQ( 1277, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
 
-        NHandUtils::gComputeAllHands = true;
+        //NHandUtils::gComputeAllHands = true;
         NHandUtils::C5CardInfo::generateAllCardHands();
     }
 
@@ -2270,6 +2269,7 @@ namespace NHandTester
     TEST_F( C5CardHandTester, StraightFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto suit : ESuit() )
         {
@@ -2392,6 +2392,7 @@ namespace NHandTester
     TEST_F( C5CardHandTester, Flush )
     {
         auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto suit : ESuit() )
         {
@@ -2427,6 +2428,7 @@ namespace NHandTester
     TEST_F( C5CardHandTester, Straight )
     {
         auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto&& highCard : ECard() )
         {
@@ -2869,29 +2871,42 @@ namespace NHandTester
         auto p1 = fGame->addPlayer( "Scott" );
         fGame->setStraightsAndFlushesCount( true );
 
-        std::list< std::shared_ptr< CHand > > allHands;
-        size_t numHands = 0;
-        auto allCards = getAllCardsVector();
-        for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
-        {
-            for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
-            {
-                for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
-                {
-                    for ( size_t c4 = c3 + 1; c4 < allCards.size(); ++c4 )
-                    {
-                        for ( size_t c5 = c4 + 1; c5 < allCards.size(); ++c5 )
-                        {
-                            auto hand = std::make_shared< CHand >( std::vector< std::shared_ptr< CCard > >( { allCards[ c1 ], allCards[ c2 ], allCards[ c3 ], allCards[ c4 ], allCards[ c5 ] } ), nullptr );
-                            allHands.push_back( hand );
-                            numHands++;
-                        }
-                    }
-                }
-            }
-        }
+        auto allHands = getAllCHandHands( 5 );
 
-        EXPECT_EQ( 2598960, numHands );
+        EXPECT_EQ( 2598960, allHands.size() );
+
+        auto analyzedHands = getUniqueHands( allHands );
+
+        EXPECT_EQ( 7462, std::get< 0 >( analyzedHands ).size() );
+
+        EXPECT_EQ( 40, std::get< 1 >( analyzedHands )[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 624, std::get< 1 >( analyzedHands )[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 3744, std::get< 1 >( analyzedHands )[ EHand::eFullHouse ] );
+        EXPECT_EQ( 5108, std::get< 1 >( analyzedHands )[ EHand::eFlush ] );
+        EXPECT_EQ( 10200, std::get< 1 >( analyzedHands )[ EHand::eStraight ] );
+        EXPECT_EQ( 54912, std::get< 1 >( analyzedHands )[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 123552, std::get< 1 >( analyzedHands )[ EHand::eTwoPair ] );
+        EXPECT_EQ( 1098240, std::get< 1 >( analyzedHands )[ EHand::ePair ] );
+        EXPECT_EQ( 1302540, std::get< 1 >( analyzedHands )[ EHand::eHighCard ] );
+
+        EXPECT_EQ( 10, std::get< 2 >( analyzedHands )[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 156, std::get< 2 >( analyzedHands )[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 156, std::get< 2 >( analyzedHands )[ EHand::eFullHouse ] );
+        EXPECT_EQ( 1277, std::get< 2 >( analyzedHands )[ EHand::eFlush ] );
+        EXPECT_EQ( 10, std::get< 2 >( analyzedHands )[ EHand::eStraight ] );
+        EXPECT_EQ( 858, std::get< 2 >( analyzedHands )[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 858, std::get< 2 >( analyzedHands )[ EHand::eTwoPair ] );
+        EXPECT_EQ( 2860, std::get< 2 >( analyzedHands )[ EHand::ePair ] );
+        EXPECT_EQ( 1277, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
+    }
+
+    TEST_F( C5CardHandTester, AllCardHands_NoStraightsFlushes )
+    {
+        auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsAndFlushesCount( true );
+
+        auto allHands = getAllCHandHands( 5 );
+
         EXPECT_EQ( 2598960, allHands.size() );
 
         auto analyzedHands = getUniqueHands( allHands );

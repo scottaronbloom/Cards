@@ -7,7 +7,7 @@
 namespace NHandUtils
 {
 // No Flushes/Straights
-std::map< C3CardInfo::THand, uint32_t > sCardMap = 
+std::map< C3CardInfo::THand, uint32_t > C3CardInfo::sCardMap = 
 {
      { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts }, { ECard::eAce, ESuit::eDiamonds } }, 1 } // EHand::eThreeOfAKind
     ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts }, { ECard::eKing, ESuit::eDiamonds } }, 2 }
@@ -467,7 +467,7 @@ std::map< C3CardInfo::THand, uint32_t > sCardMap =
 };
 
 // Flushes/Straights
-std::map< C3CardInfo::THand, uint32_t > sCardMapStraightsAndFlushesCount = 
+std::map< C3CardInfo::THand, uint32_t > C3CardInfo::sCardMapStraightsAndFlushesCount = 
 {
      { { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 1 } // EHand::eStraightFlush
     ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 2 }

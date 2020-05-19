@@ -7,7 +7,7 @@
 namespace NHandUtils
 {
 // No Flushes/Straights
-std::map< C5CardInfo::THand, uint32_t > sCardMap = 
+std::map< C5CardInfo::THand, uint32_t > C5CardInfo::sCardMap = 
 {
      { { { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } , { ECard::eAce, ESuit::eDiamonds } , { ECard::eAce, ESuit::eClubs } }, 1 } // EHand::eFourOfAKind
     ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } , { ECard::eAce, ESuit::eDiamonds } , { ECard::eAce, ESuit::eClubs } }, 2 }
@@ -6187,7 +6187,7 @@ std::map< C5CardInfo::THand, uint32_t > sCardMap =
 };
 
 // Flushes/Straights
-std::map< C5CardInfo::THand, uint32_t > sCardMapStraightsAndFlushesCount = 
+std::map< C5CardInfo::THand, uint32_t > C5CardInfo::sCardMapStraightsAndFlushesCount = 
 {
      { { { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } , { ECard::eKing, ESuit::eSpades } , { ECard::eAce, ESuit::eSpades } }, 1 } // EHand::eStraightFlush
     ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } , { ECard::eQueen, ESuit::eSpades } , { ECard::eKing, ESuit::eSpades } }, 2 }
@@ -13653,7 +13653,7 @@ std::map< C5CardInfo::THand, uint32_t > sCardMapStraightsAndFlushesCount =
     ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } , { ECard::eFive, ESuit::eSpades } , { ECard::eSeven, ESuit::eHearts } }, 7462 } // EHand::eHighCard
 };
 
-std::vector< uint32_t > sFlushes = 
+std::vector< uint32_t > C5CardInfo::sFlushes = 
 {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -14060,7 +14060,7 @@ std::vector< uint32_t > sFlushes =
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
     };
 
-std::vector< uint32_t > sHighCardUnique = 
+std::vector< uint32_t > C5CardInfo::sHighCardUnique = 
 {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 6175, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -14482,7 +14482,7 @@ std::vector< uint32_t > sHighCardUnique =
     0, 0, 4889
     };
 
-std::vector< uint32_t > sStraightsUnique = 
+std::vector< uint32_t > C5CardInfo::sStraightsUnique = 
 {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 1608, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
@@ -14904,7 +14904,7 @@ std::vector< uint32_t > sStraightsUnique =
     0, 0, 1600
     };
 
-std::unordered_map< int64_t, int16_t > sProductMap = 
+std::unordered_map< int64_t, int16_t > C5CardInfo::sProductMap = 
 {
      { 48, 156 }
     ,{ 72, 312 }
@@ -19796,7 +19796,7 @@ std::unordered_map< int64_t, int16_t > sProductMap =
     ,{ 104553157, 1 }
 };
 
-std::unordered_map< int64_t, int16_t > sStraitsAndFlushesProductMap = 
+std::unordered_map< int64_t, int16_t > C5CardInfo::sStraitsAndFlushesProductMap = 
 {
      { 48, 166 }
     ,{ 72, 322 }
@@ -24697,19 +24697,19 @@ uint32_t C5CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard
     if ( playInfo && playInfo->fStraightsAndFlushesCount )
     {
         if ( NHandUtils::isFlush( cards ) )
-            return sFlushes[ cardsValue ];
+            return sFlushes[ cardsValue ] + ( playInfo->hasWildCards() ? 13 : 0 );
     }
 
     auto straightOrHighCard = playInfo->fStraightsAndFlushesCount ? sStraightsUnique[ cardsValue ] : sHighCardUnique[ cardsValue ];
     if ( straightOrHighCard )
-        return straightOrHighCard;
+        return straightOrHighCard + ( playInfo->hasWildCards() ? 13 : 0 );
 
     auto product = computeHandProduct( cards );
     auto productMap = playInfo->fStraightsAndFlushesCount ? sStraitsAndFlushesProductMap : sProductMap;
     auto pos = productMap.find( product );
     if ( pos == productMap.end() )
         return -1;
-    return ( *pos ).second;
+    return ( *pos ).second + ( playInfo->hasWildCards() ? 13 : 0 );
 }
 
 EHand C5CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )
@@ -24717,38 +24717,38 @@ EHand C5CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInf
     EHand hand;
     if ( !playInfo->fStraightsAndFlushesCount )
     {
-        if ( rank >= 4889U )
+        if ( rank >= 4889U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::eHighCard;
-        else if ( rank >= 2029U )
+        else if ( rank >= 2029U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::ePair;
-        else if ( rank >= 1171U )
+        else if ( rank >= 1171U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::eTwoPair;
-        else if ( rank >= 313U )
+        else if ( rank >= 313U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::eThreeOfAKind;
-        else if ( rank >= 157U )
+        else if ( rank >= 157U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::eFullHouse;
-        else /* if ( rank >= 1U ) */
+        else /* if ( rank >= 1U + ( playInfo->hasWildCards() ? 13 : 0 ) ) */
             hand = EHand::eFourOfAKind;
     }
     else
     {
-        if ( rank >= 6186U )
+        if ( rank >= 6186U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::eHighCard;
-        else if ( rank >= 3326U )
+        else if ( rank >= 3326U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::ePair;
-        else if ( rank >= 2468U )
+        else if ( rank >= 2468U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::eTwoPair;
-        else if ( rank >= 1610U )
+        else if ( rank >= 1610U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::eThreeOfAKind;
-        else if ( rank >= 1600U )
+        else if ( rank >= 1600U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::eStraight;
-        else if ( rank >= 323U )
+        else if ( rank >= 323U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::eFlush;
-        else if ( rank >= 167U )
+        else if ( rank >= 167U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::eFullHouse;
-        else if ( rank >= 11U )
+        else if ( rank >= 11U + ( playInfo->hasWildCards() ? 13 : 0 ) )
             hand = EHand::eFourOfAKind;
-        else /* if ( rank >= 1U ) */
+        else /* if ( rank >= 1U + ( playInfo->hasWildCards() ? 13 : 0 ) ) */
             hand = EHand::eStraightFlush;
     }
     return hand;

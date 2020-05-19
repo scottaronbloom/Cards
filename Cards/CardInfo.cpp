@@ -273,6 +273,9 @@ namespace NHandUtils
 
     void CCardInfo::generateEvaluateFunction( std::ostream& oss, size_t size )
     {
+        std::string wildCardSuffix;
+        if ( size == 5 )
+            wildCardSuffix = " + ( playInfo->hasWildCards() ? 13 : 0 )";
         oss << "uint32_t C" << size << "CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )\n"
             << "{\n"
             << "    if ( cards.size() != " << size << " )\n"
@@ -282,19 +285,19 @@ namespace NHandUtils
             << "    if ( playInfo && playInfo->fStraightsAndFlushesCount )\n"
             << "    {\n"
             << "        if ( NHandUtils::isFlush( cards ) )\n"
-            << "            return sFlushes[ cardsValue ];\n"
+            << "            return sFlushes[ cardsValue ]" << wildCardSuffix << ";\n"
             << "    }\n"
             << "\n"
             << "    auto straightOrHighCard = playInfo->fStraightsAndFlushesCount ? sStraightsUnique[ cardsValue ] : sHighCardUnique[ cardsValue ];\n"
             << "    if ( straightOrHighCard )\n"
-            << "        return straightOrHighCard;\n"
+            << "        return straightOrHighCard" << wildCardSuffix << ";\n"
             << "\n"
             << "    auto product = computeHandProduct( cards );\n"
             << "    auto productMap = playInfo->fStraightsAndFlushesCount ? sStraitsAndFlushesProductMap : sProductMap;\n"
             << "    auto pos = productMap.find( product );\n"
             << "    if ( pos == productMap.end() )\n"
             << "        return -1;\n"
-            << "    return ( *pos ).second;\n"
+            << "    return ( *pos ).second" << wildCardSuffix << ";\n"
             << "}\n\n";
     }
 

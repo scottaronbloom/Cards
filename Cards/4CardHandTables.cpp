@@ -7,7 +7,7 @@
 namespace NHandUtils
 {
 // No Flushes/Straights
-std::map< C4CardInfo::THand, uint32_t > sCardMap = 
+std::map< C4CardInfo::THand, uint32_t > C4CardInfo::sCardMap = 
 {
      { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts }, { ECard::eAce, ESuit::eDiamonds } , { ECard::eAce, ESuit::eClubs } }, 1 } // EHand::eFourOfAKind
     ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts }, { ECard::eKing, ESuit::eDiamonds } , { ECard::eKing, ESuit::eClubs } }, 2 }
@@ -1832,7 +1832,7 @@ std::map< C4CardInfo::THand, uint32_t > sCardMap =
 };
 
 // Flushes/Straights
-std::map< C4CardInfo::THand, uint32_t > sCardMapStraightsAndFlushesCount = 
+std::map< C4CardInfo::THand, uint32_t > C4CardInfo::sCardMapStraightsAndFlushesCount = 
 {
      { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts }, { ECard::eAce, ESuit::eDiamonds } , { ECard::eAce, ESuit::eClubs } }, 1 } // EHand::eFourOfAKind
     ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts }, { ECard::eKing, ESuit::eDiamonds } , { ECard::eKing, ESuit::eClubs } }, 2 }

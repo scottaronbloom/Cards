@@ -84,7 +84,7 @@ namespace NHandUtils
     protected:
         void setOrigCards( const std::vector< TCard >& cards ); // returns the cards sorted
         template< typename T >
-        static void generateITE( std::ostream& oss, const T& map, bool flushStraightCount );
+        static void generateITE( std::ostream& oss, size_t size, const T& map, bool flushStraightCount );
         template< typename T>
         static void computeAndGenerateMap( std::ostream& oss, size_t size, T& map, bool flushStraightCount );
         void setupKickers();
@@ -122,7 +122,9 @@ namespace NHandUtils
         }
         std::cout << "Finished Computing hand values: " << map.size() << "\n";
 
-        auto varName = flushStraightCount ? "sCardMapStraightsAndFlushesCount" : "sCardMap";
+        std::string varName = flushStraightCount ? "sCardMapStraightsAndFlushesCount" : "sCardMap";
+        varName = "C" + std::to_string( size ) + "CardInfo::" + varName;
+
         auto header = flushStraightCount ? "Flushes/Straights" : "No Flushes/Straights";
         oss
             << "// " << header << "\n"
@@ -180,7 +182,7 @@ namespace NHandUtils
     }
 
     template< typename T >
-    void CCardInfo::generateITE( std::ostream& oss, const T& map, bool flushStraightCount )
+    void CCardInfo::generateITE( std::ostream& oss, size_t size, const T& map, bool flushStraightCount )
     {
         std::map< EHand, uint32_t > handTypeToFirstRank;
         for ( auto&& ii : map )
@@ -201,6 +203,10 @@ namespace NHandUtils
         {
             firstRankToHandType[ ii.second ] = ii.first;
         }
+        std::string wildCardSuffix;
+        if ( size == 5 )
+            wildCardSuffix = " + ( playInfo->hasWildCards() ? 13 : 0 )";
+
         bool first = true;
         for( auto ii = firstRankToHandType.rbegin(); ii != firstRankToHandType.rend(); ++ii )
         {
@@ -212,7 +218,7 @@ namespace NHandUtils
             bool isOne = ( ( *ii ).first == 1 );
             if ( isOne )
                 oss << "/* ";
-            oss << "if ( rank >= " << (*ii).first << "U )";
+            oss << "if ( rank >= " << (*ii).first << "U" << wildCardSuffix << " )";
             if ( isOne )
                 oss << " */";
             oss << "\n"
@@ -228,11 +234,11 @@ namespace NHandUtils
             << "    EHand hand;\n"
             << "    if ( !playInfo->fStraightsAndFlushesCount )\n"
             << "    {\n";
-        generateITE( oss, justCardsCount, false );
+        generateITE( oss, size, justCardsCount, false );
         oss << "    }\n"
             << "    else\n"
             << "    {\n";
-        generateITE( oss, flushesAndStraightsCount, true );
+        generateITE( oss, size, flushesAndStraightsCount, true );
         oss << "    }\n"
             << "    return hand;\n"
             << "}\n\n"
