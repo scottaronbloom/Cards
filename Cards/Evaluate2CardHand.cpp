@@ -84,10 +84,14 @@ namespace NHandUtils
             size_t maxCardsValue = 0;
 
             auto && allCardsVector = CCard::allCards();
-            auto allCardCombos = NUtils::allCombinations( allCardsVector, 2 );
-            for( auto && ii : allCardCombos )
+            auto updateOn = std::min( static_cast< uint64_t >( 10000 ), numHands / 25 );
+            auto allCardCombos = NUtils::allCombinations( allCardsVector, 2, { true, updateOn } );
+            for ( size_t ii = 0; ii < allCardCombos.size(); ++ii )
             {
-                auto curr = THand( TCard( ii[ 0 ]->getCard(), ii[ 0 ]->getSuit() ), TCard( ii[ 1 ]->getCard(), ii[ 1 ]->getSuit() ) );
+                if ( ( ii % updateOn ) == 0 )
+                    std::cout << "   Generating: Hand #" << ii << " of " << numHands << "\n";
+
+                auto curr = THand( TCard( allCardCombos[ ii ][ 0 ]->getCard(), allCardCombos[ ii ][ 0 ]->getSuit() ), TCard( allCardCombos[ ii ][ 1 ]->getCard(), allCardCombos[ ii ][ 1 ]->getSuit() ) );
                 C2CardInfo cardInfo( curr );
                 allHands[ curr ] = cardInfo;
                 justCardsCount.insert( std::make_pair( cardInfo, -1 ) );

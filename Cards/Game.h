@@ -74,8 +74,8 @@ public:
 
     void removePlayer( size_t playerNum );
 
-    void setStraightsFlushesCountForSmallHands( bool straightsFlushesCountForSmallHands );
-    bool straightsFlushesCountForSmallHands() const;
+    void setStraightsAndFlushesCount( bool straightsAndFlushesCount );
+    bool straightsAndFlushesCount() const;
 
     void setLowHandWins( bool lowBall );
     bool lowHandWins() const;

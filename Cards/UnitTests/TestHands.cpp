@@ -89,7 +89,7 @@ namespace NHandTester
         EXPECT_EQ( 65, std::get< 2 >( analyzedHands )[ EHand::eFlush ] );
         EXPECT_EQ( 65, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
 
-        NHandUtils::gComputeAllHands = true;
+        //NHandUtils::gComputeAllHands = true;
         NHandUtils::C2CardInfo::generateAllCardHands();
     }
 
@@ -297,7 +297,7 @@ namespace NHandTester
     TEST_F( C2CardHandTester, StraightFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto suit : ESuit() )
         {
@@ -340,7 +340,7 @@ namespace NHandTester
     TEST_F( C2CardHandTester, StraightFlushes_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( false );
+        fGame->setStraightsAndFlushesCount( false );
 
         for ( auto suit : ESuit() )
         {
@@ -383,7 +383,7 @@ namespace NHandTester
     TEST_F( C2CardHandTester, Flush )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto suit : ESuit() )
         {
@@ -416,7 +416,7 @@ namespace NHandTester
     TEST_F( C2CardHandTester, Flush_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( false );
+        fGame->setStraightsAndFlushesCount( false );
 
         for ( auto suit : ESuit() )
         {
@@ -449,7 +449,7 @@ namespace NHandTester
     TEST_F( C2CardHandTester, Straight )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto&& highCard : ECard() )
         {
@@ -478,7 +478,7 @@ namespace NHandTester
     TEST_F( C2CardHandTester, Straight_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( false );
+        fGame->setStraightsAndFlushesCount( false );
 
         for ( auto&& highCard : ECard() )
         {
@@ -511,7 +511,7 @@ namespace NHandTester
     TEST_F( C2CardHandTester, Pair )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto&& highCard : ECard() )
         {
@@ -546,7 +546,7 @@ namespace NHandTester
     TEST_F( C2CardHandTester, Pair_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( false );
+        fGame->setStraightsAndFlushesCount( false );
 
         for ( auto&& highCard : ECard() )
         {
@@ -576,7 +576,7 @@ namespace NHandTester
     TEST_F( C2CardHandTester, HighCard )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( false );
+        fGame->setStraightsAndFlushesCount( false );
 
         for ( auto&& card1 : ECard() )
         {
@@ -632,7 +632,7 @@ namespace NHandTester
     TEST_F( C2CardHandTester, AllCardHands )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         std::list< std::shared_ptr< CHand > > allHands = getAllCHandHands( 2 );
 
@@ -666,7 +666,7 @@ namespace NHandTester
     TEST_F( C2CardHandTester, AllCardHands_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( false );
+        fGame->setStraightsAndFlushesCount( false );
 
         auto allHands = getAllCHandHands( 2 );
 
@@ -818,7 +818,7 @@ namespace NHandTester
 
         {
             auto p1 = fGame->addPlayer( "Scott" );
-            fGame->setStraightsFlushesCountForSmallHands( true );
+            fGame->setStraightsAndFlushesCount( true );
 
             p1->addCard( fGame->getCard( ECard::eTrey, ESuit::eSpades ) );
             p1->addCard( fGame->getCard( ECard::eDeuce, ESuit::eSpades ) );
@@ -1001,7 +1001,7 @@ namespace NHandTester
     TEST_F( C3CardHandTester, StraightFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto suit : ESuit() )
         {
@@ -1039,7 +1039,7 @@ namespace NHandTester
     TEST_F( C3CardHandTester, Flush )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
         for ( auto suit : ESuit() )
         {
             for ( auto && highCard : ECard() )
@@ -1072,7 +1072,7 @@ namespace NHandTester
     TEST_F( C3CardHandTester, Straight )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto&& highCard : ECard() )
         {
@@ -1239,7 +1239,7 @@ namespace NHandTester
     TEST_F( C3CardHandTester, AllCardHands )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         auto allHands = getAllCHandHands( 3 );
 
@@ -1273,7 +1273,7 @@ namespace NHandTester
     TEST_F( C3CardHandTester, AllCardHands_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( false );
+        fGame->setStraightsAndFlushesCount( false );
 
         auto allHands = getAllCHandHands( 3 );
 
@@ -1385,7 +1385,7 @@ namespace NHandTester
         EXPECT_EQ( 704, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
         EXPECT_EQ( 858, std::get< 2 >( analyzedHands )[ EHand::ePair ] );
 
-        NHandUtils::gComputeAllHands = true;
+        //NHandUtils::gComputeAllHands = true;
         NHandUtils::C4CardInfo::generateAllCardHands();
     }
 
@@ -1584,7 +1584,7 @@ namespace NHandTester
     TEST_F( C4CardHandTester, Basic2 )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         p1->addCard( fGame->getCard( ECard::eTrey, ESuit::eSpades ) );
         p1->addCard( fGame->getCard( ECard::eDeuce, ESuit::eSpades ) );
@@ -1600,7 +1600,7 @@ namespace NHandTester
     TEST_F( C4CardHandTester, StraightFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto suit : ESuit() )
         {
@@ -1660,7 +1660,7 @@ namespace NHandTester
     TEST_F( C4CardHandTester, Flush )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto suit : ESuit() )
         {
@@ -1695,7 +1695,7 @@ namespace NHandTester
     TEST_F( C4CardHandTester, Straight )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         for ( auto&& highCard : ECard() )
         {
@@ -1961,7 +1961,7 @@ namespace NHandTester
     TEST_F( C4CardHandTester, AllCardHands )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( true );
+        fGame->setStraightsAndFlushesCount( true );
 
         auto allHands = getAllCHandHands( 4 );
 
@@ -1995,7 +1995,7 @@ namespace NHandTester
     TEST_F( C4CardHandTester, AllCardHands_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsFlushesCountForSmallHands( false );
+        fGame->setStraightsAndFlushesCount( false );
 
         auto allHands = getAllCHandHands( 4 );
 
@@ -2162,30 +2162,8 @@ namespace NHandTester
 
     TEST_F( C5CardHandTester, AllCardHandsByCardInfo )
     {
-        std::list< NHandUtils::CCardInfo > allHands;
-        size_t handCount = 0;
-        auto allCards = getAllCardsVector();
+        auto allHands = getAllCardInfoHands( 5 );
 
-        for ( size_t c1 = 0; c1 < allCards.size(); ++c1 )
-        {
-            for ( size_t c2 = c1 + 1; c2 < allCards.size(); ++c2 )
-            {
-                for ( size_t c3 = c2 + 1; c3 < allCards.size(); ++c3 )
-                {
-                    for ( size_t c4 = c3 + 1; c4 < allCards.size(); ++c4 )
-                    {
-                        for ( size_t c5 = c4 + 1; c5 < allCards.size(); ++c5 )
-                        {
-                            NHandUtils::C5CardInfo cardInfo( allCards[ c1 ]->getCard(), allCards[ c1 ]->getSuit(), allCards[ c2 ]->getCard(), allCards[ c2 ]->getSuit(), allCards[ c3 ]->getCard(), allCards[ c3 ]->getSuit(), allCards[ c4 ]->getCard(), allCards[ c4 ]->getSuit(), allCards[ c5 ]->getCard(), allCards[ c5 ]->getSuit() );
-                            allHands.push_back( cardInfo );
-                            handCount++;
-                        }
-                    }
-                }
-            }
-        }
-
-        EXPECT_EQ( 2598960, handCount );
         EXPECT_EQ( 2598960, allHands.size() );
 
         auto analyzedHands = getUniqueHands( allHands );
@@ -2886,8 +2864,11 @@ namespace NHandTester
         EXPECT_EQ( ECard::eFour, *card.begin() );
     }
 
-    TEST_F( C5CardHandTester, All5CardHands )
+    TEST_F( C5CardHandTester, AllCardHands )
     {
+        auto p1 = fGame->addPlayer( "Scott" );
+        fGame->setStraightsAndFlushesCount( true );
+
         std::list< std::shared_ptr< CHand > > allHands;
         size_t numHands = 0;
         auto allCards = getAllCardsVector();

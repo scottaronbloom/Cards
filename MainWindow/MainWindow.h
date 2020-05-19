@@ -52,7 +52,7 @@ public Q_SLOTS:
     void slotNumPlayersChanged();
     void slotNumWildCardsChanged();
     void slotWildCardsChanged( bool showGame );
-    void slotStraightsFlushesCountForSmallHandsChanged();
+    void slotStraightsAndFlushesCountChanged();
     void slotLowHandWinsChanged();
 private:
     void showStats();

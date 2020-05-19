@@ -7735,18 +7735,18 @@ uint32_t C4CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard
         return -1;
 
     auto cardsValue = NHandUtils::getCardsValue( cards );
-    if ( playInfo && playInfo->fStraightsFlushesCount )
+    if ( playInfo && playInfo->fStraightsAndFlushesCount )
     {
         if ( NHandUtils::isFlush( cards ) )
             return sFlushes[ cardsValue ];
     }
 
-    auto straightOrHighCard = playInfo->fStraightsFlushesCount ? sStraightsUnique[ cardsValue ] : sHighCardUnique[ cardsValue ];
+    auto straightOrHighCard = playInfo->fStraightsAndFlushesCount ? sStraightsUnique[ cardsValue ] : sHighCardUnique[ cardsValue ];
     if ( straightOrHighCard )
         return straightOrHighCard;
 
     auto product = computeHandProduct( cards );
-    auto productMap = playInfo->fStraightsFlushesCount ? sStraitsAndFlushesProductMap : sProductMap;
+    auto productMap = playInfo->fStraightsAndFlushesCount ? sStraitsAndFlushesProductMap : sProductMap;
     auto pos = productMap.find( product );
     if ( pos == productMap.end() )
         return -1;
@@ -7756,7 +7756,7 @@ uint32_t C4CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard
 EHand C4CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )
 {
     EHand hand;
-    if ( !playInfo->fStraightsFlushesCount )
+    if ( !playInfo->fStraightsAndFlushesCount )
     {
         if ( rank >= 1106U )
             hand = EHand::eHighCard;

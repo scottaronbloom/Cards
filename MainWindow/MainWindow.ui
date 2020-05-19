@@ -1599,9 +1599,9 @@
       <item row="1" column="0" colspan="7">
        <layout class="QHBoxLayout" name="horizontalLayout_3">
         <item>
-         <widget class="QCheckBox" name="straightsFlushesCountForSmallHands">
+         <widget class="QCheckBox" name="straightsAndFlushesCount">
           <property name="text">
-           <string>Sub 5 Card Poker Straights/Flushes Count</string>
+           <string>Straights and Flushes Count</string>
           </property>
          </widget>
         </item>
@@ -1755,7 +1755,7 @@
   <tabstop>fourCard</tabstop>
   <tabstop>fiveCard</tabstop>
   <tabstop>sevenCard</tabstop>
-  <tabstop>straightsFlushesCountForSmallHands</tabstop>
+  <tabstop>straightsAndFlushesCount</tabstop>
   <tabstop>lowHandWins</tabstop>
   <tabstop>numWildCards</tabstop>
   <tabstop>wcCard1</tabstop>

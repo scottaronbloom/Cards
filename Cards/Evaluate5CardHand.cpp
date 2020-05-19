@@ -5887,10 +5887,14 @@ namespace NHandUtils
             size_t maxCardsValue = 0;
 
             auto&& allCardsVector = CCard::allCards();
-            auto allCardCombos = NUtils::allCombinations( allCardsVector, 5 );
-            for ( auto&& ii : allCardCombos )
+            auto updateOn = std::min( static_cast<uint64_t>( 10000 ), numHands / 25 );
+            auto allCardCombos = NUtils::allCombinations( allCardsVector, 5, { true, updateOn } );
+            for ( size_t ii = 0; ii < allCardCombos.size(); ++ii )
             {
-                auto curr = THand( TCard( ii[ 0 ]->getCard(), ii[ 0 ]->getSuit() ), TCard( ii[ 1 ]->getCard(), ii[ 1 ]->getSuit() ), TCard( ii[ 2 ]->getCard(), ii[ 2 ]->getSuit() ), TCard( ii[ 3 ]->getCard(), ii[ 3 ]->getSuit() ), TCard( ii[ 4 ]->getCard(), ii[ 4 ]->getSuit() ) );
+                if ( ( ii % updateOn ) == 0 )
+                    std::cout << "   Generating: Hand #" << ii << " of " << numHands << "\n";
+
+                auto curr = THand( TCard( allCardCombos[ ii ][ 0 ]->getCard(), allCardCombos[ ii ][ 0 ]->getSuit() ), TCard( allCardCombos[ ii ][ 1 ]->getCard(), allCardCombos[ ii ][ 1 ]->getSuit() ), TCard( allCardCombos[ ii ][ 2 ]->getCard(), allCardCombos[ ii ][ 2 ]->getSuit() ), TCard( allCardCombos[ ii ][ 3 ]->getCard(), allCardCombos[ ii ][ 3 ]->getSuit() ), TCard( allCardCombos[ ii ][ 4 ]->getCard(), allCardCombos[ ii ][ 4 ]->getSuit() ) );
                 C5CardInfo cardInfo( curr );
                 allHands[ curr ] = cardInfo;
 
@@ -5901,9 +5905,10 @@ namespace NHandUtils
             }
             std::cout << "Finished Generating: " << numHands << "\n";
             std::ofstream ofs( "E:/DropBox/Documents/sb/github/scottaronbloom/CardGame/Cards/5CardHandTables.cpp" );
-            std::ostream* oss = &ofs; //&std::cout;
+            std::ostream & oss = ofs; //&std::cout;
 
-            CCardInfo::computeAndGenerateMaps( *oss, 5, justCardsCount, flushesAndStraightsCount );
+            CCardInfo::generateHeader( oss, 5 );
+            CCardInfo::computeAndGenerateMaps( oss, 5, justCardsCount, flushesAndStraightsCount );
 
             std::vector< uint32_t > flushes;
             flushes.resize( maxCardsValue + 1 );
@@ -5946,14 +5951,15 @@ namespace NHandUtils
                     highCardProductMap[ productValue ] = highCardValue;
                 }
             }
-            CCardInfo::generateTable( *oss, flushes, "sFlushes" );
-            CCardInfo::generateTable( *oss, highCardUnique, "sHighCardUnique" );
-            CCardInfo::generateTable( *oss, straightsUnique, "sStraightsUnique" );
-            CCardInfo::generateMap( *oss, highCardProductMap, "sProductMap" );
-            CCardInfo::generateMap( *oss, straightsProductMap, "sStraitsAndFlushesProductMap" );
+            C   bCardInfo::generateTable( oss, flushes, "sFlushes" );
+            CCard Info::generateTable( oss, highCardUnique, "sHighCardUnique" );
+            CCardInfo::generateTable( oss, straightsUnique, "sStraightsUnique" );
+            CCardInfo::generateMap( oss, highCardProductMap, "sProductMap" );
+            CCardInfo::generateMap( oss, straightsProductMap, "sStraitsAndFlushesProductMap" );
 
-            CCardInfo::generateEvaluateFunction( *oss, 5 );
-            CCardInfo::generateRankFunction( *oss, 5, justCardsCount, flushesAndStraightsCount );
+            CCardInfo::generateEvaluateFunction( oss, 5 );
+            CCardInfo::generateRankFunction( oss, 5, justCardsCount, flushesAndStraightsCount );
+            CCardInfo::generateFooter( oss );
         }
     }
 }

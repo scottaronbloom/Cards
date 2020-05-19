@@ -71,7 +71,7 @@ public:
     QString determineHandName( bool details ) const;
     std::tuple< EHand, std::vector< ECard >, std::vector< ECard > >  determineHand() const; // hand, mycard, kicker cards
 
-    void setStraightsFlushesCountForSmallHands( bool straightsFlushesCountForSmallHands );
+    void setStraightsAndFlushesCount( bool straightsAndFlushesCount );
     void setLowHandWins( bool lowHandWins );
     void addWildCard( std::shared_ptr< CCard > card ); // needed for unit testing
     EHand computeHand() const;

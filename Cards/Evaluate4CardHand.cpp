@@ -7765,18 +7765,18 @@ namespace NHandUtils
             return -1;
 
         auto cardsValue = getCardsValue( cards );
-        if ( playInfo && playInfo->fStraightsFlushesCount )
+        if ( playInfo && playInfo->fStraightsAndFlushesCount )
         {
             if ( isFlush( cards ) )
                 return sFlushes[ cardsValue ];
         }
 
-        auto straightOrHighCard = playInfo->fStraightsFlushesCount ? sStraightsUnique[ cardsValue ] : sHighCardUnique[ cardsValue ];
+        auto straightOrHighCard = playInfo->fStraightsAndFlushesCount ? sStraightsUnique[ cardsValue ] : sHighCardUnique[ cardsValue ];
         if ( straightOrHighCard )
             return straightOrHighCard;
 
         auto product = computeHandProduct( cards );
-        auto productMap = playInfo->fStraightsFlushesCount ? sStraitsAndFlushesProductMap : sProductMap;
+        auto productMap = playInfo->fStraightsAndFlushesCount ? sStraitsAndFlushesProductMap : sProductMap;
         auto pos = productMap.find( product );
         if ( pos == productMap.end() )
             return -1;
@@ -7786,7 +7786,7 @@ namespace NHandUtils
     EHand rankTo4CardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo )
     {
         EHand hand;
-        if ( !playInfo->fStraightsFlushesCount )
+        if ( !playInfo->fStraightsAndFlushesCount )
         {
             if ( rank >= 1106U )
                 hand = EHand::eHighCard;
@@ -7879,10 +7879,14 @@ namespace NHandUtils
             size_t maxCardsValue = 0;
 
             auto&& allCardsVector = CCard::allCards();
-            auto allCardCombos = NUtils::allCombinations( allCardsVector, 4 );
-            for ( auto&& ii : allCardCombos )
+            auto updateOn = std::min( static_cast<uint64_t>( 10000 ), numHands / 25 );
+            auto allCardCombos = NUtils::allCombinations( allCardsVector, 4, { true, updateOn } );
+            for ( size_t ii = 0; ii < allCardCombos.size(); ++ii )
             {
-                auto curr = C4CardInfo::THand( TCard( ii[ 0 ]->getCard(), ii[ 0 ]->getSuit() ), TCard( ii[ 1 ]->getCard(), ii[ 1 ]->getSuit() ), TCard( ii[ 2 ]->getCard(), ii[ 2 ]->getSuit() ), TCard( ii[ 3 ]->getCard(), ii[ 3 ]->getSuit() ) );
+                if ( ( ii % updateOn ) == 0 )
+                    std::cout << "   Generating: Hand #" << ii << " of " << numHands << "\n";
+             
+                auto curr = C4CardInfo::THand( TCard( allCardCombos[ ii ][ 0 ]->getCard(), allCardCombos[ ii ][ 0 ]->getSuit() ), TCard( allCardCombos[ ii ][ 1 ]->getCard(), allCardCombos[ ii ][ 1 ]->getSuit() ), TCard( allCardCombos[ ii ][ 2 ]->getCard(), allCardCombos[ ii ][ 2 ]->getSuit() ), TCard( allCardCombos[ ii ][ 3 ]->getCard(), allCardCombos[ ii ][ 3 ]->getSuit() ) );
                 C4CardInfo cardInfo( curr );
                 allHands[ curr ] = cardInfo;
 
@@ -7894,10 +7898,10 @@ namespace NHandUtils
 
             std::cout << "Finished Generating: " << numHands << "\n";
             std::ofstream ofs( "E:/DropBox/Documents/sb/github/scottaronbloom/CardGame/Cards/4CardHandTables.cpp" );
-            std::ostream* oss = &ofs; //&std::cout;
+            std::ostream & oss = ofs; //std::cout;
 
-            CCardInfo::generateHeader( *oss, 4 );
-            CCardInfo::computeAndGenerateMaps( *oss, 4, justCardsCount, flushesAndStraightsCount );
+            CCardInfo::generateHeader( oss, 4 );
+            CCardInfo::computeAndGenerateMaps( oss, 4, justCardsCount, flushesAndStraightsCount );
 
             std::vector< uint32_t > flushes;
             flushes.resize( maxCardsValue + 1 );
@@ -7940,15 +7944,15 @@ namespace NHandUtils
                     highCardProductMap[ productValue ] = highCardValue;
                 }
             }
-            CCardInfo::generateTable( *oss, flushes, "C4CardInfo::sFlushes" );
-            CCardInfo::generateTable( *oss, highCardUnique, "C4CardInfo::sHighCardUnique" );
-            CCardInfo::generateTable( *oss, straightsUnique, "C4CardInfo::sStraightsUnique" );
-            CCardInfo::generateMap( *oss, highCardProductMap, "C4CardInfo::sProductMap" );
-            CCardInfo::generateMap( *oss, straightsProductMap, "C4CardInfo::sStraitsAndFlushesProductMap" );
+            CCardInfo::generateTable( oss, flushes, "C4CardInfo::sFlushes" );
+            CCardInfo::generateTable( oss, highCardUnique, "C4CardInfo::sHighCardUnique" );
+            CCardInfo::generateTable( oss, straightsUnique, "C4CardInfo::sStraightsUnique" );
+            CCardInfo::generateMap( oss, highCardProductMap, "C4CardInfo::sProductMap" );
+            CCardInfo::generateMap( oss, straightsProductMap, "C4CardInfo::sStraitsAndFlushesProductMap" );
 
-            CCardInfo::generateEvaluateFunction( *oss, 4 );
-            CCardInfo::generateRankFunction( *oss, 4, justCardsCount, flushesAndStraightsCount );
-            CCardInfo::generateFooter( *oss );
+            CCardInfo::generateEvaluateFunction( oss, 4 );
+            CCardInfo::generateRankFunction( oss, 4, justCardsCount, flushesAndStraightsCount );
+            CCardInfo::generateFooter( oss );
         }
     }
 }

@@ -89,7 +89,7 @@ CMainWindow::CMainWindow( QWidget* parent )
         (void)connect( std::get< 2 >( fWCWidgets[ ii ] ), static_cast<void( QComboBox::* )( int )>( &QComboBox::currentIndexChanged ), this, &CMainWindow::slotWildCardsChanged );
     }
 
-    (void)connect( fImpl->straightsFlushesCountForSmallHands, &QCheckBox::clicked, this, &CMainWindow::slotStraightsFlushesCountForSmallHandsChanged );
+    (void)connect( fImpl->straightsAndFlushesCount, &QCheckBox::clicked, this, &CMainWindow::slotStraightsAndFlushesCountChanged );
     (void)connect( fImpl->lowHandWins, &QCheckBox::clicked, this, &CMainWindow::slotLowHandWinsChanged );
     fImpl->handsPerSecondLabel->setHidden( true );
     fImpl->reanalyzeHand->setEnabled( false );
@@ -106,7 +106,7 @@ void CMainWindow::saveSettings()
 {
     QSettings settings;
     settings.setValue( "NumCards", numCards() );
-    fImpl->straightsFlushesCountForSmallHands->setChecked( settings.value( "StraightsFlushesCountForSmallHands", false ).toBool() );
+    fImpl->straightsAndFlushesCount->setChecked( settings.value( "StraightsAndFlushesCount", false ).toBool() );
     fImpl->lowHandWins->setChecked( settings.value( "LowHandWins", false ).toBool() );
 
     settings.beginWriteArray( "Players" );
@@ -134,10 +134,10 @@ void CMainWindow::loadSettings()
     auto numCards = settings.value( "numCards", 5 ).toInt();
     setNumCards( numCards );
 
-    fImpl->straightsFlushesCountForSmallHands->setChecked( settings.value( "StraightsFlushesCountForSmallHands", false ).toBool() );
+    fImpl->straightsAndFlushesCount->setChecked( settings.value( "StraightsAndFlushesCount", false ).toBool() );
     fImpl->lowHandWins->setChecked( settings.value( "LowHandWins", false ).toBool() );
 
-    fGame->setStraightsFlushesCountForSmallHands( fImpl->straightsFlushesCountForSmallHands->isChecked() );
+    fGame->setStraightsAndFlushesCount( fImpl->straightsAndFlushesCount->isChecked() );
     fGame->setLowHandWins( fImpl->lowHandWins->isChecked() );
 
     int size = settings.beginReadArray( "Players" );
@@ -329,9 +329,9 @@ void CMainWindow::slotWildCardsChanged( bool showGame )
         this->showGame();
 }
 
-void CMainWindow::slotStraightsFlushesCountForSmallHandsChanged()
+void CMainWindow::slotStraightsAndFlushesCountChanged()
 {
-    fGame->setStraightsFlushesCountForSmallHands( fImpl->straightsFlushesCountForSmallHands->isChecked() );
+    fGame->setStraightsAndFlushesCount( fImpl->straightsAndFlushesCount->isChecked() );
 }
 
 void CMainWindow::slotLowHandWinsChanged()

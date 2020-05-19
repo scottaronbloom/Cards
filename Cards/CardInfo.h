@@ -110,11 +110,17 @@ namespace NHandUtils
     template< typename T>
     void CCardInfo::computeAndGenerateMap( std::ostream& oss, size_t size, T& map, bool flushStraightCount )
     {
+        std::cout << "Computing hand values: " << map.size() << "\n";
+
         int num = 1;
+        auto updateOn = std::min( static_cast<uint64_t>( 10000 ), map.size() / 25 );
         for ( auto&& ii : map )
         {
+            if ( ( num % updateOn ) == 0 )
+                std::cout << "   Computing Hand Value: Hand #" << num << " of " << map.size() << "\n";
             ii.second = num++;
         }
+        std::cout << "Finished Computing hand values: " << map.size() << "\n";
 
         auto varName = flushStraightCount ? "sCardMapStraightsAndFlushesCount" : "sCardMap";
         auto header = flushStraightCount ? "Flushes/Straights" : "No Flushes/Straights";
@@ -124,10 +130,14 @@ namespace NHandUtils
             << "{\n"
             ;
 
+        std::cout << "Writing Map: " << map.size() << "\n";
         EHand prevHandType = EHand::eNoCards;
         bool first = true;
         for ( auto ii = map.begin(); ii != map.end(); ++ii )
         {
+            if ( ( (*ii).second % updateOn ) == 0 )
+                std::cout << "   Computing Hand Value: Hand #" << (*ii).second << " of " << map.size() << "\n";
+
             oss << "    ";
             if ( first )
                 oss << " ";
@@ -157,6 +167,7 @@ namespace NHandUtils
             oss << "\n";
             prevHandType = currHandType;
         }
+        std::cout << "Finished Writing Map: " << map.size() << "\n";
         oss << "};\n\n";
         oss.flush();
     }
@@ -215,7 +226,7 @@ namespace NHandUtils
         oss << "EHand C" << size << "CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )\n"
             << "{\n"
             << "    EHand hand;\n"
-            << "    if ( !playInfo->fStraightsFlushesCount )\n"
+            << "    if ( !playInfo->fStraightsAndFlushesCount )\n"
             << "    {\n";
         generateITE( oss, justCardsCount, false );
         oss << "    }\n"

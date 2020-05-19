@@ -126,6 +126,8 @@ namespace NHandTester
 
         std::set< NHandUtils::CCardInfo > sortedMap;
 
+        auto updateOn = std::min( static_cast<uint64_t>( 10000 ), static_cast< uint64_t >( allHands.size() / 25 ) );
+
         std::list< NHandUtils::CCardInfo > uniqueHands;
         std::optional< NHandUtils::CCardInfo > prevHand;
         for ( auto ii = allHands.begin(); ii != allHands.end(); ++ii )
@@ -162,26 +164,43 @@ namespace NHandTester
     {
         allHands.sort( []( const std::shared_ptr< CHand >& lhs, const std::shared_ptr< CHand >& rhs ) { return lhs->operator>( *rhs ); } );
 
+        auto updateOn = std::min( static_cast<uint64_t>( 10000 ), allHands.size() / 25 );
+
         std::list< std::shared_ptr< CHand > > uniqueHands;
         std::shared_ptr< CHand > prevHand;
+        int num = 0;
         for ( auto ii = allHands.begin(); ii != allHands.end(); ++ii )
         {
+            if ( ( num % updateOn ) == 0 )
+                std::cout << "Analyzing Unique Hands: " << num << "\n";
+            num++;
+            
             if ( prevHand && ( prevHand->operator ==( **ii ) ) )
                 continue;
             prevHand = *ii;
             uniqueHands.push_back( *ii );
         }
 
+        num = 0;
         std::map< EHand, size_t > freq;
         for ( auto&& ii : allHands )
         {
+            if ( ( num % updateOn ) == 0 )
+                std::cout << "Analyzing Unique Hands: " << num << "\n";
+            num++;
+
             auto hand = ii->determineHand();
             freq[ std::get< 0 >( hand ) ]++;
         }
 
+        num = 0;
         std::map< EHand, size_t > uniqueFreq;
         for ( auto&& ii : uniqueHands )
         {
+            if ( ( num % updateOn ) == 0 )
+                std::cout << "Analyzing Unique Hands: " << num << "\n";
+            num++;
+                
             auto hand = ii->determineHand();
             uniqueFreq[ std::get< 0 >( hand ) ]++;
         }
@@ -192,13 +211,18 @@ namespace NHandTester
 
     std::vector< std::vector< std::shared_ptr< CCard > > > CHandTester::getAllCards( size_t numCards )
     {
-        auto allCards = NUtils::allCombinations( getAllCardsVector(), numCards );
+        auto num = NUtils::numCombinations( 52, numCards );
+        auto updateOn = std::min( static_cast<uint64_t>( 10000 ), num / 25 );
+        auto allCards = NUtils::allCombinations( getAllCardsVector(), numCards, { true, updateOn } );
         return allCards;
     }
 
     std::list< NHandUtils::CCardInfo > CHandTester::getAllCardInfoHands( size_t numCards )
     {
         auto allCards = getAllCards( numCards );
+
+        int num = 0;
+        auto updateOn = std::min( static_cast<uint64_t>( 10000 ), allCards.size() / 25 );
 
         std::list< NHandUtils::CCardInfo > retVal;
         for( auto && ii : allCards )
@@ -208,6 +232,9 @@ namespace NHandTester
             {
                 hand.push_back( TCard( jj->getCard(), jj->getSuit() ) );
             }
+            if ( ( num % updateOn ) == 0 )
+                std::cout << "Constructing Card Info: " << num << "\n";
+            num++;
             retVal.push_back( NHandUtils::CCardInfo::createCardInfo( hand ) );
         }
         return retVal;

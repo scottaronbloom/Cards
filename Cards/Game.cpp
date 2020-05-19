@@ -186,7 +186,7 @@ QString CGame::dumpGameDetails( bool /*details*/ ) const
         cards << ii->toString( false, false );
     }
     data += QString( "Wild Cards: %1\n" ).arg( cards.join( "," ) );
-    data += QString( "Sub 5 Card Poker Straights/Flushes Count: %1\n" ).arg( fPlayInfo->fStraightsFlushesCount ? "Yes" : "No" );
+    data += QString( "Sub 5 Card Poker Straights/Flushes Count: %1\n" ).arg( fPlayInfo->fStraightsAndFlushesCount ? "Yes" : "No" );
     data += QString( "Lowball/Razz: %1\n" ).arg( fPlayInfo->fLowBall ? "Yes" : "No" );
     return data;
 }
@@ -487,14 +487,14 @@ void CGame::removePlayer( size_t playerNum )
         next->setPrevPlayer( prev );
 }
 
-void CGame::setStraightsFlushesCountForSmallHands( bool straightsFlushesCountForSmallHands )
+void CGame::setStraightsAndFlushesCount( bool straightsAndFlushesCount )
 {
-    fPlayInfo->fStraightsFlushesCount = straightsFlushesCountForSmallHands;
+    fPlayInfo->fStraightsAndFlushesCount = straightsAndFlushesCount;
 }
 
-bool CGame::straightsFlushesCountForSmallHands() const
+bool CGame::straightsAndFlushesCount() const
 {
-    return fPlayInfo->fStraightsFlushesCount;
+    return fPlayInfo->fStraightsAndFlushesCount;
 }
 
 void CGame::setLowHandWins( bool lowBall )
