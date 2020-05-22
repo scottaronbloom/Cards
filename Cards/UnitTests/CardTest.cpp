@@ -84,8 +84,9 @@ namespace NHandTester
         if ( !highCardAce )
             return false;
 
+        cards.erase( cards.begin() );
+
         auto jj = cards.rbegin();
-        jj++;
         if ( jj == cards.rend() )
             return false; // onecard cant be a straight
 
@@ -172,7 +173,7 @@ namespace NHandTester
         for ( auto ii = allHands.begin(); ii != allHands.end(); ++ii )
         {
             if ( ( num % updateOn ) == 0 )
-                std::cout << "Analyzing Unique Hands: " << num << "\n";
+                sabDebugStream() << "Analyzing Unique Hands: " << num << "\n";
             num++;
             
             if ( prevHand && ( prevHand->operator ==( **ii ) ) )
@@ -186,7 +187,7 @@ namespace NHandTester
         for ( auto&& ii : allHands )
         {
             if ( ( num % updateOn ) == 0 )
-                std::cout << "Analyzing Unique Hands: " << num << "\n";
+                sabDebugStream() << "Analyzing Unique Hands: " << num << "\n";
             num++;
 
             auto hand = ii->determineHand();
@@ -198,7 +199,7 @@ namespace NHandTester
         for ( auto&& ii : uniqueHands )
         {
             if ( ( num % updateOn ) == 0 )
-                std::cout << "Analyzing Unique Hands: " << num << "\n";
+                sabDebugStream() << "Analyzing Unique Hands: " << num << "\n";
             num++;
                 
             auto hand = ii->determineHand();
@@ -233,7 +234,7 @@ namespace NHandTester
                 hand.push_back( TCard( jj->getCard(), jj->getSuit() ) );
             }
             if ( ( num % updateOn ) == 0 )
-                std::cout << "Constructing Card Info: " << num << "\n";
+                sabDebugStream() << "Constructing Card Info: " << num << "\n";
             num++;
             retVal.push_back( NHandUtils::CCardInfo::createCardInfo( hand ) );
         }

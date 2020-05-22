@@ -187,7 +187,7 @@ QString CGame::dumpGameDetails( bool /*details*/ ) const
     }
     data += QString( "Wild Cards: %1\n" ).arg( cards.join( "," ) );
     data += QString( "Sub 5 Card Poker Straights/Flushes Count: %1\n" ).arg( fPlayInfo->fStraightsAndFlushesCount ? "Yes" : "No" );
-    data += QString( "Lowball/Razz: %1\n" ).arg( fPlayInfo->fLowBall ? "Yes" : "No" );
+    data += QString( "Low Ball/Razz: %1\n" ).arg( fPlayInfo->fLowHandWins ? "Yes" : "No" );
     return data;
 }
 
@@ -298,9 +298,12 @@ std::list< std::shared_ptr< CPlayer > > CGame::findWinners()
 
     std::stable_sort( currGame.begin(), currGame.end(),
                [ this ]( const std::shared_ptr< CPlayer >& lhs, const std::shared_ptr< CPlayer >& rhs )
-                   {
-                       return lhs->operator<( *rhs );
-                   } );
+                    {
+                        if ( this->lowHandWins() )
+                            return lhs->operator>( *rhs );
+                        else
+                            return lhs->operator<( *rhs );
+                      } );
 
     //qDebug() << "==============================";
     //qDebug() << "Post Sort";
@@ -497,14 +500,14 @@ bool CGame::straightsAndFlushesCount() const
     return fPlayInfo->fStraightsAndFlushesCount;
 }
 
-void CGame::setLowHandWins( bool lowBall )
+void CGame::setLowHandWins( bool lowHandWins )
 {
-    fPlayInfo->fLowBall = lowBall;
+    fPlayInfo->fLowHandWins = lowHandWins;
 }
 
 bool CGame::lowHandWins() const
 {
-    return fPlayInfo->fLowBall;
+    return fPlayInfo->fLowHandWins;
 }
 
 void CGame::addWildCard( std::shared_ptr< CCard > card )

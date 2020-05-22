@@ -34,8 +34,8 @@ struct SPlayInfo
         return fWildCards.find( card ) != fWildCards.end();
     }
     std::unordered_set< std::shared_ptr< CCard > > fWildCards;
-    bool fLowBall{ false };
-    bool fStraightsAndFlushesCount{ false };
+    bool fLowHandWins{ false };
+    bool fStraightsAndFlushesCount{ true };
 };
 
 #endif 

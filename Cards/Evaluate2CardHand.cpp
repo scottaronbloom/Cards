@@ -79,7 +79,7 @@ namespace NHandUtils
             TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
 
             auto numHands = NUtils::numCombinations( 52, 2 );
-            std::cout << "Generating: " << numHands << "\n";
+            sabDebugStream() << "Generating: " << numHands << "\n";
 
             size_t maxCardsValue = 0;
 
@@ -89,7 +89,7 @@ namespace NHandUtils
             for ( size_t ii = 0; ii < allCardCombos.size(); ++ii )
             {
                 if ( ( ii % updateOn ) == 0 )
-                    std::cout << "   Generating: Hand #" << ii << " of " << numHands << "\n";
+                    sabDebugStream() << "   Generating: Hand #" << ii << " of " << numHands << "\n";
 
                 auto curr = THand( TCard( allCardCombos[ ii ][ 0 ]->getCard(), allCardCombos[ ii ][ 0 ]->getSuit() ), TCard( allCardCombos[ ii ][ 1 ]->getCard(), allCardCombos[ ii ][ 1 ]->getSuit() ) );
                 C2CardInfo cardInfo( curr );
@@ -100,10 +100,10 @@ namespace NHandUtils
                 maxCardsValue = std::max( static_cast<size_t>( cardInfo.getCardsValue() ), maxCardsValue );
             }
 
-            std::cout << "Finished Generating: " << numHands << "\n";
+            sabDebugStream() << "Finished Generating: " << numHands << "\n";
 
             std::ofstream ofs( "E:/DropBox/Documents/sb/github/scottaronbloom/CardGame/Cards/2CardHandTables.cpp" );
-            std::ostream & oss = ofs; //&std::cout;
+            std::ostream & oss = ofs; 
 
             generateHeader( oss, 2 );
             computeAndGenerateMaps( oss, 2, justCardsCount, flushesAndStraightsCount );

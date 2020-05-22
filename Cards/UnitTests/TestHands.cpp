@@ -1192,6 +1192,9 @@ namespace NHandTester
 
                             for ( auto&& suit3 : ESuit() )
                             {
+                                if ( suit3 == suit1 || suit3 == suit2 )
+                                    continue;
+
                                 if ( isStraight( std::vector< ECard >( { card1, card2, card3 } ) ) )
                                     continue;
 
@@ -2769,6 +2772,39 @@ namespace NHandTester
         fGame->addPlayer( "Eric" )->setCards( fGame->getCards( "9H 8S 6H 3C 2S" ) ); // 9 high, 8632
         fGame->addPlayer( "Keith" )->setCards( fGame->getCards( "KD QS 7C 6S 5C" ) ); // K high, Q765
 
+        fGame->setLowHandWins( true );
+        fGame->setStraightsAndFlushesCount( false );
+        auto winners = fGame->findWinners();
+        EXPECT_EQ( 1, winners.size() );
+        EXPECT_EQ( "Scott", winners.front()->name() );
+    }
+
+    TEST_F( C5CardHandTester, Find5CardWinnerLowBall1 )
+    {
+        fGame->addPlayer( "Scott" )->setCards( fGame->getCards( "AD KD QS 7C 6S" ) ); // KQ76A 4919
+        fGame->addPlayer( "Craig" )->setCards( fGame->getCards( "9C 8C 6D 3D 2H" ) ); // 98632 6135
+        fGame->addPlayer( "Eric" )->setCards( fGame->getCards( "9H 8S 6H 3C 2S" ) ); //  98632 6135
+        fGame->addPlayer( "Keith" )->setCards( fGame->getCards( "KD QS 7C 6S 5C" ) ); // KQ765 5484
+
+        fGame->setLowHandWins( true );
+        fGame->setStraightsAndFlushesCount( false );
+
+        auto winners = fGame->findWinners();
+        EXPECT_EQ( 2, winners.size() );
+        EXPECT_EQ( "Craig", winners.front()->name() );
+        EXPECT_EQ( "Eric", winners.back()->name() );
+    }
+
+    TEST_F( C5CardHandTester, Find5CardWinnerLowBall2 )
+    {
+        fGame->addPlayer( "Scott" )->setCards( fGame->getCards( "2D AS 3D 4H 5C" ) ); // Wheel.. best 5 card low
+        fGame->addPlayer( "Craig" )->setCards( fGame->getCards( "9C 8C 6D 3D 2H" ) ); // 9 high, 8632
+        fGame->addPlayer( "Eric" )->setCards( fGame->getCards( "9H 8S 6H 3C 2S" ) ); // 9 high, 8632
+        fGame->addPlayer( "Keith" )->setCards( fGame->getCards( "KD QS jC TS 9C" ) ); // K high striaght.. worst 5 card low
+
+        fGame->setLowHandWins( true );
+        fGame->setStraightsAndFlushesCount( false );
+
         auto winners = fGame->findWinners();
         EXPECT_EQ( 1, winners.size() );
         EXPECT_EQ( "Scott", winners.front()->name() );
@@ -2908,7 +2944,7 @@ namespace NHandTester
     TEST_F( C5CardHandTester, AllCardHands_NoStraightsFlushes )
     {
         auto p1 = fGame->addPlayer( "Scott" );
-        fGame->setStraightsAndFlushesCount( true );
+        fGame->setStraightsAndFlushesCount( false );
 
         auto allHands = getAllCHandHands( 5 );
 

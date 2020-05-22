@@ -28,6 +28,7 @@
 #include <memory>
 #include <map>
 #include <iostream>
+#include "SABUtils/utils.h"
 enum class EHand;
 struct SPlayInfo;
 
@@ -110,17 +111,17 @@ namespace NHandUtils
     template< typename T>
     void CCardInfo::computeAndGenerateMap( std::ostream& oss, size_t size, T& map, bool flushStraightCount )
     {
-        std::cout << "Computing hand values: " << map.size() << "\n";
+        sabDebugStream() << "Computing hand values: " << map.size() << "\n";
 
         int num = 1;
         auto updateOn = std::min( static_cast<uint64_t>( 10000 ), map.size() / 25 );
         for ( auto&& ii : map )
         {
             if ( ( num % updateOn ) == 0 )
-                std::cout << "   Computing Hand Value: Hand #" << num << " of " << map.size() << "\n";
+                sabDebugStream() << "   Computing Hand Value: Hand #" << num << " of " << map.size() << "\n";
             ii.second = num++;
         }
-        std::cout << "Finished Computing hand values: " << map.size() << "\n";
+        sabDebugStream() << "Finished Computing hand values: " << map.size() << "\n";
 
         std::string varName = flushStraightCount ? "sCardMapStraightsAndFlushesCount" : "sCardMap";
         varName = "C" + std::to_string( size ) + "CardInfo::" + varName;
@@ -132,13 +133,13 @@ namespace NHandUtils
             << "{\n"
             ;
 
-        std::cout << "Writing Map: " << map.size() << "\n";
+        sabDebugStream() << "Writing Map: " << map.size() << "\n";
         EHand prevHandType = EHand::eNoCards;
         bool first = true;
         for ( auto ii = map.begin(); ii != map.end(); ++ii )
         {
             if ( ( (*ii).second % updateOn ) == 0 )
-                std::cout << "   Computing Hand Value: Hand #" << (*ii).second << " of " << map.size() << "\n";
+                sabDebugStream() << "   Computing Hand Value: Hand #" << (*ii).second << " of " << map.size() << "\n";
 
             oss << "    ";
             if ( first )
@@ -169,7 +170,7 @@ namespace NHandUtils
             oss << "\n";
             prevHandType = currHandType;
         }
-        std::cout << "Finished Writing Map: " << map.size() << "\n";
+        sabDebugStream() << "Finished Writing Map: " << map.size() << "\n";
         oss << "};\n\n";
         oss.flush();
     }
