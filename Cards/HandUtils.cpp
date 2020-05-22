@@ -202,7 +202,7 @@ namespace NHandUtils
         return value.to_ulong() != 0;
     }
 
-    bool isFlush( const std::vector< TCard >& cards )
+    bool isFlush( const THand & cards )
     {
         if ( cards.empty() )
             return false;
@@ -223,7 +223,7 @@ namespace NHandUtils
         return ( *pos ).second;
     }
 
-    bool isCount( const std::vector< TCard >& cards, const std::unordered_multiset< uint8_t > & counts )
+    bool isCount( const THand & cards, const std::unordered_multiset< uint8_t > & counts )
     {
         std::unordered_multimap< uint8_t, bool > countHits;
         for( auto && ii : counts )
@@ -260,7 +260,7 @@ namespace NHandUtils
         return true;
     }
 
-    bool isCount( const std::vector< TCard >& cards, uint8_t count )
+    bool isCount( const THand & cards, uint8_t count )
     {
         return isCount( cards, std::unordered_multiset< uint8_t >( { count } ) );
     }
@@ -307,7 +307,7 @@ namespace NHandUtils
         return std::optional< ECard >();
     }
 
-    std::optional< EStraightType > isWheel( const std::vector< TCard > & cards )
+    std::optional< EStraightType > isWheel( const THand & cards )
     {
         auto sortedCards = cards;
         std::sort( sortedCards.begin(), sortedCards.end(), []( TCard lhs, TCard rhs ) { return lhs.first > rhs.first; } );
@@ -412,7 +412,7 @@ namespace NHandUtils
         return std::optional< bool >();
     }
 
-    std::optional< EStraightType > isStraight( const std::vector< TCard >& cards )
+    std::optional< EStraightType > isStraight( const THand & cards )
     {
         if ( cards.size() < 2 )
             return std::optional< EStraightType >();

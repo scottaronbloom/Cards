@@ -44,20 +44,20 @@ namespace NHandUtils
     {
     }
 
-    NHandUtils::CCardInfo CCardInfo::createCardInfo( const std::vector< TCard >& hand )
+    std::shared_ptr< NHandUtils::CCardInfo > CCardInfo::createCardInfo( const THand & hand )
     {
         switch ( hand.size() )
         {
             case 2:
-                return NHandUtils::C2CardInfo( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second );
+                return std::make_shared< C2CardInfo >( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second );
             case 3:
-                return NHandUtils::C3CardInfo( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second, hand[ 2 ].first, hand[ 2 ].second );
+                return std::make_shared< C3CardInfo >( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second, hand[ 2 ].first, hand[ 2 ].second );
             case 4:
-                return NHandUtils::C4CardInfo( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second, hand[ 2 ].first, hand[ 2 ].second, hand[ 3 ].first, hand[ 3 ].second );
+                return std::make_shared< C4CardInfo >( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second, hand[ 2 ].first, hand[ 2 ].second, hand[ 3 ].first, hand[ 3 ].second );
             case 5:
-                return NHandUtils::C5CardInfo( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second, hand[ 2 ].first, hand[ 2 ].second, hand[ 3 ].first, hand[ 3 ].second, hand[ 4 ].first, hand[ 4 ].second );
+                return std::make_shared< C5CardInfo >( hand[ 0 ].first, hand[ 0 ].second, hand[ 1 ].first, hand[ 1 ].second, hand[ 2 ].first, hand[ 2 ].second, hand[ 3 ].first, hand[ 3 ].second, hand[ 4 ].first, hand[ 4 ].second );
             default:
-                return CCardInfo();
+                return nullptr;
         }
     }
 
@@ -218,107 +218,6 @@ namespace NHandUtils
         return NHandUtils::computeHandProduct( fBitValues );
     }
 
-    void CCardInfo::generateMap( std::ostream& oss, const std::map< uint64_t, uint16_t > & values, const std::string& varName )
-    {
-        oss
-            << "" << "std::unordered_map< int64_t, int16_t > " << varName << " = \n"
-            << "{\n"
-            ;
-        bool first = true;
-        for( auto && ii : values )
-        {
-            oss << "    ";
-
-            if ( !first )
-                oss << ",";
-            else
-                oss << " ";
-            first = false;
-            oss << "{ " << ii.first << ", " << ii.second << " }\n";
-        }
-        oss << "};\n\n";
-        oss.flush();
-    }
-
-    void CCardInfo::generateTable( std::ostream& oss, const std::vector< uint32_t >& values, const std::string & varName )
-    {
-        oss 
-            << "" << "std::vector< uint32_t > " << varName << " = \n"
-            << "{\n"
-            ;
-        size_t numChars = 0;
-        for( size_t ii = 0; ii < values.size(); ++ii )
-        {
-            if ( numChars == 0 )
-                oss << "    ";
-
-            auto tmp = std::to_string( values[ ii ] );
-            oss << tmp;
-            numChars += tmp.size();
-            if ( ii != ( values.size() -1 ) )
-            {
-                oss << ", ";
-                numChars += 2;
-            }
-
-            if ( numChars >= 66 )
-            {
-                numChars = 0;
-                oss << "\n";
-            }
-        }
-        oss << "\n    };\n\n";
-        oss.flush();
-    }
-
-    void CCardInfo::generateEvaluateFunction( std::ostream& oss, size_t size )
-    {
-        std::string wildCardSuffix;
-        if ( size == 5 )
-            wildCardSuffix = " + ( playInfo->hasWildCards() ? 13 : 0 )";
-        oss << "uint32_t C" << size << "CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )\n"
-            << "{\n"
-            << "    if ( cards.size() != " << size << " )\n"
-            << "        return -1;\n"
-            << "\n"
-            << "    auto cardsValue = NHandUtils::getCardsValue( cards );\n"
-            << "    if ( playInfo && playInfo->fStraightsAndFlushesCount )\n"
-            << "    {\n"
-            << "        if ( NHandUtils::isFlush( cards ) )\n"
-            << "            return sFlushes[ cardsValue ]" << wildCardSuffix << ";\n"
-            << "    }\n"
-            << "\n"
-            << "    auto straightOrHighCard = playInfo->fStraightsAndFlushesCount ? sStraightsUnique[ cardsValue ] : sHighCardUnique[ cardsValue ];\n"
-            << "    if ( straightOrHighCard )\n"
-            << "        return straightOrHighCard" << wildCardSuffix << ";\n"
-            << "\n"
-            << "    auto product = computeHandProduct( cards );\n"
-            << "    auto productMap = playInfo->fStraightsAndFlushesCount ? sStraitsAndFlushesProductMap : sProductMap;\n"
-            << "    auto pos = productMap.find( product );\n"
-            << "    if ( pos == productMap.end() )\n"
-            << "        return -1;\n"
-            << "    return ( *pos ).second" << wildCardSuffix << ";\n"
-            << "}\n\n";
-    }
-
-    void CCardInfo::generateHeader( std::ostream& oss, size_t size )
-    {
-        oss << "#include \"Evaluate" << size << "CardHand.h\"\n"
-            << "#include \"PlayInfo.h\"\n"
-            << "#include \"Hand.h\"\n"
-            << "\n"
-            << "#include <map>\n"
-            << "\n"
-            << "namespace NHandUtils\n"
-            << "{\n"
-            ;
-    }
-
-    void CCardInfo::generateFooter( std::ostream& oss )
-    {
-        oss << "}\n\n";
-    }
-
     bool CCardInfo::isHighCard() const
     {
         return !isStraightFlush() 
@@ -367,7 +266,7 @@ namespace NHandUtils
 
         setupKickers();
     }
-    
+
     void CCardInfo::setupKickers()
     {
         if ( fOrigCards.empty() )
@@ -387,21 +286,21 @@ namespace NHandUtils
             numHitsToCard[ ii.second ].push_back( ii.first );
         }
 
-        for( auto && ii : numHitsToCard )
+        for ( auto&& ii : numHitsToCard )
         {
             ii.second.sort( []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
         }
 
         for ( auto ii = numHitsToCard.rbegin(); ii != numHitsToCard.rend(); ++ii )
         {
-            if ( (*ii).first > 1 )
+            if ( ( *ii ).first > 1 )
             {
-                for( auto && jj : ( *ii ).second )
+                for ( auto&& jj : ( *ii ).second )
                     fCards.push_back( jj );
             }
             else
             {
-                for ( auto && jj : ( *ii ).second )
+                for ( auto&& jj : ( *ii ).second )
                     fKickers.push_back( jj );
             }
         }
@@ -424,5 +323,4 @@ namespace NHandUtils
         }
         return oss;
     }
-
 }

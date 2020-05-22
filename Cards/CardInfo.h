@@ -39,7 +39,7 @@ namespace NHandUtils
     public:
         CCardInfo();
 
-        static CCardInfo createCardInfo( const std::vector< TCard > & card );
+        static std::shared_ptr< CCardInfo > createCardInfo( const THand & card );
 
         virtual uint16_t getCardsValue() const;
         virtual uint64_t handProduct() const;
@@ -48,11 +48,16 @@ namespace NHandUtils
         virtual bool greaterThan( bool flushStraightCount, const CCardInfo& rhs ) const final;
         virtual bool equalTo( bool flushStraightCount, const CCardInfo& rhs ) const;
 
+        virtual void generateAllCardHands();
+        virtual bool allHandsComputed() const=0;
+        virtual void setAllHandsComputed( bool computed ) = 0;
+        virtual size_t getNumCards() const = 0;
+
         bool operator<( const CCardInfo & rhs ) const { return lessThan( true, rhs ); }
         bool operator>( const CCardInfo& rhs ) const { return greaterThan( true, rhs ); }
         bool operator==( const CCardInfo& rhs ) const { return equalTo( true, rhs ); }
 
-        const std::vector< TCard > & origCards() const{ return fOrigCards; }
+        const THand & origCards() const{ return fOrigCards; }
 
         const std::optional< EStraightType > & straightType() const{ return fStraightType; }
 
@@ -72,22 +77,21 @@ namespace NHandUtils
 
         virtual const std::list< EHand >& handOrder() const final{ return fHandOrder; }
 
-        template< typename T1, typename T2>
-        static void computeAndGenerateMaps( std::ostream& oss, size_t size, T1& justCardsCount, T2& flushesAndStraightsCount );
-        template< typename T1, typename T2 >
-        static void generateRankFunction( std::ostream& oss, size_t size, const T1& justCardsCount, const T2& flushesAndStraightsCount );
-
-        static void generateMap( std::ostream& oss, const std::map< uint64_t, uint16_t >& values, const std::string& varName );
-        static void generateTable( std::ostream& oss, const std::vector< uint32_t >& values, const std::string& varName );
-        static void generateEvaluateFunction( std::ostream& oss, size_t size );
-        static void generateHeader( std::ostream & oss, size_t size );
-        static void generateFooter( std::ostream &oss );
     protected:
-        void setOrigCards( const std::vector< TCard >& cards ); // returns the cards sorted
-        template< typename T >
-        static void generateITE( std::ostream& oss, size_t size, const T& map, bool flushStraightCount );
+        THand createTHand( std::vector< std::shared_ptr< CCard > >& sharedCards ) const;
+        void generateHeader( std::ostream& oss, size_t size ) const;
+        void generateFooter( std::ostream& oss ) const;
+
         template< typename T>
-        static void computeAndGenerateMap( std::ostream& oss, size_t size, T& map, bool flushStraightCount );
+        void computeAndGenerateMap( std::ostream& oss, size_t size, T& map, bool flushStraightCount ) const;
+        template< typename T1, typename T2 >
+        void computeAndGenerateMaps( std::ostream& oss, size_t size, T1& justCardsCount, T2& flushesAndStraightsCount ) const;
+        template< typename T >
+        void generateITE( std::ostream& oss, size_t size, const T& map, bool flushStraightCount ) const;
+        template< typename T1, typename T2 >
+        void generateRankFunction( std::ostream& oss, size_t size, const T1& justCardsCount, const T2& flushesAndStraightsCount ) const;
+
+        void setOrigCards( const THand& cards ); // returns the cards sorted
         void setupKickers();
 
         std::optional< EStraightType > fStraightType;
@@ -101,151 +105,11 @@ namespace NHandUtils
         std::list< ECard > fCards;
         std::list< ECard > fKickers;
 
-        std::vector< TCard > fOrigCards;
+        THand fOrigCards;
         std::vector< TCardBitType > fBitValues;
 
         std::list< EHand > fHandOrder;
     };
-
-
-    template< typename T>
-    void CCardInfo::computeAndGenerateMap( std::ostream& oss, size_t size, T& map, bool flushStraightCount )
-    {
-        sabDebugStream() << "Computing hand values: " << map.size() << "\n";
-
-        int num = 1;
-        auto updateOn = std::min( static_cast<uint64_t>( 10000 ), map.size() / 25 );
-        for ( auto&& ii : map )
-        {
-            if ( ( num % updateOn ) == 0 )
-                sabDebugStream() << "   Computing Hand Value: Hand #" << num << " of " << map.size() << "\n";
-            ii.second = num++;
-        }
-        sabDebugStream() << "Finished Computing hand values: " << map.size() << "\n";
-
-        std::string varName = flushStraightCount ? "sCardMapStraightsAndFlushesCount" : "sCardMap";
-        varName = "C" + std::to_string( size ) + "CardInfo::" + varName;
-
-        auto header = flushStraightCount ? "Flushes/Straights" : "No Flushes/Straights";
-        oss
-            << "// " << header << "\n"
-            << "std::map< C" << size << "CardInfo::THand, uint32_t > " << varName << " = \n"
-            << "{\n"
-            ;
-
-        sabDebugStream() << "Writing Map: " << map.size() << "\n";
-        EHand prevHandType = EHand::eNoCards;
-        bool first = true;
-        for ( auto ii = map.begin(); ii != map.end(); ++ii )
-        {
-            if ( ( (*ii).second % updateOn ) == 0 )
-                sabDebugStream() << "   Computing Hand Value: Hand #" << (*ii).second << " of " << map.size() << "\n";
-
-            oss << "    ";
-            if ( first )
-                oss << " ";
-            else
-                oss << ",";
-            first = false;
-            auto firstCard = (*ii).first.fOrigCards[ 0 ];
-            auto secondCard = (*ii).first.fOrigCards[ 1 ];
-            if ( ( firstCard.first == ECard::eDeuce ) && ( secondCard.first == ECard::eAce ) )
-                std::swap( firstCard, secondCard );
-            oss << "{ { "
-                << "{ " << qPrintable( ::asEnum( firstCard.first ) ) << ", " << qPrintable( ::asEnum( firstCard.second ) ) << " }"
-                << ", { " << qPrintable( ::asEnum( secondCard.first ) ) << ", " << qPrintable( ::asEnum( secondCard.second ) ) << " }"
-                ;
-            for ( size_t jj = 2; jj < (*ii).first.fOrigCards.size(); ++jj )
-                oss << ", { " << qPrintable( ::asEnum( (*ii).first.fOrigCards[ jj ].first ) ) << ", " << qPrintable( ::asEnum( (*ii).first.fOrigCards[ jj ].second ) ) << " } ";
-
-            oss << "}, " << (*ii).second << " }";
-
-            auto currHandType = (*ii).first.getHandType( flushStraightCount );
-            
-            auto next = ii;
-            ++next;
-            bool printHandType = ( currHandType != prevHandType ) || ( next == map.end() ) || ( (*next).first.getHandType( flushStraightCount ) != currHandType );
-            if ( printHandType )
-                oss << " // " << toCPPString( currHandType );
-            oss << "\n";
-            prevHandType = currHandType;
-        }
-        sabDebugStream() << "Finished Writing Map: " << map.size() << "\n";
-        oss << "};\n\n";
-        oss.flush();
-    }
-
-    template< typename T1, typename T2 >
-    void CCardInfo::computeAndGenerateMaps( std::ostream& oss, size_t size, T1& justCardsCount, T2& flushesAndStraightsCount )
-    {
-        computeAndGenerateMap( oss, size, justCardsCount, false );
-        computeAndGenerateMap( oss, size, flushesAndStraightsCount, true );
-    }
-
-    template< typename T >
-    void CCardInfo::generateITE( std::ostream& oss, size_t size, const T& map, bool flushStraightCount )
-    {
-        std::map< EHand, uint32_t > handTypeToFirstRank;
-        for ( auto&& ii : map )
-        {
-            auto handType = ii.first.getHandType( flushStraightCount );
-            auto pos = handTypeToFirstRank.find( handType );
-            auto minValue = ii.second;
-
-            if ( pos != handTypeToFirstRank.end() )
-            {
-                minValue = std::min( minValue, ( *pos ).second );
-            }
-            handTypeToFirstRank[ handType ] = minValue;
-        }
-
-        std::map< uint32_t, EHand > firstRankToHandType;
-        for ( auto&& ii : handTypeToFirstRank )
-        {
-            firstRankToHandType[ ii.second ] = ii.first;
-        }
-        std::string wildCardSuffix;
-        if ( size == 5 )
-            wildCardSuffix = " + ( playInfo->hasWildCards() ? 13 : 0 )";
-
-        bool first = true;
-        for( auto ii = firstRankToHandType.rbegin(); ii != firstRankToHandType.rend(); ++ii )
-        {
-            oss << "        ";
-            if ( !first )
-                oss << "else ";
-            first = false;
-
-            bool isOne = ( ( *ii ).first == 1 );
-            if ( isOne )
-                oss << "/* ";
-            oss << "if ( rank >= " << (*ii).first << "U" << wildCardSuffix << " )";
-            if ( isOne )
-                oss << " */";
-            oss << "\n"
-                << "            hand = " << toCPPString( (*ii).second ) << ";\n";
-        }
-    }
-
-    template< typename T1, typename T2 >
-    void CCardInfo::generateRankFunction( std::ostream& oss, size_t size, const T1& justCardsCount, const T2& flushesAndStraightsCount )
-    {
-        oss << "EHand C" << size << "CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )\n"
-            << "{\n"
-            << "    EHand hand;\n"
-            << "    if ( !playInfo->fStraightsAndFlushesCount )\n"
-            << "    {\n";
-        generateITE( oss, size, justCardsCount, false );
-        oss << "    }\n"
-            << "    else\n"
-            << "    {\n";
-        generateITE( oss, size, flushesAndStraightsCount, true );
-        oss << "    }\n"
-            << "    return hand;\n"
-            << "}\n\n"
-            ;
-        oss.flush();
-    }
 
     std::ostream& operator<<( std::ostream& oss, const CCardInfo & obj );
 }

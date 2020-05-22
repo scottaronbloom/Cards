@@ -30,18 +30,15 @@
 
 namespace NHandUtils
 {
+    bool C5CardInfo::sAllHandsComputed{ false };
+
     C5CardInfo::C5CardInfo() :
-        C5CardInfo( THand( TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ) ) )
+        C5CardInfo( THand( { TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ) } ) )
     {
     }
 
     C5CardInfo::C5CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2, ECard c3, ESuit s3, ECard c4, ESuit s4, ECard c5, ESuit s5 ) :
-        C5CardInfo( THand( TCard( c1, s1 ), TCard( c2, s2 ), TCard( c3, s3 ), TCard( c4, s4 ), TCard( c5, s5 ) ) )
-    {
-    }
-
-    C5CardInfo::C5CardInfo( const std::vector< TCard >& cards ) :
-        C5CardInfo( std::make_tuple( cards[ 0 ], cards[ 1 ], cards[ 2 ], cards[ 3 ], cards[ 4 ] ) )
+        C5CardInfo( THand( { TCard( c1, s1 ), TCard( c2, s2 ), TCard( c3, s3 ), TCard( c4, s4 ), TCard( c5, s5 )  }) )
     {
     }
 
@@ -61,7 +58,7 @@ namespace NHandUtils
             EHand::eHighCard
         };
 
-        setOrigCards( { std::get< 0 >( cards ), std::get< 1 >( cards ), std::get< 2 >( cards ), std::get< 3 >( cards ), std::get< 4 >( cards ) } );
+        setOrigCards( cards );
 
         fIsFiveOfAKind = NHandUtils::isCount( fOrigCards, 5 );
         fIsFourOfAKind = NHandUtils::isCount( fOrigCards, 4 );
@@ -73,103 +70,104 @@ namespace NHandUtils
         fIsPair = NHandUtils::isCount( fOrigCards, 2 );
     }
 
-    void C5CardInfo::generateAllCardHands()
-    {
-        static bool sAllHandsComputed{ false };
-        if ( NHandUtils::gComputeAllHands && !sAllHandsComputed )
-        {
-            sAllHandsComputed = true;
+    //void C5CardInfo::generateAllCardHands()
+    //{
+    //    CCardInfo::generateAllCardHands();
+        //static bool sAllHandsComputed{ false };
+        //if ( NHandUtils::gComputeAllHands && !sAllHandsComputed )
+        //{
+        //    sAllHandsComputed = true;
 
-            using TCardToInfoMap = std::map< C5CardInfo::THand, C5CardInfo >;
-            auto gFlushStraightsCount = []( const C5CardInfo& lhs, const C5CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
-            auto gJustCardsCount = []( const C5CardInfo& lhs, const C5CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
+        //    using TCardToInfoMap = std::map< THand, C5CardInfo >;
+        //    auto gFlushStraightsCount = []( const C5CardInfo& lhs, const C5CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
+        //    auto gJustCardsCount = []( const C5CardInfo& lhs, const C5CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
 
-            using TCardsCountMap = std::map< C5CardInfo, uint32_t, decltype( gJustCardsCount ) >;
-            using TFlushesCountMap = std::map< C5CardInfo, uint32_t, decltype( gFlushStraightsCount ) >;
+        //    using TCardsCountMap = std::map< C5CardInfo, uint32_t, decltype( gJustCardsCount ) >;
+        //    using TFlushesCountMap = std::map< C5CardInfo, uint32_t, decltype( gFlushStraightsCount ) >;
 
-            TCardToInfoMap allHands;
-            TCardsCountMap justCardsCount( gJustCardsCount );
-            TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
+        //    TCardToInfoMap allHands;
+        //    TCardsCountMap justCardsCount( gJustCardsCount );
+        //    TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
 
-            auto numHands = NUtils::numCombinations( 52, 5 );
-            sabDebugStream() << "Generating: " << numHands << "\n";
+        //    auto numHands = NUtils::numCombinations( 52, 5 );
+        //    sabDebugStream() << "Generating: " << numHands << "\n";
 
-            size_t maxCardsValue = 0;
+        //    size_t maxCardsValue = 0;
 
-            auto&& allCardsVector = CCard::allCards();
-            auto updateOn = std::min( static_cast<uint64_t>( 10000 ), numHands / 25 );
-            auto allCardCombos = NUtils::allCombinations( allCardsVector, 5, { true, updateOn } );
-            for ( size_t ii = 0; ii < allCardCombos.size(); ++ii )
-            {
-                if ( ( ii % updateOn ) == 0 )
-                    sabDebugStream() << "   Generating: Hand #" << ii << " of " << numHands << "\n";
+        //    auto&& allCardsVector = CCard::allCards();
+        //    auto updateOn = std::min( static_cast<uint64_t>( 10000 ), numHands / 25 );
+        //    auto allCardCombos = NUtils::allCombinations( allCardsVector, 5, { true, updateOn } );
+        //    for ( size_t ii = 0; ii < allCardCombos.size(); ++ii )
+        //    {
+        //        if ( ( ii % updateOn ) == 0 )
+        //            sabDebugStream() << "   Generating: Hand #" << ii << " of " << numHands << "\n";
 
-                auto curr = THand( TCard( allCardCombos[ ii ][ 0 ]->getCard(), allCardCombos[ ii ][ 0 ]->getSuit() ), TCard( allCardCombos[ ii ][ 1 ]->getCard(), allCardCombos[ ii ][ 1 ]->getSuit() ), TCard( allCardCombos[ ii ][ 2 ]->getCard(), allCardCombos[ ii ][ 2 ]->getSuit() ), TCard( allCardCombos[ ii ][ 3 ]->getCard(), allCardCombos[ ii ][ 3 ]->getSuit() ), TCard( allCardCombos[ ii ][ 4 ]->getCard(), allCardCombos[ ii ][ 4 ]->getSuit() ) );
-                C5CardInfo cardInfo( curr );
-                allHands[ curr ] = cardInfo;
+        //        auto curr = THand( TCard( allCardCombos[ ii ][ 0 ]->getCard(), allCardCombos[ ii ][ 0 ]->getSuit() ), TCard( allCardCombos[ ii ][ 1 ]->getCard(), allCardCombos[ ii ][ 1 ]->getSuit() ), TCard( allCardCombos[ ii ][ 2 ]->getCard(), allCardCombos[ ii ][ 2 ]->getSuit() ), TCard( allCardCombos[ ii ][ 3 ]->getCard(), allCardCombos[ ii ][ 3 ]->getSuit() ), TCard( allCardCombos[ ii ][ 4 ]->getCard(), allCardCombos[ ii ][ 4 ]->getSuit() ) );
+        //        C5CardInfo cardInfo( curr );
+        //        allHands[ curr ] = cardInfo;
 
-                justCardsCount.insert( std::make_pair( cardInfo, -1 ) );
-                flushesAndStraightsCount.insert( std::make_pair( cardInfo, -1 ) );
+        //        justCardsCount.insert( std::make_pair( cardInfo, -1 ) );
+        //        flushesAndStraightsCount.insert( std::make_pair( cardInfo, -1 ) );
 
-                maxCardsValue = std::max( static_cast<size_t>( cardInfo.getCardsValue() ), maxCardsValue );
-            }
-            sabDebugStream() << "Finished Generating: " << numHands << "\n";
-            std::ofstream ofs( "E:/DropBox/Documents/sb/github/scottaronbloom/CardGame/Cards/5CardHandTables.cpp" );
-            std::ostream & oss = ofs;
+        //        maxCardsValue = std::max( static_cast<size_t>( cardInfo.getCardsValue() ), maxCardsValue );
+        //    }
+        //    sabDebugStream() << "Finished Generating: " << numHands << "\n";
+        //    std::ofstream ofs( "E:/DropBox/Documents/sb/github/scottaronbloom/CardGame/Cards/5CardHandTables.cpp" );
+        //    std::ostream & oss = ofs;
 
-            CCardInfo::generateHeader( oss, 5 );
-            CCardInfo::computeAndGenerateMaps( oss, 5, justCardsCount, flushesAndStraightsCount );
+        //    CCardInfo::generateHeader( oss, 5 );
+        //    CCardInfo::computeAndGenerateMaps( oss, 5, justCardsCount, flushesAndStraightsCount );
 
-            std::vector< uint32_t > flushes;
-            flushes.resize( maxCardsValue + 1 );
+        //    std::vector< uint32_t > flushes;
+        //    flushes.resize( maxCardsValue + 1 );
 
-            std::vector< uint32_t > highCardUnique;
-            highCardUnique.resize( maxCardsValue + 1 );
+        //    std::vector< uint32_t > highCardUnique;
+        //    highCardUnique.resize( maxCardsValue + 1 );
 
-            std::vector< uint32_t > straightsUnique;
-            straightsUnique.resize( maxCardsValue + 1 );
+        //    std::vector< uint32_t > straightsUnique;
+        //    straightsUnique.resize( maxCardsValue + 1 );
 
-            std::map< uint64_t, uint16_t > highCardProductMap;
-            std::map< uint64_t, uint16_t > straightsProductMap;
+        //    std::map< uint64_t, uint16_t > highCardProductMap;
+        //    std::map< uint64_t, uint16_t > straightsProductMap;
 
-            for ( auto&& ii : allHands )
-            {
-                auto cardValue = ii.second.getCardsValue();
+        //    for ( auto&& ii : allHands )
+        //    {
+        //        auto cardValue = ii.second.getCardsValue();
 
-                auto pos = flushesAndStraightsCount.find( ii.second );
-                Q_ASSERT( pos != flushesAndStraightsCount.end() );
+        //        auto pos = flushesAndStraightsCount.find( ii.second );
+        //        Q_ASSERT( pos != flushesAndStraightsCount.end() );
 
-                auto straightsValue = ( *pos ).second;
+        //        auto straightsValue = ( *pos ).second;
 
-                auto pos2 = justCardsCount.find( ii.second );
-                Q_ASSERT( pos2 != justCardsCount.end() );
-                auto highCardValue = ( *pos2 ).second;
+        //        auto pos2 = justCardsCount.find( ii.second );
+        //        Q_ASSERT( pos2 != justCardsCount.end() );
+        //        auto highCardValue = ( *pos2 ).second;
 
-                if ( ii.second.isFlush() )
-                {
-                    flushes[ cardValue ] = straightsValue;
-                }
-                else if ( ii.second.allCardsUnique() )
-                {
-                    straightsUnique[ cardValue ] = straightsValue;
-                    highCardUnique[ cardValue ] = highCardValue;
-                }
-                else
-                {
-                    auto productValue = ii.second.handProduct();
-                    straightsProductMap[ productValue ] = straightsValue;
-                    highCardProductMap[ productValue ] = highCardValue;
-                }
-            }
-            CCardInfo::generateTable( oss, flushes, "C5CardInfo::sFlushes" );
-            CCardInfo::generateTable( oss, highCardUnique, "C5CardInfo::sHighCardUnique" );
-            CCardInfo::generateTable( oss, straightsUnique, "C5CardInfo::sStraightsUnique" );
-            CCardInfo::generateMap( oss, highCardProductMap, "C5CardInfo::sProductMap" );
-            CCardInfo::generateMap( oss, straightsProductMap, "C5CardInfo::sStraitsAndFlushesProductMap" );
+        //        if ( ii.second.isFlush() )
+        //        {
+        //            flushes[ cardValue ] = straightsValue;
+        //        }
+        //        else if ( ii.second.allCardsUnique() )
+        //        {
+        //            straightsUnique[ cardValue ] = straightsValue;
+        //            highCardUnique[ cardValue ] = highCardValue;
+        //        }
+        //        else
+        //        {
+        //            auto productValue = ii.second.handProduct();
+        //            straightsProductMap[ productValue ] = straightsValue;
+        //            highCardProductMap[ productValue ] = highCardValue;
+        //        }
+        //    }
+        //    CCardInfo::generateTable( oss, flushes, "C5CardInfo::sFlushes" );
+        //    CCardInfo::generateTable( oss, highCardUnique, "C5CardInfo::sHighCardUnique" );
+        //    CCardInfo::generateTable( oss, straightsUnique, "C5CardInfo::sStraightsUnique" );
+        //    CCardInfo::generateMap( oss, highCardProductMap, "C5CardInfo::sProductMap" );
+        //    CCardInfo::generateMap( oss, straightsProductMap, "C5CardInfo::sStraitsAndFlushesProductMap" );
 
-            CCardInfo::generateEvaluateFunction( oss, 5 );
-            CCardInfo::generateRankFunction( oss, 5, justCardsCount, flushesAndStraightsCount );
-            CCardInfo::generateFooter( oss );
-        }
-    }
+        //    CCardInfo::generateEvaluateFunction( oss, 5 );
+        //    CCardInfo::generateRankFunction( oss, 5, justCardsCount, flushesAndStraightsCount );
+        //    CCardInfo::generateFooter( oss );
+        //}
+    //}
 }

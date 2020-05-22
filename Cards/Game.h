@@ -62,6 +62,7 @@ public:
     QString dumpStats() const;
     std::shared_ptr< CCard > getCard( const QString & cardName ) const;
     std::shared_ptr< CCard > getCard( ECard card, ESuit suit ) const;
+    std::shared_ptr< CCard > getCard( const std::pair< ECard , ESuit > & card ) const;
     std::vector< std::shared_ptr< CCard > > getCards( const QString & cardNames ) const;
     std::vector< std::shared_ptr< CCard > > getCards( const QString& cards, const QString & suits, bool allowAll ) const; // all means all cards or suits, all for both returns empty if allow all = false
 

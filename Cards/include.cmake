@@ -27,6 +27,7 @@ set(qtproject_SRCS
     Evaluate3CardHand.cpp
     Evaluate4CardHand.cpp
     Evaluate5CardHand.cpp
+    GenerateCardTables.cpp
     2CardHandTables.cpp
     3CardHandTables.cpp
     4CardHandTables.cpp

@@ -34,12 +34,14 @@ namespace NHandUtils
     class C4CardInfo : public CCardInfo
     {
     public:
-        using THand = std::tuple< TCard, TCard, TCard, TCard >;
         C4CardInfo();
         C4CardInfo( const THand& cards );
         C4CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2, ECard c3, ESuit s3, ECard c4, ESuit s4 );
 
-        static void generateAllCardHands();
+        virtual bool allHandsComputed() const override { return sAllHandsComputed; }
+        virtual void setAllHandsComputed( bool computed ) override { sAllHandsComputed = computed; }
+        virtual size_t getNumCards() const override { return 4; }
+
         static uint32_t evaluateCardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo );
         static EHand rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
 

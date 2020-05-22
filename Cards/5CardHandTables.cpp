@@ -7,7 +7,7 @@
 namespace NHandUtils
 {
 // No Flushes/Straights
-std::map< C5CardInfo::THand, uint32_t > C5CardInfo::sCardMap = 
+std::map< THand, uint32_t > C5CardInfo::sCardMap = 
 {
      { { { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } , { ECard::eAce, ESuit::eDiamonds } , { ECard::eAce, ESuit::eClubs } }, 1 } // EHand::eFourOfAKind
     ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts } , { ECard::eAce, ESuit::eDiamonds } , { ECard::eAce, ESuit::eClubs } }, 2 }
@@ -6187,7 +6187,7 @@ std::map< C5CardInfo::THand, uint32_t > C5CardInfo::sCardMap =
 };
 
 // Flushes/Straights
-std::map< C5CardInfo::THand, uint32_t > C5CardInfo::sCardMapStraightsAndFlushesCount = 
+std::map< THand, uint32_t > C5CardInfo::sCardMapStraightsAndFlushesCount = 
 {
      { { { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } , { ECard::eKing, ESuit::eSpades } , { ECard::eAce, ESuit::eSpades } }, 1 } // EHand::eStraightFlush
     ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } , { ECard::eQueen, ESuit::eSpades } , { ECard::eKing, ESuit::eSpades } }, 2 }

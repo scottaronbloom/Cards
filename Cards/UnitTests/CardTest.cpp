@@ -121,20 +121,21 @@ namespace NHandTester
         return retVal;
     }
 
-    std::tuple< std::list< NHandUtils::CCardInfo >, std::map< EHand, size_t >, std::map< EHand, size_t > > CHandTester::getUniqueHands( std::list< NHandUtils::CCardInfo >& allHands )
+    std::tuple< std::list< std::shared_ptr< NHandUtils::CCardInfo > >, std::map< EHand, size_t >, std::map< EHand, size_t > > CHandTester::getUniqueHands( std::list< std::shared_ptr< NHandUtils::CCardInfo > >& allHands )
     {
-        allHands.sort( []( const NHandUtils::CCardInfo & lhs, const NHandUtils::CCardInfo & rhs ) { return lhs.greaterThan( true, rhs ); } );
+        allHands.sort( []( const std::shared_ptr< NHandUtils::CCardInfo >& lhs, const std::shared_ptr< NHandUtils::CCardInfo >& rhs ) { return lhs->greaterThan( true, *rhs ); } );
 
-        std::set< NHandUtils::CCardInfo > sortedMap;
+        auto comp = []( const std::shared_ptr< NHandUtils::CCardInfo >& lhs, const std::shared_ptr< NHandUtils::CCardInfo >& rhs ) { return lhs->lessThan( true, *rhs ); };
+        auto sortedMap = std::set< std::shared_ptr< NHandUtils::CCardInfo >, decltype(comp) >( comp );
 
         auto updateOn = std::min( static_cast<uint64_t>( 10000 ), static_cast< uint64_t >( allHands.size() / 25 ) );
 
-        std::list< NHandUtils::CCardInfo > uniqueHands;
-        std::optional< NHandUtils::CCardInfo > prevHand;
+        std::list< std::shared_ptr< NHandUtils::CCardInfo > > uniqueHands;
+        std::optional< std::shared_ptr< NHandUtils::CCardInfo > > prevHand;
         for ( auto ii = allHands.begin(); ii != allHands.end(); ++ii )
         {
             bool inserted = sortedMap.insert( *ii ).second;
-            if ( prevHand.has_value() && ( prevHand.value().equalTo( true, *ii ) ) )
+            if ( prevHand.has_value() && ( prevHand.value()->equalTo( true, **ii ) ) )
             {
                 EXPECT_TRUE( !inserted );
                 continue;
@@ -147,14 +148,14 @@ namespace NHandTester
         std::map< EHand, size_t > freq;
         for ( auto&& ii : allHands )
         {
-            auto hand = ii.getHandType();
+            auto hand = ii->getHandType();
             freq[ hand ]++;
         }
 
         std::map< EHand, size_t > uniqueFreq;
         for ( auto&& ii : uniqueHands )
         {
-            auto hand = ii.getHandType();
+            auto hand = ii->getHandType();
             uniqueFreq[ hand ]++;
         }
 
@@ -218,17 +219,17 @@ namespace NHandTester
         return allCards;
     }
 
-    std::list< NHandUtils::CCardInfo > CHandTester::getAllCardInfoHands( size_t numCards )
+    std::list< std::shared_ptr< NHandUtils::CCardInfo > > CHandTester::getAllCardInfoHands( size_t numCards )
     {
         auto allCards = getAllCards( numCards );
 
         int num = 0;
         auto updateOn = std::min( static_cast<uint64_t>( 10000 ), allCards.size() / 25 );
 
-        std::list< NHandUtils::CCardInfo > retVal;
+        std::list< std::shared_ptr< NHandUtils::CCardInfo > > retVal;
         for( auto && ii : allCards )
         {
-            std::vector< TCard > hand;
+            THand hand;
             for( auto && jj : ii )
             {
                 hand.push_back( TCard( jj->getCard(), jj->getSuit() ) );

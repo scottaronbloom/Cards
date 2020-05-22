@@ -36,6 +36,7 @@ enum class EHand;
 enum class ESuit : uint8_t;
 
 using TCard = std::pair< ECard, ESuit >;
+using THand = std::vector< TCard >;
 
 namespace std
 {
@@ -94,7 +95,7 @@ namespace NHandUtils
     EHand rankToHand( uint32_t rank, size_t numCards, const std::shared_ptr< SPlayInfo > & playInfo );
 
     TCardBitType computeBitValue( ECard card, ESuit suit );
-    bool isFlush( const std::vector< TCard > & cards );
+    bool isFlush( const THand & cards );
 
     uint32_t getCardRank( ECard card );
 
@@ -117,10 +118,10 @@ namespace NHandUtils
         eTrey  = 0b00000000000011, // 32
     };
 
-    bool isCount( const std::vector< TCard > & cards, uint8_t count );
-    bool isCount( const std::vector< TCard >& cards, const std::unordered_multiset< uint8_t > & counts );
-    std::optional< EStraightType > isStraight( const std::vector< TCard > & cards );
-    std::optional< EStraightType > isWheel( const std::vector< TCard >& cards );
+    bool isCount( const THand & cards, uint8_t count );
+    bool isCount( const THand & cards, const std::unordered_multiset< uint8_t > & counts );
+    std::optional< EStraightType > isStraight( const THand & cards );
+    std::optional< EStraightType > isWheel( const THand & cards );
 
     std::optional< bool > compareStraight( const std::optional< EStraightType > & lhs, const std::optional< EStraightType >& rhs );
     std::optional< bool > straightsEqual( const std::optional< EStraightType >& lhs, const std::optional< EStraightType >& rhs );

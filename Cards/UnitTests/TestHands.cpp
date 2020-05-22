@@ -39,13 +39,13 @@ namespace NHandTester
 {
     TEST( HandUtils, HandUtils )
     {
-        auto cards = std::vector< TCard >( { TCard( ECard::eDeuce, ESuit::eSpades ), TCard( ECard::eDeuce, ESuit::eHearts ), TCard( ECard::eTrey, ESuit::eSpades ), TCard( ECard::eTrey, ESuit::eHearts ), TCard( ECard::eFour, ESuit::eHearts ) } );
+        auto cards = THand( { TCard( ECard::eDeuce, ESuit::eSpades ), TCard( ECard::eDeuce, ESuit::eHearts ), TCard( ECard::eTrey, ESuit::eSpades ), TCard( ECard::eTrey, ESuit::eHearts ), TCard( ECard::eFour, ESuit::eHearts ) } );
         EXPECT_FALSE( NHandUtils::isCount( cards, 4 ) );
         EXPECT_TRUE( NHandUtils::isCount( cards, { 2, 2 } ) );
         EXPECT_FALSE( NHandUtils::isCount( cards, { 2, 3 } ) );
         EXPECT_FALSE( NHandUtils::isCount( cards, { 3, 2 } ) );
 
-        cards = std::vector< TCard >( { TCard( ECard::eDeuce, ESuit::eSpades ), TCard( ECard::eDeuce, ESuit::eHearts ), TCard( ECard::eTrey, ESuit::eSpades ), TCard( ECard::eTrey, ESuit::eHearts ), TCard( ECard::eDeuce, ESuit::eHearts ) } );
+        cards = THand( { TCard( ECard::eDeuce, ESuit::eSpades ), TCard( ECard::eDeuce, ESuit::eHearts ), TCard( ECard::eTrey, ESuit::eSpades ), TCard( ECard::eTrey, ESuit::eHearts ), TCard( ECard::eDeuce, ESuit::eHearts ) } );
         EXPECT_FALSE( NHandUtils::isCount( cards, { 2, 2 } ) );
         EXPECT_TRUE( NHandUtils::isCount( cards, { 2, 3 } ) );
         EXPECT_TRUE( NHandUtils::isCount( cards, { 3, 2 } ) );
@@ -89,8 +89,9 @@ namespace NHandTester
         EXPECT_EQ( 65, std::get< 2 >( analyzedHands )[ EHand::eFlush ] );
         EXPECT_EQ( 65, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
 
-        //NHandUtils::gComputeAllHands = true;
-        NHandUtils::C2CardInfo::generateAllCardHands();
+        NHandUtils::gComputeAllHands = true;
+        auto cardInfo = std::make_unique< NHandUtils::C2CardInfo >();
+        cardInfo->generateAllCardHands();
     }
 
     TEST_F( C2CardHandTester, Basic )
@@ -736,14 +737,15 @@ namespace NHandTester
         EXPECT_EQ( 156, std::get< 2 >( analyzedHands )[ EHand::ePair ] );
         EXPECT_EQ( 274, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
 
-        //NHandUtils::gComputeAllHands = true;
-        NHandUtils::C3CardInfo::generateAllCardHands();
+        NHandUtils::gComputeAllHands = true;
+        auto cardInfo = std::make_unique< NHandUtils::C3CardInfo >();
+        cardInfo->generateAllCardHands();
     }
 
     TEST_F( C3CardHandTester, Basic )
     {
         {
-            using TCardToInfoMap = std::map< NHandUtils::C3CardInfo::THand, NHandUtils::C3CardInfo >;
+            using TCardToInfoMap = std::map< THand, NHandUtils::C3CardInfo >;
             auto gFlushStraightsCount = []( const NHandUtils::C3CardInfo& lhs, const NHandUtils::C3CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
             auto gJustCardsCount = []( const NHandUtils::C3CardInfo& lhs, const NHandUtils::C3CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
 
@@ -1388,8 +1390,9 @@ namespace NHandTester
         EXPECT_EQ( 704, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
         EXPECT_EQ( 858, std::get< 2 >( analyzedHands )[ EHand::ePair ] );
 
-        //NHandUtils::gComputeAllHands = true;
-        NHandUtils::C4CardInfo::generateAllCardHands();
+        NHandUtils::gComputeAllHands = true;
+        auto cardInfo = std::make_unique< NHandUtils::C4CardInfo >();
+        cardInfo->generateAllCardHands();
     }
 
     TEST_F( C4CardHandTester, OneOfEachHand )
@@ -2104,7 +2107,7 @@ namespace NHandTester
 
     TEST_F( C5CardHandTester, FourOfAKind_CardInfo )
     {
-        std::list< NHandUtils::CCardInfo > allHands;
+        std::list< std::shared_ptr< NHandUtils::CCardInfo > > allHands;
 
         for ( auto&& highCard : ECard() )
         {
@@ -2115,7 +2118,7 @@ namespace NHandTester
 
                 for ( auto suit : ESuit() )
                 {
-                    NHandUtils::C5CardInfo cardInfo( highCard, ESuit::eClubs, highCard, ESuit::eDiamonds, highCard, ESuit::eHearts, highCard, ESuit::eSpades, kicker, suit );
+                    auto cardInfo = std::make_shared< NHandUtils::C5CardInfo >( highCard, ESuit::eClubs, highCard, ESuit::eDiamonds, highCard, ESuit::eHearts, highCard, ESuit::eSpades, kicker, suit );
                     allHands.push_back( cardInfo );
                 }
             }
@@ -2137,7 +2140,7 @@ namespace NHandTester
                             if ( ksuit1 == ksuit2 )
                                 continue;
 
-                            std::vector< TCard > cards;
+                            THand cards;
                             // for highsuit we add ALL but the highSuit of the high card
                             for ( auto currSuit : ESuit() )
                             {
@@ -2151,7 +2154,7 @@ namespace NHandTester
                             // add the pair
                             cards.push_back( TCard( kicker, ksuit1 ) );
                             cards.push_back( TCard( kicker, ksuit2 ) );
-                            NHandUtils::C5CardInfo cardInfo( cards );
+                            auto cardInfo = std::make_shared< NHandUtils::C5CardInfo >( cards );
                             allHands.push_back( cardInfo );
                         }
                     }
@@ -2194,8 +2197,9 @@ namespace NHandTester
         EXPECT_EQ( 2860, std::get< 2 >( analyzedHands )[ EHand::ePair ] );
         EXPECT_EQ( 1277, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
 
-        //NHandUtils::gComputeAllHands = true;
-        NHandUtils::C5CardInfo::generateAllCardHands();
+        NHandUtils::gComputeAllHands = true;
+        auto cardInfo = std::make_unique< NHandUtils::C5CardInfo >();
+        cardInfo->generateAllCardHands();
     }
 
     TEST_F( C5CardHandTester, CheckBitValues )
@@ -2590,7 +2594,7 @@ namespace NHandTester
     {
         auto p1 = fGame->addPlayer( "Scott" );
 
-        std::vector< NHandUtils::C5CardInfo::THand > hands;
+        std::vector< THand > hands;
         for ( auto&& highCard : ECard() )
         {
             for ( auto&& highSuit1 : ESuit() )
@@ -2619,7 +2623,7 @@ namespace NHandTester
                                             continue;
                                         for ( auto&& kickerSuit3 : ESuit() )
                                         {
-                                            hands.push_back( NHandUtils::C5CardInfo::THand( { highCard, highSuit1 }, { highCard, highSuit2 }, { kicker1, kickerSuit1 }, { kicker2, kickerSuit2 }, { kicker3, kickerSuit3 } ) );
+                                            hands.push_back( THand( { { highCard, highSuit1 }, { highCard, highSuit2 }, { kicker1, kickerSuit1 }, { kicker2, kickerSuit2 }, { kicker3, kickerSuit3 } } ) );
                                         }
                                     }
                                 }
@@ -2633,18 +2637,18 @@ namespace NHandTester
         {
             p1->clearCards();
 
-            p1->addCard( fGame->getCard( std::get< 0 >( handData ).first, std::get< 0 >( handData ).second ) );
-            p1->addCard( fGame->getCard( std::get< 1 >( handData ).first, std::get< 1 >( handData ).second ) );
-            p1->addCard( fGame->getCard( std::get< 2 >( handData ).first, std::get< 2 >( handData ).second ) );
-            p1->addCard( fGame->getCard( std::get< 3 >( handData ).first, std::get< 3 >( handData ).second ) );
-            p1->addCard( fGame->getCard( std::get< 4 >( handData ).first, std::get< 4 >( handData ).second ) );
+            p1->addCard( fGame->getCard( handData[ 0 ] ) );
+            p1->addCard( fGame->getCard( handData[ 1 ] ) );
+            p1->addCard( fGame->getCard( handData[ 2 ] ) );
+            p1->addCard( fGame->getCard( handData[ 3 ] ) );
+            p1->addCard( fGame->getCard( handData[ 4 ] ) );
 
             auto hand = p1->determineHand();
             EXPECT_EQ( EHand::ePair, std::get< 0 >( hand ) );
             ASSERT_EQ( 1, std::get< 1 >( hand ).size() );
 
-            EXPECT_EQ( std::get< 0 >( handData ).first, std::get< 1 >( hand ).front() );
-            auto kickers = std::vector< ECard >( { std::get< 2 >( handData ).first, std::get< 3 >( handData ).first, std::get< 4 >( handData ).first } );
+            EXPECT_EQ( handData[ 0 ].first, std::get< 1 >( hand ).front() );
+            auto kickers = std::vector< ECard >( { handData[ 2 ].first, handData[ 3 ].first, handData[ 4 ].first } );
             std::sort( kickers.begin(), kickers.end(), []( ECard lhs, ECard rhs ) { return lhs > rhs; } );
             EXPECT_EQ( kickers, std::get< 2 >( hand ) );
         }

@@ -60,11 +60,11 @@ namespace NHandTester
         bool isStraight( std::vector< ECard > cards ) const;
         bool CompareHandOrder( const std::map< EHand, size_t > & freq, const NHandUtils::CCardInfo & cardInfo ) const;
 
-        std::tuple< std::list< NHandUtils::CCardInfo >, std::map< EHand, size_t >, std::map< EHand, size_t > > getUniqueHands( std::list< NHandUtils::CCardInfo > & allHands );
+        std::tuple< std::list< std::shared_ptr< NHandUtils::CCardInfo > >, std::map< EHand, size_t >, std::map< EHand, size_t > > getUniqueHands( std::list< std::shared_ptr< NHandUtils::CCardInfo > > & allHands );
         std::tuple< std::list< std::shared_ptr< CHand > >, std::map< EHand, size_t >, std::map< EHand, size_t > > getUniqueHands( std::list< std::shared_ptr< CHand > >& allHands );
 
 
-        std::list< NHandUtils::CCardInfo > getAllCardInfoHands( size_t numCards );
+        std::list< std::shared_ptr< NHandUtils::CCardInfo > > getAllCardInfoHands( size_t numCards );
         std::list< std::shared_ptr< CHand > > getAllCHandHands( size_t numCards );
     public:
         std::vector< std::vector< std::shared_ptr< CCard > > > getAllCards( size_t numCards );

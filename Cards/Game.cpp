@@ -348,7 +348,12 @@ std::shared_ptr< CCard > CGame::getCard( const QString & cardName ) const
 
 std::shared_ptr< CCard > CGame::getCard( ECard card, ESuit suit ) const
 {
-    auto pos = fCardMap.find( std::make_pair( card, suit ) );
+    return getCard( std::make_pair( card, suit ) );
+}
+
+std::shared_ptr< CCard > CGame::getCard( const std::pair< ECard, ESuit > & card  ) const
+{
+    auto pos = fCardMap.find( card );
     if ( pos == fCardMap.end() )
         return nullptr;
     return ( *pos ).second;
