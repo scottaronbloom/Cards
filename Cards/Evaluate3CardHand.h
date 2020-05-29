@@ -48,13 +48,31 @@ namespace NHandUtils
         static EHand rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
 
     private:
-        static std::unordered_map< int64_t, int16_t > sStraitsAndFlushesProductMap;
+        struct SCardMaps
+        {
+            std::map< THand, uint32_t > fFlushesAndStraightsDontCountLowBall;
+            std::map< THand, uint32_t > fFlushesAndStraightsCountLowBall;
+            std::map< THand, uint32_t > fFlushesAndStraightsDontCount;
+            std::map< THand, uint32_t > fFlushesAndStraightsCount;
+        };
+
+        static SCardMaps sCardMaps;
+
+        struct SUniqueVectors
+        {
+            std::vector< uint32_t > fStraitsAndFlushesCount;
+            std::vector< uint32_t > fStraitsAndFlushesDontCount;
+        };
+        static SUniqueVectors sUniqueVectors;
+
+        struct SProductMaps
+        {
+            std::unordered_map< int64_t, int16_t > fStraitsAndFlushesCount;
+            std::unordered_map< int64_t, int16_t > fStraitsAndFlushesDontCount;
+        };
+        static SProductMaps sProductMaps;
+
         static std::vector< uint32_t > sFlushes;
-        static std::map< THand, uint32_t > sCardMap;
-        static std::map< THand, uint32_t > sCardMapStraightsAndFlushesCount;
-        static std::vector< uint32_t > sHighCardUnique;
-        static std::vector< uint32_t > sStraightsUnique;
-        static std::unordered_map< int64_t, int16_t > sProductMap;
         static bool sAllHandsComputed;
     };
 }

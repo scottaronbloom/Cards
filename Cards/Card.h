@@ -22,6 +22,7 @@
 
 #ifndef _CARDS_H
 #define _CARDS_H
+#include "HandUtils.h"
 #include "SABUtils/EnumUtils.h"
 #include <bitset>
 #include <vector>
@@ -76,7 +77,6 @@ std::ostream & operator<<( std::ostream& oss, ECard card );
 
 std::list< std::shared_ptr< CCard > > getAllCardsList();
 std::vector< std::shared_ptr< CCard > > getAllCardsVector();
-using TCardBitType = std::bitset< 29 >;
 class CCard
 {
 public:
@@ -86,7 +86,7 @@ public:
     static std::vector< std::shared_ptr< CCard > > allCards();
     static std::list< std::shared_ptr< CCard > > allCardsList();
     QString toString( bool verbose, bool includeBitValue ) const;
-    TCardBitType bitValue() const{ return fBitValue; }
+    NHandUtils::TCardBitType bitValue() const{ return fBitValue; }
 
     ESuit getSuit() const{ return fSuit; }
     ECard getCard() const { return fCard; }
@@ -99,7 +99,7 @@ private:
     ECard fCard{ ECard::eUNKNOWN };
     ESuit fSuit{ ESuit::eUNKNOWN };
 
-    TCardBitType fBitValue;
+    NHandUtils::TCardBitType fBitValue;
 };
 
 std::ostream& operator<<( std::ostream& oss, const CCard & card );

@@ -69,7 +69,14 @@ namespace std
 
 namespace NHandUtils
 {
-    using TCardBitType = std::bitset< 29 >;
+    using TCardBitType = std::bitset< 29 >; 
+    // bits 
+    // 2        2         1          
+    // 987654321098765432109876543210
+    //                       7:0 - Prime number for card
+    //                   11:8    - Rank value for card (0-12 decimal)
+    //              16:12        - bit flag for suit
+    //             17:29         - Bit flag for card
 
     std::pair< uint32_t, std::unique_ptr< CHand > > findBest( const std::vector< std::shared_ptr< CCard > >& cards, int numCards, const std::shared_ptr< SPlayInfo > & playInfo );
     std::pair< uint32_t, std::unique_ptr< CHand > > findBest( const std::vector< std::vector< std::shared_ptr< CCard > > >& allHands, const std::shared_ptr< SPlayInfo >& playInfo );

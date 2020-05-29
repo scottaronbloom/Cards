@@ -44,9 +44,9 @@ namespace NHandUtils
         virtual uint16_t getCardsValue() const;
         virtual uint64_t handProduct() const;
 
-        virtual bool lessThan( bool flushStraightCount, const CCardInfo& rhs ) const;
-        virtual bool greaterThan( bool flushStraightCount, const CCardInfo& rhs ) const final;
-        virtual bool equalTo( bool flushStraightCount, const CCardInfo& rhs ) const;
+        virtual bool lessThan( bool flushesAndStraightsCount, const CCardInfo& rhs ) const;
+        virtual bool greaterThan( bool flushesAndStraightsCount, const CCardInfo& rhs ) const final;
+        virtual bool equalTo( bool flushesAndStraightsCount, const CCardInfo& rhs ) const;
 
         virtual void generateAllCardHands();
         virtual bool allHandsComputed() const=0;
@@ -72,7 +72,7 @@ namespace NHandUtils
         virtual bool isTwoPair() const final { return fIsTwoPair; }
         virtual bool isPair() const final{ return fIsPair; }
         virtual bool isHighCard() const final;
-        virtual EHand getHandType( bool flushStraightCount = true ) const final;
+        virtual EHand getHandType( bool flushesAndStraightsCount = true, bool lowBall = false ) const final;
         virtual bool allCardsUnique() const final;
 
         virtual const std::list< EHand >& handOrder() const final{ return fHandOrder; }
@@ -83,13 +83,13 @@ namespace NHandUtils
         void generateFooter( std::ostream& oss ) const;
 
         template< typename T>
-        void computeAndGenerateMap( std::ostream& oss, size_t size, T& map, bool flushStraightCount ) const;
-        template< typename T1, typename T2 >
-        void computeAndGenerateMaps( std::ostream& oss, size_t size, T1& justCardsCount, T2& flushesAndStraightsCount ) const;
+        void computeAndGenerateMap( std::ostream& oss, bool firstMap, T& map, bool flushesAndStraightsCount, bool lowBall ) const;
+        template< typename T1, typename T2, typename T3, typename T4 >
+        void computeAndGenerateMaps( std::ostream& oss, size_t size, T1& flushesAndStraightsDontCount, T2& flushesAndStraightsCount, T3& justCardsLowCount, T4& flushesAndStraightsLowCount ) const;
         template< typename T >
-        void generateITE( std::ostream& oss, size_t size, const T& map, bool flushStraightCount ) const;
-        template< typename T1, typename T2 >
-        void generateRankFunction( std::ostream& oss, size_t size, const T1& justCardsCount, const T2& flushesAndStraightsCount ) const;
+        void generateITE( std::ostream& oss, size_t size, const T& map, bool flushesAndStraightsCount, bool lowBall ) const;
+        template< typename T1, typename T2, typename T3, typename T4 >
+        void generateRankFunction( std::ostream& oss, size_t size, const T1& flushesAndStraightsDontCount, const T2& flushesAndStraightsCount, const T3& flushesAndStraightsDontCountLowBall, const T4& flushesAndStraightsLowCount ) const;
 
         void setOrigCards( const THand& cards ); // returns the cards sorted
         void setupKickers();

@@ -747,12 +747,12 @@ namespace NHandTester
         {
             using TCardToInfoMap = std::map< THand, NHandUtils::C3CardInfo >;
             auto gFlushStraightsCount = []( const NHandUtils::C3CardInfo& lhs, const NHandUtils::C3CardInfo& rhs ) { return lhs.greaterThan( true, rhs ); };
-            auto gJustCardsCount = []( const NHandUtils::C3CardInfo& lhs, const NHandUtils::C3CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
+            auto gFlushesAndStraightsDontCount = []( const NHandUtils::C3CardInfo& lhs, const NHandUtils::C3CardInfo& rhs ) { return lhs.greaterThan( false, rhs ); };
 
-            using TCardsCountMap = std::map< NHandUtils::C3CardInfo, uint32_t, decltype( gJustCardsCount ) >;
+            using TCardsCountMap = std::map< NHandUtils::C3CardInfo, uint32_t, decltype( gFlushesAndStraightsDontCount ) >;
             using TFlushesCountMap = std::map< NHandUtils::C3CardInfo, uint32_t, decltype( gFlushStraightsCount ) >;
 
-            TCardsCountMap justCardsCount( gJustCardsCount );
+            TCardsCountMap justCardsCount( gFlushesAndStraightsDontCount );
             TFlushesCountMap flushesAndStraightsCount( gFlushStraightsCount );
 
             NHandUtils::C3CardInfo h1( ECard::eAce, ESuit::eSpades, ECard::eKing, ESuit::eHearts, ECard::eJack, ESuit::eSpades ); // pair of 2s 3 kicker
@@ -2104,6 +2104,43 @@ namespace NHandTester
             EXPECT_TRUE( h1.greaterThan( true, h2 ) );
         }
     }
+    
+    TEST_F( C5CardHandTester, AllCardHandsByCardInfo )
+    {
+        auto allHands = getAllCardInfoHands( 5 );
+
+        EXPECT_EQ( 2598960, allHands.size() );
+
+        auto analyzedHands = getUniqueHands( allHands );
+
+        EXPECT_EQ( 7462, std::get< 0 >( analyzedHands ).size() );
+
+        CompareHandOrder( std::get< 1 >( analyzedHands ), NHandUtils::C5CardInfo() );
+
+        EXPECT_EQ( 40, std::get< 1 >( analyzedHands )[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 624, std::get< 1 >( analyzedHands )[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 3744, std::get< 1 >( analyzedHands )[ EHand::eFullHouse ] );
+        EXPECT_EQ( 5108, std::get< 1 >( analyzedHands )[ EHand::eFlush ] );
+        EXPECT_EQ( 10200, std::get< 1 >( analyzedHands )[ EHand::eStraight ] );
+        EXPECT_EQ( 54912, std::get< 1 >( analyzedHands )[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 123552, std::get< 1 >( analyzedHands )[ EHand::eTwoPair ] );
+        EXPECT_EQ( 1098240, std::get< 1 >( analyzedHands )[ EHand::ePair ] );
+        EXPECT_EQ( 1302540, std::get< 1 >( analyzedHands )[ EHand::eHighCard ] );
+
+        EXPECT_EQ( 10, std::get< 2 >( analyzedHands )[ EHand::eStraightFlush ] );
+        EXPECT_EQ( 156, std::get< 2 >( analyzedHands )[ EHand::eFourOfAKind ] );
+        EXPECT_EQ( 156, std::get< 2 >( analyzedHands )[ EHand::eFullHouse ] );
+        EXPECT_EQ( 1277, std::get< 2 >( analyzedHands )[ EHand::eFlush ] );
+        EXPECT_EQ( 10, std::get< 2 >( analyzedHands )[ EHand::eStraight ] );
+        EXPECT_EQ( 858, std::get< 2 >( analyzedHands )[ EHand::eThreeOfAKind ] );
+        EXPECT_EQ( 858, std::get< 2 >( analyzedHands )[ EHand::eTwoPair ] );
+        EXPECT_EQ( 2860, std::get< 2 >( analyzedHands )[ EHand::ePair ] );
+        EXPECT_EQ( 1277, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
+
+        NHandUtils::gComputeAllHands = true;
+        auto cardInfo = std::make_unique< NHandUtils::C5CardInfo >();
+        cardInfo->generateAllCardHands();
+    }
 
     TEST_F( C5CardHandTester, FourOfAKind_CardInfo )
     {
@@ -2163,43 +2200,6 @@ namespace NHandTester
         }
 
         auto analyzedHands = getUniqueHands( allHands );
-    }
-
-    TEST_F( C5CardHandTester, AllCardHandsByCardInfo )
-    {
-        auto allHands = getAllCardInfoHands( 5 );
-
-        EXPECT_EQ( 2598960, allHands.size() );
-
-        auto analyzedHands = getUniqueHands( allHands );
-
-        EXPECT_EQ( 7462, std::get< 0 >( analyzedHands ).size() );
-
-        CompareHandOrder( std::get< 1 >( analyzedHands ), NHandUtils::C5CardInfo() );
-
-        EXPECT_EQ( 40, std::get< 1 >( analyzedHands )[ EHand::eStraightFlush ] );
-        EXPECT_EQ( 624, std::get< 1 >( analyzedHands )[ EHand::eFourOfAKind ] );
-        EXPECT_EQ( 3744, std::get< 1 >( analyzedHands )[ EHand::eFullHouse ] );
-        EXPECT_EQ( 5108, std::get< 1 >( analyzedHands )[ EHand::eFlush ] );
-        EXPECT_EQ( 10200, std::get< 1 >( analyzedHands )[ EHand::eStraight ] );
-        EXPECT_EQ( 54912, std::get< 1 >( analyzedHands )[ EHand::eThreeOfAKind ] );
-        EXPECT_EQ( 123552, std::get< 1 >( analyzedHands )[ EHand::eTwoPair ] );
-        EXPECT_EQ( 1098240, std::get< 1 >( analyzedHands )[ EHand::ePair ] );
-        EXPECT_EQ( 1302540, std::get< 1 >( analyzedHands )[ EHand::eHighCard ] );
-
-        EXPECT_EQ( 10, std::get< 2 >( analyzedHands )[ EHand::eStraightFlush ] );
-        EXPECT_EQ( 156, std::get< 2 >( analyzedHands )[ EHand::eFourOfAKind ] );
-        EXPECT_EQ( 156, std::get< 2 >( analyzedHands )[ EHand::eFullHouse ] );
-        EXPECT_EQ( 1277, std::get< 2 >( analyzedHands )[ EHand::eFlush ] );
-        EXPECT_EQ( 10, std::get< 2 >( analyzedHands )[ EHand::eStraight ] );
-        EXPECT_EQ( 858, std::get< 2 >( analyzedHands )[ EHand::eThreeOfAKind ] );
-        EXPECT_EQ( 858, std::get< 2 >( analyzedHands )[ EHand::eTwoPair ] );
-        EXPECT_EQ( 2860, std::get< 2 >( analyzedHands )[ EHand::ePair ] );
-        EXPECT_EQ( 1277, std::get< 2 >( analyzedHands )[ EHand::eHighCard ] );
-
-        NHandUtils::gComputeAllHands = true;
-        auto cardInfo = std::make_unique< NHandUtils::C5CardInfo >();
-        cardInfo->generateAllCardHands();
     }
 
     TEST_F( C5CardHandTester, CheckBitValues )

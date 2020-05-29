@@ -72,11 +72,11 @@ namespace NHandUtils
     }
 
 
-    bool CCardInfo::lessThan( bool flushStraightCount, const CCardInfo& rhs ) const
+    bool CCardInfo::lessThan( bool flushesAndStraightsCount, const CCardInfo& rhs ) const
     {
         for ( auto&& handType : fHandOrder )
         {
-            if ( !flushStraightCount && NHandUtils::isStraightOrFlush( handType ) )
+            if ( !flushesAndStraightsCount && NHandUtils::isStraightOrFlush( handType ) )
                 continue;
             switch ( handType )
             {
@@ -180,12 +180,12 @@ namespace NHandUtils
         return false;
     }
 
-    bool CCardInfo::greaterThan( bool flushStraightCount, const CCardInfo& rhs ) const
+    bool CCardInfo::greaterThan( bool flushesAndStraightsCount, const CCardInfo& rhs ) const
     {
-        return !lessThan( flushStraightCount, rhs ) && !equalTo( flushStraightCount, rhs );
+        return !lessThan( flushesAndStraightsCount, rhs ) && !equalTo( flushesAndStraightsCount, rhs );
     }
 
-    bool CCardInfo::equalTo( bool flushStraightCount, const CCardInfo& rhs ) const
+    bool CCardInfo::equalTo( bool flushesAndStraightsCount, const CCardInfo& rhs ) const
     {
         if ( fIsFiveOfAKind && rhs.fIsFiveOfAKind )
             return fCards == rhs.fCards && fKickers == rhs.fKickers;
@@ -196,7 +196,7 @@ namespace NHandUtils
         if ( fIsPair && rhs.fIsPair )
             return fCards == rhs.fCards && fKickers == rhs.fKickers;
 
-        if ( flushStraightCount )
+        if ( flushesAndStraightsCount )
         {
             if ( fIsFlush != rhs.fIsFlush )
                 return false;
@@ -230,17 +230,17 @@ namespace NHandUtils
             && !isPair();
     }
 
-    EHand CCardInfo::getHandType( bool flushStraightCount ) const
+    EHand CCardInfo::getHandType( bool flushesAndStraightsCount, bool /*lowBall*/ ) const
     {
-        if ( flushStraightCount && isStraightFlush() )
+        if ( flushesAndStraightsCount && isStraightFlush() )
             return EHand::eStraightFlush;
         else if ( isFourOfAKind() )
             return EHand::eFourOfAKind;
         else if ( isFullHouse() )
             return EHand::eFullHouse;
-        else if ( flushStraightCount && isFlush() )
+        else if ( flushesAndStraightsCount && isFlush() )
             return EHand::eFlush;
-        else if ( flushStraightCount && isStraight() )
+        else if ( flushesAndStraightsCount && isStraight() )
             return EHand::eStraight;
         else if ( isThreeOfAKind() )
             return EHand::eThreeOfAKind;
