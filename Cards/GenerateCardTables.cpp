@@ -108,11 +108,13 @@ namespace NHandUtils
             }
         }
 
+        oss << getPadding( 2 );
         if ( !firstMap )
             oss << ",";
+
         oss
             << "{\n"
-            << " // " << comment << "\n"
+            << getPadding( 3 ) << "// " << comment << "\n"
             ;
 
         sabDebugStream() << "Writing Map: " << map.size() << "\n";
@@ -123,7 +125,7 @@ namespace NHandUtils
             if ( ( ( *ii ).second % updateOn ) == 0 )
                 sabDebugStream() << "   Computing Hand Value: Hand #" << ( *ii ).second << " of " << map.size() << "\n";
 
-            oss << "    ";
+            oss << getPadding( 3 );
             if ( first )
                 oss << " ";
             else
@@ -153,7 +155,7 @@ namespace NHandUtils
             prevHandType = currHandType;
         }
         sabDebugStream() << "Finished Writing Map: " << map.size() << "\n";
-        oss << "}\n";
+        oss << getPadding( 2 ) << "}\n";
         oss.flush();
     }
 
@@ -161,8 +163,8 @@ namespace NHandUtils
     void CCardInfo::computeAndGenerateMaps( std::ostream& oss, size_t size, T1& flushesAndStraightsDontCount, T2& flushesAndStraightsCount, T3& flushesAndStraightsDontCountLowBall, T4& flushesAndStraightsCountLowBall ) const
     {
         oss 
-            << "C" + std::to_string( size ) + "CardInfo::SCardMaps C" + std::to_string( size ) + "CardInfo::sCardMaps = \n"
-            << "{\n"
+            << getPadding( 1 ) << "C" + std::to_string( size ) + "CardInfo::SCardMaps C" + std::to_string( size ) + "CardInfo::sCardMaps =\n"
+            << getPadding( 1 ) << "{\n"
             ;
 
         computeAndGenerateMap( oss, true, flushesAndStraightsDontCount, false, true );
@@ -170,7 +172,7 @@ namespace NHandUtils
         computeAndGenerateMap( oss, false, flushesAndStraightsDontCountLowBall, false, false );
         computeAndGenerateMap( oss, false, flushesAndStraightsCountLowBall, true, false );
 
-        oss << "};\n\n";
+        oss << getPadding( 1 ) << "};\n\n";
     }
 
     template< typename T >
@@ -202,7 +204,7 @@ namespace NHandUtils
         bool first = true;
         for ( auto ii = firstRankToHandType.rbegin(); ii != firstRankToHandType.rend(); ++ii )
         {
-            oss << "        ";
+            oss << getPadding( 3 );
             if ( !first )
                 oss << "else ";
             first = false;
@@ -214,65 +216,74 @@ namespace NHandUtils
             if ( isOne )
                 oss << " */";
             oss << "\n"
-                << "            hand = " << toCPPString( ( *ii ).second ) << ";\n";
+                << getPadding( 4 ) << "hand = " << toCPPString( ( *ii ).second ) << ";\n";
         }
     }
 
     template< typename T1, typename T2, typename T3, typename T4 >
     void CCardInfo::generateRankFunction( std::ostream& oss, size_t size, const T1& flushesAndStraightsDontCount, const T2& flushesAndStraightsCount, const T3& flushesAndStraightsDontCountLowBall, const T4& flushesAndStraightsCountLowBall ) const
     {
-        oss << "EHand C" << size << "CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )\n"
-            << "{\n"
-            << "    EHand hand;\n"
-            << "    if ( !playInfo->fStraightsAndFlushesCount && !playInfo->fLowHandWins )\n"
-            << "    {\n";
+        oss << getPadding( 1 ) << "EHand C" << size << "CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )\n"
+            << getPadding( 1 ) << "{\n"
+            << getPadding( 2 ) << "EHand hand;\n"
+            << getPadding( 2 ) << "if ( !playInfo->fStraightsAndFlushesCount && !playInfo->fLowHandWins )\n"
+            << getPadding( 2 ) << "{\n";
         generateITE( oss, size, flushesAndStraightsDontCount, false, false );
-        oss << "    }\n"
-            << "    else if ( !playInfo->fStraightsAndFlushesCount && playInfo->fLowHandWins )\n"
-            << "    {\n";
+        oss << getPadding( 2 ) << "}\n"
+            << getPadding( 2 ) << "else if ( !playInfo->fStraightsAndFlushesCount && playInfo->fLowHandWins )\n"
+            << getPadding( 2 ) << "{\n";
         generateITE( oss, size, flushesAndStraightsDontCountLowBall, false, true );
-        oss << "    }\n"
-            << "    else if ( playInfo->fStraightsAndFlushesCount && !playInfo->fLowHandWins )\n"
-            << "    {\n";
+        oss << getPadding( 2 ) << "}\n"
+            << getPadding( 2 ) << "else if ( playInfo->fStraightsAndFlushesCount && !playInfo->fLowHandWins )\n"
+            << getPadding( 2 ) << "{\n";
         generateITE( oss, size, flushesAndStraightsCount, true, false );
-        oss << "    }\n"
-            << "    else /* if ( playInfo->fStraightsAndFlushesCount && playInfo->fLowHandWins ) */\n"
-            << "    {\n";
+        oss << getPadding( 2 ) << "}\n"
+            << getPadding( 2 ) << "else /* if ( playInfo->fStraightsAndFlushesCount && playInfo->fLowHandWins ) */\n"
+            << getPadding( 2 ) << "{\n";
         generateITE( oss, size, flushesAndStraightsCountLowBall, true, true );
-        oss << "    }\n"
-            << "    return hand;\n"
-            << "}\n\n"
+        oss << getPadding( 2 ) << "}\n"
+            << getPadding( 2 ) << "return hand;\n"
+            << getPadding( 1 ) << "}\n\n"
             ;
         oss.flush();
     }
 
+    static std::string getPadding( size_t sz )
+    {
+        return std::string( 4*sz, ' ' );
+    }
     static void generateTable( std::ostream& oss, const std::vector< uint32_t >& values, const std::string & className, const std::string& varName )
     {
-        if ( !varName.empty() )
+        size_t indent = 1;
+        if ( varName.empty() )
+            indent = 2;
+        else
         {
             oss
-                << "" << "std::vector< uint32_t > ";
+                << getPadding( indent ) << "std::vector< uint32_t > ";
             if ( !className.empty() )
                 oss << className << "::";
-            oss << varName << " = \n"
-                << "    "
+            oss << varName << " =\n"
+                << getPadding( indent )
                 ;
         }
 
         oss << "{\n";
 
+
         size_t numChars = 0;
         for ( size_t ii = 0; ii < values.size(); ++ii )
         {
             if ( numChars == 0 )
-                oss << "    ";
+                oss << getPadding( indent + 1 );
 
             auto tmp = std::to_string( values[ ii ] );
             oss << tmp;
             numChars += tmp.size();
-            if ( ii != ( values.size() - 1 ) )
+            bool lastValue = ( ii == ( values.size() - 1 ) );
+            if ( !lastValue )
             {
-                oss << ", ";
+                oss << ",";
                 numChars += 2;
             }
 
@@ -281,27 +292,29 @@ namespace NHandUtils
                 numChars = 0;
                 oss << "\n";
             }
+            else if ( !lastValue )
+                oss << " ";
         }
-        oss << "\n    }";
+        oss << "\n" << getPadding( indent ) << "}";
         if ( !varName.empty() )
-            oss << ";\n\n";
-        else
-            oss << "\n";
+            oss << ";\n";
+        oss << "\n";
         oss.flush();
     }
 
     static void generateTables( std::ostream& oss, const std::pair< std::vector< uint32_t >, std::vector< uint32_t > > & values, const std::string & className, const std::string & typeName, const std::string & varName )
     {
         oss
-            << className << "::" << typeName << " " << className << "::" << varName << " = \n"
-            << "{\n"
+            << getPadding( 1 ) << className << "::" << typeName << " " << className << "::" << varName << " =\n"
+            << getPadding( 1 ) << "{\n"
             ;
 
+        oss << getPadding( 2 );
         generateTable( oss, values.first, "", "" );
-        oss << "   ,";
+        oss << getPadding( 2 ) << ",";
         generateTable( oss, values.second, "", "" );
 
-        oss << "};\n\n";
+        oss << getPadding( 1 ) << "};\n\n";
         oss.flush();
     }
 
@@ -312,7 +325,7 @@ namespace NHandUtils
         bool first = true;
         for ( auto&& ii : values )
         {
-            oss << "        ";
+            oss << getPadding( 3 ) ;
 
             if ( !first )
                 oss << ",";
@@ -321,22 +334,22 @@ namespace NHandUtils
             first = false;
             oss << "{ " << ii.first << ", " << ii.second << " }\n";
         }
-        oss << "    }\n";
+        oss << getPadding( 2 ) << "}\n";
         oss.flush();
     }
 
     static void generateMaps( std::ostream& oss, const std::pair< std::map< uint64_t, uint16_t >, std::map< uint64_t, uint16_t > > & values, const std::string& className, const std::string & typeName, const std::string& varName )
     {
         oss
-            << className << "::" << typeName << " " << className << "::" << varName << " = \n"
-            << "{\n"
+            << getPadding( 1 ) << className << "::" << typeName << " " << className << "::" << varName << " =\n"
+            << getPadding( 1 ) << "{\n"
             ;
-        oss << "    ";
+        oss << getPadding( 2 );
         generateMap( oss, values.first );
-        oss << "   ,";
+        oss << getPadding( 2 ) << ",";
         generateMap( oss, values.second );
 
-        oss << "};\n\n";
+        oss << getPadding( 1 ) << "};\n\n";
         oss.flush();
     }
 
@@ -345,29 +358,29 @@ namespace NHandUtils
         std::string wildCardSuffix;
         if ( size == 5 )
             wildCardSuffix = " + ( playInfo->hasWildCards() ? 13 : 0 )";
-        oss << "uint32_t C" << size << "CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )\n"
-            << "{\n"
-            << "    if ( cards.size() != " << size << " )\n"
-            << "        return -1;\n"
+        oss << getPadding( 1 ) << "uint32_t C" << size << "CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )\n"
+            << getPadding( 1 ) << "{\n"
+            << getPadding( 2 ) << "if ( cards.size() != " << size << " )\n"
+            << getPadding( 3 ) << "return -1;\n"
             << "\n"
-            << "    auto cardsValue = NHandUtils::getCardsValue( cards );\n"
-            << "    if ( playInfo && playInfo->fStraightsAndFlushesCount )\n"
-            << "    {\n"
-            << "        if ( NHandUtils::isFlush( cards ) )\n"
-            << "            return sFlushes[ cardsValue ]" << wildCardSuffix << ";\n"
-            << "    }\n"
+            << getPadding( 2 ) << "auto cardsValue = NHandUtils::getCardsValue( cards );\n"
+            << getPadding( 2 ) << "if ( playInfo && playInfo->fStraightsAndFlushesCount )\n"
+            << getPadding( 2 ) << "{\n"
+            << getPadding( 3 ) << "if ( NHandUtils::isFlush( cards ) )\n"
+            << getPadding( 4 ) << "return sFlushes[ cardsValue ]" << wildCardSuffix << ";\n"
+            << getPadding( 2 ) << "}\n"
             << "\n"
-            << "    auto straightOrHighCard = playInfo->fStraightsAndFlushesCount ? sUniqueVectors.fStraitsAndFlushesCount[ cardsValue ] : sUniqueVectors.fStraitsAndFlushesDontCount[ cardsValue ];\n"
-            << "    if ( straightOrHighCard )\n"
-            << "        return straightOrHighCard" << wildCardSuffix << ";\n"
+            << getPadding( 2 ) << "auto straightOrHighCard = playInfo->fStraightsAndFlushesCount ? sUniqueVectors.fStraitsAndFlushesCount[ cardsValue ] : sUniqueVectors.fStraitsAndFlushesDontCount[ cardsValue ];\n"
+            << getPadding( 2 ) << "if ( straightOrHighCard )\n"
+            << getPadding( 3 ) << "return straightOrHighCard" << wildCardSuffix << ";\n"
             << "\n"
-            << "    auto product = computeHandProduct( cards );\n"
-            << "    auto productMap = playInfo->fStraightsAndFlushesCount ? sProductMaps.fStraitsAndFlushesCount : sProductMaps.fStraitsAndFlushesDontCount;\n"
-            << "    auto pos = productMap.find( product );\n"
-            << "    if ( pos == productMap.end() )\n"
-            << "        return -1;\n"
-            << "    return ( *pos ).second" << wildCardSuffix << ";\n"
-            << "}\n\n";
+            << getPadding( 2 ) << "auto product = computeHandProduct( cards );\n"
+            << getPadding( 2 ) << "auto productMap = playInfo->fStraightsAndFlushesCount ? sProductMaps.fStraitsAndFlushesCount : sProductMaps.fStraitsAndFlushesDontCount;\n"
+            << getPadding( 2 ) << "auto pos = productMap.find( product );\n"
+            << getPadding( 2 ) << "if ( pos == productMap.end() )\n"
+            << getPadding( 3 ) << "return -1;\n"
+            << getPadding( 2 ) << "return ( *pos ).second" << wildCardSuffix << ";\n"
+            << getPadding( 1 ) << "}\n\n";
     }
 
     void CCardInfo::generateAllCardHands()

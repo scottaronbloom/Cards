@@ -9,8 +9,8 @@ namespace NHandUtils
     C3CardInfo::SCardMaps C3CardInfo::sCardMaps =
     {
         {
-        // No Flushes/Straights - LowBall
-            { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts }, { ECard::eAce, ESuit::eDiamonds } }, 1 } // EHand::eThreeOfAKind
+            // No Flushes/Straights - LowBall
+             { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts }, { ECard::eAce, ESuit::eDiamonds } }, 1 } // EHand::eThreeOfAKind
             ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts }, { ECard::eKing, ESuit::eDiamonds } }, 2 }
             ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts }, { ECard::eQueen, ESuit::eDiamonds } }, 3 }
             ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts }, { ECard::eJack, ESuit::eDiamonds } }, 4 }
@@ -467,7 +467,7 @@ namespace NHandUtils
             ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFour, ESuit::eSpades } }, 455 } // EHand::eHighCard
         }
         ,{
-        // Flushes/Straights - LowBall
+            // Flushes/Straights - LowBall
              { { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 1 } // EHand::eStraightFlush
             ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 2 }
             ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 3 }
@@ -1212,7 +1212,7 @@ namespace NHandUtils
         }
         ,{
             // No Flushes/Straights
-            { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts }, { ECard::eAce, ESuit::eDiamonds } }, 1 } // EHand::eThreeOfAKind
+             { { { ECard::eAce, ESuit::eSpades }, { ECard::eAce, ESuit::eHearts }, { ECard::eAce, ESuit::eDiamonds } }, 1 } // EHand::eThreeOfAKind
             ,{ { { ECard::eKing, ESuit::eSpades }, { ECard::eKing, ESuit::eHearts }, { ECard::eKing, ESuit::eDiamonds } }, 2 }
             ,{ { { ECard::eQueen, ESuit::eSpades }, { ECard::eQueen, ESuit::eHearts }, { ECard::eQueen, ESuit::eDiamonds } }, 3 }
             ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eJack, ESuit::eHearts }, { ECard::eJack, ESuit::eDiamonds } }, 4 }
@@ -1670,7 +1670,7 @@ namespace NHandUtils
         }
         ,{
             // Flushes/Straights
-            { { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 1 } // EHand::eStraightFlush
+             { { { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades }, { ECard::eAce, ESuit::eSpades } }, 1 } // EHand::eStraightFlush
             ,{ { { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades }, { ECard::eKing, ESuit::eSpades } }, 2 }
             ,{ { { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades }, { ECard::eQueen, ESuit::eSpades } }, 3 }
             ,{ { { ECard::eNine, ESuit::eSpades }, { ECard::eTen, ESuit::eSpades }, { ECard::eJack, ESuit::eSpades } }, 4 }
@@ -3086,7 +3086,7 @@ namespace NHandUtils
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 170
         }
-       ,{
+        ,{
             0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 0, 741, 0, 740, 35, 0, 0, 0, 0, 739,
             0, 738, 737, 0, 0, 736, 735, 0, 34, 0, 0, 0, 0, 0, 0, 734, 0, 733,
             732, 0, 0, 731, 730, 0, 729, 0, 0, 0, 0, 728, 727, 0, 726, 0, 0, 0,
@@ -3595,7 +3595,7 @@ namespace NHandUtils
             ,{ 62197, 14 }
             ,{ 68921, 1 }
         }
-       ,{
+        ,{
              { 8, 25 }
             ,{ 12, 467 }
             ,{ 18, 455 }
@@ -3768,7 +3768,7 @@ namespace NHandUtils
         }
     };
 
-    uint32_t C3CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo )
+    uint32_t C3CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )
     {
         if ( cards.size() != 3 )
             return -1;
@@ -3792,7 +3792,7 @@ namespace NHandUtils
         return ( *pos ).second;
     }
 
-    EHand C3CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo )
+    EHand C3CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )
     {
         EHand hand;
         if ( !playInfo->fStraightsAndFlushesCount && !playInfo->fLowHandWins )
