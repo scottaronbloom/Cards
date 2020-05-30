@@ -29,6 +29,7 @@
 #include "Evaluate3CardHand.h"
 #include "Evaluate4CardHand.h"
 #include "Evaluate5CardHand.h"
+#include "SABUtils/utils.h"
 
 #include <map>
 #include <set>
@@ -67,6 +68,11 @@ namespace NHandUtils
     void CCardInfo::generateFooter( std::ostream& oss ) const
     {
         oss << "}\n\n";
+    }
+
+    static std::string getPadding( size_t sz )
+    {
+        return std::string( 4*sz, ' ' );
     }
 
     template< typename T>
@@ -108,6 +114,7 @@ namespace NHandUtils
             }
         }
 
+        using NHandUtils::getPadding;
         oss << getPadding( 2 );
         if ( !firstMap )
             oss << ",";
@@ -254,10 +261,6 @@ namespace NHandUtils
         oss.flush();
     }
 
-    static std::string getPadding( size_t sz )
-    {
-        return std::string( 4*sz, ' ' );
-    }
     static void generateTable( std::ostream& oss, const std::vector< uint32_t >& values, const std::string & className, const std::string& varName )
     {
         size_t indent = 1;
