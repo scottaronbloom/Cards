@@ -6,6 +6,7 @@
 
 namespace NHandUtils
 {
+#ifdef _USECARDMAPS_
     C3CardInfo::SCardMaps C3CardInfo::sCardMaps =
     {
         {
@@ -2413,6 +2414,9 @@ namespace NHandUtils
             ,{ { { ECard::eDeuce, ESuit::eSpades }, { ECard::eTrey, ESuit::eSpades }, { ECard::eFive, ESuit::eHearts } }, 741 } // EHand::eHighCard
         }
     };
+#else
+    C3CardInfo::SCardMaps C3CardInfo::sCardMaps = { {}, {}, {}, {} };
+#endif
 
     std::vector< uint32_t > C3CardInfo::sFlushes =
     {
