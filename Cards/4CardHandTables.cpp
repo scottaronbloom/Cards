@@ -6,7 +6,7 @@
 
 namespace NHandUtils
 {
-#ifdef _USECARDMAPS_
+#ifdef _USECARDMAPS
     C4CardInfo::SCardMaps C4CardInfo::sCardMaps =
     {
         {
@@ -8735,6 +8735,7 @@ namespace NHandUtils
 #else
     C4CardInfo::SCardMaps C4CardInfo::sCardMaps = { {}, {}, {}, {} };
 #endif
+
 
     std::vector< uint32_t > C4CardInfo::sFlushes =
     {

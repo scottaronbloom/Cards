@@ -162,7 +162,8 @@ namespace NHandUtils
     template< typename T1, typename T2, typename T3, typename T4 >
     void CCardInfo::computeAndGenerateMaps( std::ostream& oss, size_t size, T1& flushesAndStraightsDontCount, T2& flushesAndStraightsCount, T3& flushesAndStraightsDontCountLowBall, T4& flushesAndStraightsCountLowBall ) const
     {
-        oss 
+        oss
+            << "#ifdef _USECARDMAPS\n"
             << getPadding( 1 ) << "C" + std::to_string( size ) + "CardInfo::SCardMaps C" + std::to_string( size ) + "CardInfo::sCardMaps =\n"
             << getPadding( 1 ) << "{\n"
             ;
@@ -172,7 +173,12 @@ namespace NHandUtils
         computeAndGenerateMap( oss, false, flushesAndStraightsDontCountLowBall, false, false );
         computeAndGenerateMap( oss, false, flushesAndStraightsCountLowBall, true, false );
 
-        oss << getPadding( 1 ) << "};\n\n";
+        oss << getPadding( 1 ) << "};\n"
+            << "#else\n"
+            << getPadding( 1 ) << "C" + std::to_string( size ) + "CardInfo::SCardMaps C" + std::to_string( size ) + "CardInfo::sCardMaps = { {}, {}, {}, {} };\n"
+            << "#endif\n"
+            << "\n\n"
+            ;
     }
 
     template< typename T >
