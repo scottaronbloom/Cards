@@ -30,6 +30,7 @@ class CGame;
 #include <string>
 #include <iostream>
 #include <tuple>
+#include <list>
 #include "gmock/gmock.h"
 
 std::ostream& operator<<( std::ostream& os, const QString & data );

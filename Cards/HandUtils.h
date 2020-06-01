@@ -27,6 +27,7 @@
 #include <unordered_set>
 #include <vector>
 #include <optional>
+#include <list>
 
 class CHand;
 class CCard;

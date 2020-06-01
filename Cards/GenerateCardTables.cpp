@@ -69,6 +69,11 @@ namespace NHandUtils
         oss << "}\n\n";
     }
 
+    static std::string getPadding( size_t sz )
+    {
+        return std::string( 4*sz, ' ' );
+    }
+
     template< typename T>
     void CCardInfo::computeAndGenerateMap( std::ostream& oss, bool firstMap, T& map, bool flushesAndStraightsCount, bool lowBall ) const
     {
@@ -108,6 +113,7 @@ namespace NHandUtils
             }
         }
 
+        using NHandUtils::getPadding;
         oss << getPadding( 2 );
         if ( !firstMap )
             oss << ",";
@@ -254,10 +260,6 @@ namespace NHandUtils
         oss.flush();
     }
 
-    static std::string getPadding( size_t sz )
-    {
-        return std::string( 4*sz, ' ' );
-    }
     static void generateTable( std::ostream& oss, const std::vector< uint32_t >& values, const std::string & className, const std::string& varName )
     {
         size_t indent = 1;
