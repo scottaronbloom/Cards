@@ -74,6 +74,11 @@ uint16_t toBitValue( ECard card );
 ECard fromBitValue( uint16_t value );
 uint8_t toRankValue( ECard card );
 std::ostream & operator<<( std::ostream& oss, ECard card );
+bool lessThan( ECard lhs, ECard rhs, bool lowCardWins );
+inline bool greaterThan( ECard lhs, ECard rhs, bool lowCardWins )
+{
+    return ( lhs != rhs ) && !lessThan( lhs, rhs, lowCardWins );
+}
 
 std::list< std::shared_ptr< CCard > > getAllCardsList();
 std::vector< std::shared_ptr< CCard > > getAllCardsVector();

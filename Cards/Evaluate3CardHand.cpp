@@ -36,8 +36,6 @@
 
 namespace NHandUtils
 {
-    bool C3CardInfo::sAllHandsComputed{ false };
-
     C3CardInfo::C3CardInfo() :
         C3CardInfo( THand( { TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ) } ) )
     {
@@ -52,7 +50,9 @@ namespace NHandUtils
 
     C3CardInfo::C3CardInfo( const THand& cards )
     {
-        fHandOrder = 
+        initMaps();
+
+        fHandOrder =
             { 
                 EHand::eStraightFlush, 
                 EHand::eThreeOfAKind, 

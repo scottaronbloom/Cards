@@ -36,12 +36,9 @@
 
 namespace NHandUtils
 {
-    bool C2CardInfo::sAllHandsComputed{ false };
-
     C2CardInfo::C2CardInfo() :
         C2CardInfo( THand( { TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ) } ) )
     {
-
     }
 
     C2CardInfo::C2CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2 ) :
@@ -52,6 +49,8 @@ namespace NHandUtils
 
     C2CardInfo::C2CardInfo( const THand& cards )
     {
+        initMaps();
+
         fHandOrder = { EHand::eStraightFlush, EHand::ePair, EHand::eStraight, EHand::eFlush, EHand::eHighCard };
 
         assert( cards.size() == 2 );

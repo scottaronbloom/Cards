@@ -217,6 +217,17 @@ std::ostream& operator<<( std::ostream& oss, const CCard& card )
     return oss;
 }
 
+bool lessThan( ECard lhs, ECard rhs, bool lowCardWins )
+{
+    if ( !lowCardWins || ( ( lhs != ECard::eAce ) && ( rhs != ECard::eAce ) ) )
+        return lhs < rhs;
+
+    if ( lhs == rhs )
+        return false;
+
+    return lhs == ECard::eAce; // its low
+}
+
 std::list< std::shared_ptr< CCard > > getAllCardsList()
 {
     std::list< std::shared_ptr< CCard > > retVal;

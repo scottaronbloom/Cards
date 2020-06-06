@@ -326,7 +326,7 @@ namespace NHandUtils
         return std::optional< EStraightType >();
     }
 
-    bool compareCards( const std::pair< std::list< ECard >, std::list< ECard > >& lhs, const std::pair< std::list< ECard >, std::list< ECard > >& rhs )
+    bool compareCards( const std::pair< std::list< ECard >, std::list< ECard > >& lhs, const std::pair< std::list< ECard >, std::list< ECard > >& rhs, bool lowCardWins )
     {
         auto ii = lhs.first.begin();
         auto jj = rhs.first.begin();
@@ -334,12 +334,13 @@ namespace NHandUtils
         {
             if ( *ii == *jj )
                 continue;
-            return *ii < *jj;
+            return lessThan( *ii, *jj, lowCardWins );
         }
         if ( ii != lhs.first.end() && jj == rhs.first.end() )
             return true;
         if ( ii == lhs.first.end() && jj != rhs.first.end() )
             return false;
+
         // both at end or both not at end
         ii = lhs.second.begin();
         jj = rhs.second.begin();
@@ -347,7 +348,7 @@ namespace NHandUtils
         {
             if ( *ii == *jj )
                 continue;
-            return *ii < *jj;
+            return lessThan( *ii, *jj, lowCardWins );
         }
         if ( ii != lhs.second.end() && jj == rhs.second.end() )
             return true;
@@ -407,7 +408,7 @@ namespace NHandUtils
             if ( !lhsWheel && rhsWheel )
                 return false;
             else if ( !lhsWheel && !rhsWheel )
-                return lhs.value() < rhs.value();
+                return lhs.value() < rhs.value(); 
         }
         return std::optional< bool >();
     }

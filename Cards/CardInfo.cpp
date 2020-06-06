@@ -71,17 +71,16 @@ namespace NHandUtils
         return fStraightType.has_value() && ( fStraightType.value() == EStraightType::eWheel );
     }
 
-
-    bool CCardInfo::lessThan( bool flushesAndStraightsCount, const CCardInfo& rhs ) const
+    bool CCardInfo::lessThan( bool straightsAndFlushesCount, bool lowHandWins, const CCardInfo& rhs ) const
     {
         for ( auto&& handType : fHandOrder )
         {
-            if ( !flushesAndStraightsCount && NHandUtils::isStraightOrFlush( handType ) )
+            if ( !straightsAndFlushesCount && NHandUtils::isStraightOrFlush( handType ) )
                 continue;
             switch ( handType )
             {
                 case EHand::eHighCard:
-                    return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
+                    return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers }, lowHandWins );
                 case EHand::ePair:
                     {
                         if ( !fIsPair && rhs.fIsPair )
@@ -89,7 +88,7 @@ namespace NHandUtils
                         if ( fIsPair && !rhs.fIsPair )
                             return false;
                         if ( fIsPair && rhs.fIsPair )
-                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
+                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers }, lowHandWins );
                     }
                     break;
                 case EHand::eTwoPair:
@@ -99,7 +98,7 @@ namespace NHandUtils
                         if ( fIsTwoPair && !rhs.fIsTwoPair )
                             return false;
                         if ( fIsTwoPair && rhs.fIsTwoPair )
-                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
+                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers }, lowHandWins );
                     }
                     break;
                 case EHand::eThreeOfAKind:
@@ -109,7 +108,7 @@ namespace NHandUtils
                         if ( fIsThreeOfAKind && !rhs.fIsThreeOfAKind )
                             return false;
                         if ( fIsThreeOfAKind && rhs.fIsThreeOfAKind )
-                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
+                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers }, lowHandWins );
                     }
                     break;
                 case EHand::eFullHouse:
@@ -119,7 +118,7 @@ namespace NHandUtils
                         if ( fIsFullHouse && !rhs.fIsFullHouse )
                             return false;
                         if ( fIsFullHouse && rhs.fIsFullHouse )
-                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
+                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers }, lowHandWins );
                     }
                     break;
                 case EHand::eFourOfAKind:
@@ -129,7 +128,7 @@ namespace NHandUtils
                         if ( fIsFourOfAKind && !rhs.fIsFourOfAKind )
                             return false;
                         if ( fIsFourOfAKind && rhs.fIsFourOfAKind )
-                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
+                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers }, lowHandWins );
                     }
                     break;
                     case EHand::eFiveOfAKind:
@@ -139,7 +138,7 @@ namespace NHandUtils
                             if ( fIsFiveOfAKind && !rhs.fIsFiveOfAKind )
                                 return false;
                             if ( fIsFiveOfAKind && rhs.fIsFiveOfAKind )
-                                return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
+                                return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers }, lowHandWins );
                         }
                         break;
                 case EHand::eStraight:
@@ -156,7 +155,7 @@ namespace NHandUtils
                         if ( !fIsFlush && rhs.fIsFlush )
                             return true;
                         if ( fIsFlush && rhs.fIsFlush )
-                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers } );
+                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers }, false );
                     }
                     break;
                 case EHand::eStraightFlush:
@@ -180,12 +179,12 @@ namespace NHandUtils
         return false;
     }
 
-    bool CCardInfo::greaterThan( bool flushesAndStraightsCount, const CCardInfo& rhs ) const
+    bool CCardInfo::greaterThan( bool straightsAndFlushesCount, bool lowHandWins, const CCardInfo& rhs ) const
     {
-        return !lessThan( flushesAndStraightsCount, rhs ) && !equalTo( flushesAndStraightsCount, rhs );
+        return !lessThan( straightsAndFlushesCount, lowHandWins, rhs ) && !equalTo( straightsAndFlushesCount, rhs );
     }
 
-    bool CCardInfo::equalTo( bool flushesAndStraightsCount, const CCardInfo& rhs ) const
+    bool CCardInfo::equalTo( bool straightsAndFlushesCount, const CCardInfo& rhs ) const
     {
         if ( fIsFiveOfAKind && rhs.fIsFiveOfAKind )
             return fCards == rhs.fCards && fKickers == rhs.fKickers;
@@ -196,7 +195,7 @@ namespace NHandUtils
         if ( fIsPair && rhs.fIsPair )
             return fCards == rhs.fCards && fKickers == rhs.fKickers;
 
-        if ( flushesAndStraightsCount )
+        if ( straightsAndFlushesCount )
         {
             if ( fIsFlush != rhs.fIsFlush )
                 return false;
@@ -230,17 +229,17 @@ namespace NHandUtils
             && !isPair();
     }
 
-    EHand CCardInfo::getHandType( bool flushesAndStraightsCount, bool /*lowBall*/ ) const
+    EHand CCardInfo::getHandType( bool straightsAndFlushesCount, bool /*lowBall*/ ) const
     {
-        if ( flushesAndStraightsCount && isStraightFlush() )
+        if ( straightsAndFlushesCount && isStraightFlush() )
             return EHand::eStraightFlush;
         else if ( isFourOfAKind() )
             return EHand::eFourOfAKind;
         else if ( isFullHouse() )
             return EHand::eFullHouse;
-        else if ( flushesAndStraightsCount && isFlush() )
+        else if ( straightsAndFlushesCount && isFlush() )
             return EHand::eFlush;
-        else if ( flushesAndStraightsCount && isStraight() )
+        else if ( straightsAndFlushesCount && isStraight() )
             return EHand::eStraight;
         else if ( isThreeOfAKind() )
             return EHand::eThreeOfAKind;
@@ -322,5 +321,23 @@ namespace NHandUtils
             oss << ii.first << ii.second;
         }
         return oss;
+    }
+
+    const std::vector< uint32_t > & SCardInfoData::getUniqueVector( bool straightsAndFlushesCount, bool lowHandWins ) const
+    {
+        auto whichItem = getWhichItem( straightsAndFlushesCount, lowHandWins );
+        return fUniqueVectors[ whichItem ];
+    }
+
+    const std::unordered_map< int64_t, int16_t > & SCardInfoData::getProductMap( bool straightsAndFlushesCount, bool lowHandWins ) const
+    {
+        auto whichItem = getWhichItem( straightsAndFlushesCount, lowHandWins );
+        return fProductMaps[ whichItem ];
+    }
+
+    const std::map< THand, uint32_t > & SCardInfoData::getCardMap( bool straightsAndFlushesCount, bool lowHandWins ) const
+    {
+        auto whichItem = getWhichItem( straightsAndFlushesCount, lowHandWins );
+        return fCardMaps[ whichItem ];
     }
 }

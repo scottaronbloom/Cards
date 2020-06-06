@@ -40,40 +40,16 @@ namespace NHandUtils
         C3CardInfo( const THand& cards );
         C3CardInfo( ECard c1, ESuit s1, ECard c2, ESuit s2, ECard c3, ESuit s3 );
 
-        virtual bool allHandsComputed() const override { return sAllHandsComputed; }
-        virtual void setAllHandsComputed( bool computed ) override { sAllHandsComputed = computed; }
+        virtual bool allHandsComputed() const override { return sCardInfoData.fAllHandsComputed; }
+        virtual void setAllHandsComputed( bool computed ) override { sCardInfoData.fAllHandsComputed = computed; }
         virtual size_t getNumCards() const override { return 3; }
 
         static uint32_t evaluateCardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo );
         static EHand rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
 
     private:
-        struct SCardMaps
-        {
-            std::map< THand, uint32_t > fFlushesAndStraightsDontCountLowBall;
-            std::map< THand, uint32_t > fFlushesAndStraightsCountLowBall;
-            std::map< THand, uint32_t > fFlushesAndStraightsDontCount;
-            std::map< THand, uint32_t > fFlushesAndStraightsCount;
-        };
-
-        static SCardMaps sCardMaps;
-
-        struct SUniqueVectors
-        {
-            std::vector< uint32_t > fStraitsAndFlushesCount;
-            std::vector< uint32_t > fStraitsAndFlushesDontCount;
-        };
-        static SUniqueVectors sUniqueVectors;
-
-        struct SProductMaps
-        {
-            std::unordered_map< int64_t, int16_t > fStraitsAndFlushesCount;
-            std::unordered_map< int64_t, int16_t > fStraitsAndFlushesDontCount;
-        };
-        static SProductMaps sProductMaps;
-
-        static std::vector< uint32_t > sFlushes;
-        static bool sAllHandsComputed;
+        void initMaps();
+        static SCardInfoData sCardInfoData;
     };
 }
 

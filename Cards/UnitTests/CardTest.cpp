@@ -123,9 +123,9 @@ namespace NHandTester
 
     std::tuple< std::list< std::shared_ptr< NHandUtils::CCardInfo > >, std::map< EHand, size_t >, std::map< EHand, size_t > > CHandTester::getUniqueHands( std::list< std::shared_ptr< NHandUtils::CCardInfo > >& allHands )
     {
-        allHands.sort( []( const std::shared_ptr< NHandUtils::CCardInfo >& lhs, const std::shared_ptr< NHandUtils::CCardInfo >& rhs ) { return lhs->greaterThan( true, *rhs ); } );
+        allHands.sort( []( const std::shared_ptr< NHandUtils::CCardInfo >& lhs, const std::shared_ptr< NHandUtils::CCardInfo >& rhs ) { return lhs->greaterThan( true, false, *rhs ); } );
 
-        auto comp = []( const std::shared_ptr< NHandUtils::CCardInfo >& lhs, const std::shared_ptr< NHandUtils::CCardInfo >& rhs ) { return lhs->lessThan( true, *rhs ); };
+        auto comp = []( const std::shared_ptr< NHandUtils::CCardInfo >& lhs, const std::shared_ptr< NHandUtils::CCardInfo >& rhs ) { return lhs->lessThan( true, false, *rhs ); };
         auto sortedMap = std::set< std::shared_ptr< NHandUtils::CCardInfo >, decltype(comp) >( comp );
 
         auto updateOn = std::min( static_cast<uint64_t>( 10000 ), static_cast< uint64_t >( allHands.size() / 25 ) );

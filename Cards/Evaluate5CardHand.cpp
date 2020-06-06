@@ -30,8 +30,6 @@
 
 namespace NHandUtils
 {
-    bool C5CardInfo::sAllHandsComputed{ false };
-
     C5CardInfo::C5CardInfo() :
         C5CardInfo( THand( { TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ), TCard( ECard::eUNKNOWN, ESuit::eUNKNOWN ) } ) )
     {
@@ -44,6 +42,8 @@ namespace NHandUtils
 
     C5CardInfo::C5CardInfo( const THand& cards )
     {
+        initMaps();
+
         fHandOrder =
         {
             //EHand::eFiveOfAKind,

@@ -134,7 +134,7 @@ namespace NHandUtils
     std::optional< bool > compareStraight( const std::optional< EStraightType > & lhs, const std::optional< EStraightType >& rhs );
     std::optional< bool > straightsEqual( const std::optional< EStraightType >& lhs, const std::optional< EStraightType >& rhs );
 
-    bool compareCards( const std::pair< std::list< ECard >, std::list< ECard > > & lhs, const std::pair< std::list< ECard >, std::list< ECard > > & rhs );
+    bool compareCards( const std::pair< std::list< ECard >, std::list< ECard > > & lhs, const std::pair< std::list< ECard >, std::list< ECard > > & rhs, bool lowHandWins );
 
     bool isStraightOrFlush( EHand handType );
 
