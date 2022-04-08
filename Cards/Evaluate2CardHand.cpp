@@ -56,8 +56,8 @@ namespace NHandUtils
         assert( cards.size() == 2 );
         setOrigCards( cards );
            
-        fIsFlush = NHandUtils::isFlush( fOrigCards );
         fIsPair = NHandUtils::isCount( fOrigCards, 2 );
+        fIsFlush = NHandUtils::isFlush( fOrigCards );
         fStraightType = NHandUtils::isStraight( fOrigCards );
     }
 }

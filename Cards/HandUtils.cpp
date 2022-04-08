@@ -463,6 +463,22 @@ namespace NHandUtils
 
         return retVal;
     }
+    
+    uint64_t computeHandProduct( const THand & cards )
+    {
+        if ( cards.empty() )
+            return -1;
+
+        uint64_t retVal = 1;
+        TCardBitType value( std::numeric_limits< int64_t >::max() );
+        for ( auto && ii : cards )
+        {
+            auto currPrime = toPrimeValue( ii.first );
+            retVal *= currPrime;
+        }
+
+        return retVal;
+    }
 
     uint64_t computeHandProduct( const std::vector < TCardBitType >& cards )
     {
@@ -502,6 +518,18 @@ namespace NHandUtils
         return value;
     }
 
+    TCardBitType cardsOrValue( const THand & cards )
+    {
+        if ( cards.empty() )
+            return TCardBitType();
+
+        TCardBitType value;
+        for ( auto && ii : cards )
+            value |= computeBitValue( ii );
+
+        return value;
+    }
+
     TCardBitType cardsAndValue( const std::vector< std::shared_ptr< CCard > >& cards )
     {
         if ( cards.empty() )
@@ -524,6 +552,25 @@ namespace NHandUtils
             value &= ii;
 
         return value;
+    }
+
+    TCardBitType cardsAndValue( const THand & cards )
+    {
+        if ( cards.empty() )
+            return TCardBitType();
+
+        TCardBitType value( std::numeric_limits< int64_t >::max() );
+        for ( auto && ii : cards )
+            value &= computeBitValue( ii );
+
+        return value;
+    }
+
+    uint16_t getCardsValue( const THand & cards )
+    {
+        if ( cards.empty() )
+            return -1;
+        return static_cast<uint16_t>( ( cardsOrValue( cards ) >> 16 ).to_ulong() );
     }
 
     uint16_t getCardsValue( const std::vector< std::shared_ptr< CCard > >& cards )
@@ -585,6 +632,11 @@ namespace NHandUtils
             return C5CardInfo::rankToCardHand( rank, playInfo );
         else
             return EHand::eNoCards;
+    }
+
+    TCardBitType computeBitValue( const TCard & card )
+    {
+        return computeBitValue( card.first, card.second );
     }
 
     TCardBitType computeBitValue( ECard card, ESuit suit )

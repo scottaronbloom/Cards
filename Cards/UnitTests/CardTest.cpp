@@ -123,9 +123,9 @@ namespace NHandTester
 
     std::tuple< std::list< std::shared_ptr< NHandUtils::CCardInfo > >, std::map< EHand, size_t >, std::map< EHand, size_t > > CHandTester::getUniqueHands( std::list< std::shared_ptr< NHandUtils::CCardInfo > >& allHands )
     {
-        allHands.sort( []( const std::shared_ptr< NHandUtils::CCardInfo >& lhs, const std::shared_ptr< NHandUtils::CCardInfo >& rhs ) { return lhs->greaterThan( true, false, *rhs ); } );
+        allHands.sort( []( const std::shared_ptr< NHandUtils::CCardInfo >& lhs, const std::shared_ptr< NHandUtils::CCardInfo >& rhs ) { return lhs->greaterThan( *rhs, true, false ); } );
 
-        auto comp = []( const std::shared_ptr< NHandUtils::CCardInfo >& lhs, const std::shared_ptr< NHandUtils::CCardInfo >& rhs ) { return lhs->lessThan( true, false, *rhs ); };
+        auto comp = []( const std::shared_ptr< NHandUtils::CCardInfo >& lhs, const std::shared_ptr< NHandUtils::CCardInfo >& rhs ) { return lhs->lessThan( *rhs, true, false ); };
         auto sortedMap = std::set< std::shared_ptr< NHandUtils::CCardInfo >, decltype(comp) >( comp );
 
         auto updateOn = std::min( static_cast<uint64_t>( 10000 ), static_cast< uint64_t >( allHands.size() / 25 ) );
@@ -135,7 +135,7 @@ namespace NHandTester
         for ( auto ii = allHands.begin(); ii != allHands.end(); ++ii )
         {
             bool inserted = sortedMap.insert( *ii ).second;
-            if ( prevHand.has_value() && ( prevHand.value()->equalTo( true, **ii ) ) )
+            if ( prevHand.has_value() && ( prevHand.value()->equalTo( **ii, true ) ) )
             {
                 EXPECT_TRUE( !inserted );
                 continue;

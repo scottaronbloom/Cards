@@ -15101,27 +15101,8 @@ namespace NHandUtils
 
     uint32_t C4CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )
     {
-        if ( cards.size() != 4 )
-            return -1;
-
-        auto cardsValue = NHandUtils::getCardsValue( cards );
-        if ( playInfo && playInfo->fStraightsAndFlushesCount )
-        {
-            if ( NHandUtils::isFlush( cards ) )
-                return sCardInfoData.fFlushes[ cardsValue ];
-        }
-
-        auto && straightOrHighCardVector = sCardInfoData.getUniqueVector( playInfo->fStraightsAndFlushesCount, playInfo->fLowHandWins );
-        auto straightOrHighCard = straightOrHighCardVector[ cardsValue ];
-        if ( straightOrHighCard )
-            return straightOrHighCard;
-
-        auto product = computeHandProduct( cards );
-        auto && productMap = sCardInfoData.getProductMap( playInfo->fStraightsAndFlushesCount, playInfo->fLowHandWins );
-        auto pos = productMap.find( product );
-        if ( pos == productMap.end() )
-            return -1;
-        return ( *pos ).second;
+        initMaps();
+        return sCardInfoData.evaluateCardHand( cards, playInfo, 4 );
     }
 
     EHand C4CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )
