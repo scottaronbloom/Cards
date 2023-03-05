@@ -13,7 +13,7 @@
 // perform a binary search on a pre-sorted array
 //
 
-uint64_t findit( int64_t key )
+size_t findit( int64_t key )
 {
     computeProductLookupTable();
     auto pos = fProductMap.find( key );
@@ -183,7 +183,7 @@ hand_rank( short val )
 short
 eval_5cards( int c1, int c2, int c3, int c4, int c5 )
 {
-    uint64_t q;
+    size_t q;
     short s;
 
     q = ( c1 | c2 | c3 | c4 | c5 ) >> 16;

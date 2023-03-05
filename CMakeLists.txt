@@ -59,7 +59,6 @@ INSTALL( CODE "
 add_custom_target( SABTests_SABUtils )
 add_custom_target( SABTests_Cards )
 add_subdirectory( SABUtils )
-add_subdirectory( SABUtils/UnitTests )
 add_subdirectory( MainWindow )
 add_subdirectory( Cards )
 add_subdirectory( Cards/UnitTests )

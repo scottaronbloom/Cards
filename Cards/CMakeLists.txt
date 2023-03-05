@@ -20,17 +20,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.1)
 if(CMAKE_VERSION VERSION_LESS "3.7.0")
     set(CMAKE_INCLUDE_CURRENT_DIR ON)
 endif()
 project( Cards )
 
-include( include.cmake )
-include( ${CMAKE_SOURCE_DIR}/SABUtils/Project.cmake )
+include( include.cmake ) # include list of files for this project
+include( ${CMAKE_SOURCE_DIR}/SABUtils/Project.cmake ) // global project settings
+
+if ( file exists "./LocalSettings.cmake" )
+    include (./LocalSettings.cmake ) // local project setting override
+endif()
 
 add_library(Cards STATIC
-    ${project_SRCS} 
     ${project_H}  
     ${qtproject_SRCS} 
     ${qtproject_QRC} 

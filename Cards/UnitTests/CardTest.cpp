@@ -166,7 +166,7 @@ namespace NHandTester
     {
         allHands.sort( []( const std::shared_ptr< CHand >& lhs, const std::shared_ptr< CHand >& rhs ) { return lhs->operator>( *rhs ); } );
 
-        auto updateOn = std::min( static_cast<uint64_t>( 10000 ), allHands.size() / 25 );
+        auto updateOn = std::min( static_cast<size_t>( 10000 ), allHands.size() / 25 );
 
         std::list< std::shared_ptr< CHand > > uniqueHands;
         std::shared_ptr< CHand > prevHand;
@@ -224,7 +224,7 @@ namespace NHandTester
         auto allCards = getAllCards( numCards );
 
         int num = 0;
-        auto updateOn = std::min( static_cast<uint64_t>( 10000 ), allCards.size() / 25 );
+        auto updateOn = std::min( static_cast<size_t>( 10000 ), allCards.size() / 25 );
 
         std::list< std::shared_ptr< NHandUtils::CCardInfo > > retVal;
         for( auto && ii : allCards )

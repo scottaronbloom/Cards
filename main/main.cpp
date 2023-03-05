@@ -24,10 +24,11 @@
 
 #include <QApplication>
 #include <QLabel>
+#include <QVariant>
 
 int main( int argc, char ** argv )
 {
-    QApplication appl( argc, argv );
+	QApplication appl(argc, argv);
     appl.setApplicationName( "CardGame" );
     appl.setApplicationVersion( "0.9" );
     appl.setOrganizationName( "Scott Aron Bloom" );

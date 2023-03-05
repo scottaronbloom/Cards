@@ -18,7 +18,7 @@ extern short flushes[];
 */
 extern short unique5[];
 extern std::vector< int > products;
-extern std::unordered_map< int64_t, int64_t > fProductMap;
+extern std::unordered_map< int64_t, size_t > fProductMap;
 extern void computeProductLookupTable();
 extern std::vector< short > sValues;
 

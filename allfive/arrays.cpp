@@ -1486,7 +1486,7 @@ std::vector< int > products =
 85147693, 87598591, 94352849, 104553157
 };
 
-std::unordered_map< int64_t, int64_t > fProductMap =
+std::unordered_map< int64_t, size_t > fProductMap =
 {
      { 48, 0 }
     ,{ 72, 1 }
@@ -6834,7 +6834,7 @@ void computeProductLookupTable()
 
     std::ofstream ofs( "TableDump.cpp", std::ofstream::out | std::ofstream::trunc );
     ofs << "std::unordered_map< int64_t, short > fProductMap =\n{\n";
-    for ( auto ii = 0; ii < products.size(); ++ii )
+    for ( auto ii = 0U; ii < products.size(); ++ii )
     {
         ofs << "    ";
         if ( ii == 0 )

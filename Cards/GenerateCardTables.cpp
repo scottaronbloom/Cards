@@ -109,7 +109,7 @@ namespace NHandUtils
         sabDebugStream() << "Computing hand values: " << map.size() << "\n";
 
         int num = 1;
-        auto updateOn = std::min( static_cast<uint64_t>( 10000 ), map.size() / 25 );
+        auto updateOn = std::min( static_cast<uint64_t>( 10000 ), static_cast<uint64_t>( map.size() / 25 ) );
         for ( auto&& ii : map )
         {
             if ( ( num % updateOn ) == 0 )
