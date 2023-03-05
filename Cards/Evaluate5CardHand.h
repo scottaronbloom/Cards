@@ -47,7 +47,7 @@ namespace NHandUtils
         static EHand rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo >& playInfo );
 
     public:
-        void initMaps();
+        static void initMaps();
         static SCardInfoData sCardInfoData;
     };
 }

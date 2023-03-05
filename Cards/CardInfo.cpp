@@ -71,7 +71,7 @@ namespace NHandUtils
         return fStraightType.has_value() && ( fStraightType.value() == EStraightType::eWheel );
     }
 
-    bool CCardInfo::lessThan( bool straightsAndFlushesCount, bool lowHandWins, const CCardInfo& rhs ) const
+    bool CCardInfo::lessThan( const CCardInfo& rhs, bool straightsAndFlushesCount, bool lowHandWins ) const
     {
         for ( auto&& handType : fHandOrder )
         {
@@ -80,7 +80,16 @@ namespace NHandUtils
             switch ( handType )
             {
                 case EHand::eHighCard:
-                    return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers }, lowHandWins );
+                    {
+                        bool isHighCard = this->isHighCard( straightsAndFlushesCount );
+                        bool rhsIsHighCard = rhs.isHighCard( straightsAndFlushesCount );
+                        if ( !isHighCard && rhsIsHighCard )
+                            return false; // im better than a highcard
+                        if ( isHighCard && !rhsIsHighCard )
+                            return true;
+                        if ( isHighCard && rhsIsHighCard )
+                            return NHandUtils::compareCards( { fCards, fKickers }, { rhs.fCards, rhs.fKickers }, lowHandWins );
+                    }
                 case EHand::ePair:
                     {
                         if ( !fIsPair && rhs.fIsPair )
@@ -179,12 +188,12 @@ namespace NHandUtils
         return false;
     }
 
-    bool CCardInfo::greaterThan( bool straightsAndFlushesCount, bool lowHandWins, const CCardInfo& rhs ) const
+    bool CCardInfo::greaterThan( const CCardInfo& rhs, bool straightsAndFlushesCount, bool lowHandWins ) const
     {
-        return !lessThan( straightsAndFlushesCount, lowHandWins, rhs ) && !equalTo( straightsAndFlushesCount, rhs );
+        return !lessThan( rhs, straightsAndFlushesCount, lowHandWins ) && !equalTo( rhs, straightsAndFlushesCount );
     }
 
-    bool CCardInfo::equalTo( bool straightsAndFlushesCount, const CCardInfo& rhs ) const
+    bool CCardInfo::equalTo( const CCardInfo& rhs, bool straightsAndFlushesCount ) const
     {
         if ( fIsFiveOfAKind && rhs.fIsFiveOfAKind )
             return fCards == rhs.fCards && fKickers == rhs.fKickers;
@@ -217,13 +226,12 @@ namespace NHandUtils
         return NHandUtils::computeHandProduct( fBitValues );
     }
 
-    bool CCardInfo::isHighCard() const
+    bool CCardInfo::isHighCard( bool straightsAndFlushesCount ) const
     {
-        return !isStraightFlush() 
-            && !isFourOfAKind() 
+        if ( straightsAndFlushesCount && ( isStraightFlush() || isFlush() || isStraight() ) )
+            return false;
+        return !isFourOfAKind()
             && !isFullHouse() 
-            && !isFlush() 
-            && !isStraight() 
             && !isThreeOfAKind() 
             && !isTwoPair() 
             && !isPair();
@@ -320,6 +328,8 @@ namespace NHandUtils
             first = false;
             oss << ii.first << ii.second;
         }
+
+        oss << " - Hand Value: " << NHandUtils::getCardsValue( obj.origCards() );
         return oss;
     }
 
@@ -340,4 +350,30 @@ namespace NHandUtils
         auto whichItem = getWhichItem( straightsAndFlushesCount, lowHandWins );
         return fCardMaps[ whichItem ];
     }
+
+    uint32_t SCardInfoData::evaluateCardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo, size_t expectedSize )
+    {
+        if ( cards.size() != expectedSize )
+            return -1;
+
+        auto cardsValue = NHandUtils::getCardsValue( cards );
+        if ( playInfo && playInfo->fStraightsAndFlushesCount )
+        {
+            if ( NHandUtils::isFlush( cards ) )
+                return fFlushes[ cardsValue ] + ( playInfo->hasWildCards() ? 13 : 0 );
+        }
+
+        auto && straightOrHighCardVector = getUniqueVector( playInfo->fStraightsAndFlushesCount, playInfo->fLowHandWins );
+        auto straightOrHighCard = straightOrHighCardVector[ cardsValue ];
+        if ( straightOrHighCard )
+            return straightOrHighCard + ( playInfo->hasWildCards() ? 13 : 0 );
+
+        auto product = computeHandProduct( cards );
+        auto && productMap = getProductMap( playInfo->fStraightsAndFlushesCount, playInfo->fLowHandWins );
+        auto pos = productMap.find( product );
+        if ( pos == productMap.end() )
+            return -1;
+        return ( *pos ).second + ( playInfo->hasWildCards() ? 13 : 0 );
+    }
+
 }

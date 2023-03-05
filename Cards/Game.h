@@ -85,6 +85,7 @@ public:
     void addWildCards( const std::vector< std::shared_ptr< CCard > > & cards );
     void clearWildCards();
 private:
+    void dumpPlayers( const std::string & header, const std::vector< std::shared_ptr< CPlayer > >& players ) const;
     void recomputeNextPrev();
     void createDeck();
 

@@ -22,6 +22,7 @@
 
 #include "Card.h"
 #include "HandUtils.h"
+#include <iostream>
 
 QString toString( ESuit suit, bool verbose )
 {

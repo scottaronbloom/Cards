@@ -374,27 +374,8 @@ namespace NHandUtils
             wildCardSuffix = " + ( playInfo->hasWildCards() ? 13 : 0 )";
         oss << getPadding( 1 ) << "uint32_t C" << size << "CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )\n"
             << getPadding( 1 ) << "{\n"
-            << getPadding( 2 ) << "if ( cards.size() != " << size << " )\n"
-            << getPadding( 3 )   << "return -1;\n"
-            << "\n"
-            << getPadding( 2 ) << "auto cardsValue = NHandUtils::getCardsValue( cards );\n"
-            << getPadding( 2 ) << "if ( playInfo && playInfo->fStraightsAndFlushesCount )\n"
-            << getPadding( 2 ) << "{\n"
-            << getPadding( 3 )     << "if ( NHandUtils::isFlush( cards ) )\n"
-            << getPadding( 4 )         << "return sCardInfoData.fFlushes[ cardsValue ]" << wildCardSuffix << ";\n"
-            << getPadding( 2 ) << "}\n"
-            << "\n"
-            << getPadding( 2 ) << "auto && straightOrHighCardVector = sCardInfoData.getUniqueVector( playInfo->fStraightsAndFlushesCount, playInfo->fLowHandWins );\n"
-            << getPadding( 2 ) << "auto straightOrHighCard = straightOrHighCardVector[ cardsValue ];\n"
-            << getPadding( 2 ) << "if ( straightOrHighCard )\n"
-            << getPadding( 3 )     << "return straightOrHighCard" << wildCardSuffix << ";\n"
-            << "\n"
-            << getPadding( 2 ) << "auto product = computeHandProduct( cards );\n"
-            << getPadding( 2 ) << "auto && productMap = sCardInfoData.getProductMap( playInfo->fStraightsAndFlushesCount, playInfo->fLowHandWins );\n"
-            << getPadding( 2 ) << "auto pos = productMap.find( product );\n"
-            << getPadding( 2 ) << "if ( pos == productMap.end() )\n"
-            << getPadding( 3 )     << "return -1;\n"
-            << getPadding( 2 ) << "return ( *pos ).second" << wildCardSuffix << ";\n"
+            << getPadding( 2 )     << "initMaps();\n"
+            << getPadding( 2 )     << "return sCardInfoData.evaluateCardHand( cards, playInfo, " << size << " );\n"
             << getPadding( 1 ) << "}\n\n";
     }
 
@@ -413,10 +394,10 @@ namespace NHandUtils
         {
             setAllHandsComputed( true );
 
-            auto cmpStraightsAndFlushesDontCount = []( const std::shared_ptr< CCardInfo >& lhs, const std::shared_ptr< CCardInfo >& rhs ) { return lhs->greaterThan( false, false, *rhs ); };
-            auto cmpFlushAndStraightsCount = []( const std::shared_ptr< CCardInfo >& lhs, const std::shared_ptr< CCardInfo >& rhs ) { return lhs->greaterThan( true, false, *rhs ); };
-            auto cmpStraightsAndFlushesDontCountLowBall = []( const std::shared_ptr< CCardInfo >& lhs, const std::shared_ptr< CCardInfo >& rhs ) { return lhs->greaterThan( false, true, *rhs ); };
-            auto cmpFlushAndStraightsCountLowBall = []( const std::shared_ptr< CCardInfo >& lhs, const std::shared_ptr< CCardInfo >& rhs ) { return lhs->greaterThan( true, true, *rhs ); };
+            auto cmpStraightsAndFlushesDontCount = []( const std::shared_ptr< CCardInfo >& lhs, const std::shared_ptr< CCardInfo >& rhs ) { return lhs->greaterThan( *rhs, false, false ); };
+            auto cmpFlushAndStraightsCount = []( const std::shared_ptr< CCardInfo >& lhs, const std::shared_ptr< CCardInfo >& rhs ) { return lhs->greaterThan( *rhs, true, false ); };
+            auto cmpStraightsAndFlushesDontCountLowBall = []( const std::shared_ptr< CCardInfo >& lhs, const std::shared_ptr< CCardInfo >& rhs ) { return lhs->greaterThan( *rhs, false, true ); };
+            auto cmpFlushAndStraightsCountLowBall = []( const std::shared_ptr< CCardInfo >& lhs, const std::shared_ptr< CCardInfo >& rhs ) { return lhs->greaterThan( *rhs, true, true ); };
 
             using TStraightsAndFlushesDontCountMap = std::map< std::shared_ptr< CCardInfo >, uint32_t, decltype( cmpStraightsAndFlushesDontCount ) >;
             using TStraightsAndFlushesCountMap = std::map< std::shared_ptr< CCardInfo >, uint32_t, decltype( cmpFlushAndStraightsCount ) >;

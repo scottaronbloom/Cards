@@ -28,7 +28,7 @@
 
 #include <random>
 #include <unordered_set>
-
+#include <iostream>
 #include <QLocale>
 #include <QDebug>
 
@@ -284,34 +284,30 @@ void CGame::analyzeHand( bool updateStats )
     }
 }
 
+void CGame::dumpPlayers( const std::string & header, const std::vector< std::shared_ptr< CPlayer > >  & players ) const
+{
+    std::cerr << "==============================" << "\n";
+    std::cerr << header << "\n";
+    std::cerr << "==============================" << "\n";
+    for ( auto&& ii : players )
+    {
+        std::cerr << "Player: " << qPrintable( ii->name() ) << " - " << qPrintable( ii->getHand()->toString() ) << "\n";
+    }
+}
+
 std::list< std::shared_ptr< CPlayer > > CGame::findWinners()
 {
     auto currGame = fPlayers;
 
-    //qDebug() << "==============================";
-    //qDebug() << "Pre Sort";
-    //qDebug() << "==============================";
-    //for( auto && ii : currGame )
-    //{
-    //    qDebug() << "Player: " << ii->name() << ii->getHand()->toString();
-    //}
+    dumpPlayers( "Pre Sort", currGame );
 
     std::stable_sort( currGame.begin(), currGame.end(),
                [ this ]( const std::shared_ptr< CPlayer >& lhs, const std::shared_ptr< CPlayer >& rhs )
                     {
-                        if ( this->lowHandWins() )
-                            return lhs->operator>( *rhs );
-                        else
-                            return lhs->operator<( *rhs );
-                      } );
+                          return lhs->operator<( *rhs );
+                    } );
 
-    //qDebug() << "==============================";
-    //qDebug() << "Post Sort";
-    //qDebug() << "==============================";
-    //for ( auto&& ii : currGame )
-    //{
-    //    qDebug() << "Player: " << ii->name() << ii->getHand()->toString();
-    //}
+    dumpPlayers( "Post Sort", currGame );
 
     std::list< std::shared_ptr< CPlayer > > winners;
     auto currWinner = currGame.rbegin();

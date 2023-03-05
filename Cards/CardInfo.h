@@ -61,7 +61,9 @@ namespace NHandUtils
         }
         const std::vector< uint32_t > & getUniqueVector( bool straightsAndFlushesCount, bool lowHandWins ) const;
         const std::unordered_map< int64_t, int16_t > & getProductMap( bool straightsAndFlushesCount, bool lowHandWins ) const;
-        const std::map< THand, uint32_t >& getCardMap( bool straightsAndFlushesCount, bool lowHandWins ) const;
+        const std::map< THand, uint32_t > & getCardMap( bool straightsAndFlushesCount, bool lowHandWins ) const;
+
+        uint32_t evaluateCardHand( const std::vector< std::shared_ptr< CCard > >& cards, const std::shared_ptr< SPlayInfo >& playInfo, size_t expectedSize );
 
         std::vector< std::vector< uint32_t > > fUniqueVectors;
         std::vector< std::map< THand, uint32_t > > fCardMaps;
@@ -81,18 +83,18 @@ namespace NHandUtils
         virtual uint16_t getCardsValue() const;
         virtual uint64_t handProduct() const;
 
-        virtual bool lessThan( bool straightsAndFlushesCount, bool lowHandWins, const CCardInfo& rhs ) const;
-        virtual bool greaterThan( bool straightsAndFlushesCount, bool lowHandWins, const CCardInfo& rhs ) const final;
-        virtual bool equalTo( bool straightsAndFlushesCount, const CCardInfo& rhs ) const;
+        virtual bool lessThan( const CCardInfo& rhs, bool straightsAndFlushesCount, bool lowHandWins ) const;
+        virtual bool greaterThan( const CCardInfo& rhs, bool straightsAndFlushesCount, bool lowHandWins ) const final;
+        virtual bool equalTo( const CCardInfo& rhs, bool straightsAndFlushesCount ) const;
 
         virtual void generateAllCardHands();
         virtual bool allHandsComputed() const=0;
         virtual void setAllHandsComputed( bool computed ) = 0;
         virtual size_t getNumCards() const = 0;
 
-        bool operator<( const CCardInfo & rhs ) const { return lessThan( true, false, rhs ); }
-        bool operator>( const CCardInfo& rhs ) const { return greaterThan( true, false, rhs ); }
-        bool operator==( const CCardInfo& rhs ) const { return equalTo( true, rhs ); }
+        bool operator<( const CCardInfo & rhs ) const { return lessThan( rhs, true, false ); }
+        bool operator>( const CCardInfo& rhs ) const { return greaterThan( rhs, true, false ); }
+        bool operator==( const CCardInfo& rhs ) const { return equalTo( rhs, true ); }
 
         const THand & origCards() const{ return fOrigCards; }
 
@@ -108,7 +110,7 @@ namespace NHandUtils
         virtual bool isThreeOfAKind() const final { return fIsThreeOfAKind; }
         virtual bool isTwoPair() const final { return fIsTwoPair; }
         virtual bool isPair() const final{ return fIsPair; }
-        virtual bool isHighCard() const final;
+        virtual bool isHighCard( bool straightsAndFlushesCount ) const final;
         virtual EHand getHandType( bool straightsAndFlushesCount = true, bool lowBall = false ) const final;
         virtual bool allCardsUnique() const final;
 

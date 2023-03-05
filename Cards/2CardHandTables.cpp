@@ -844,7 +844,7 @@ namespace NHandUtils
                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1
             };
 
-            sCardInfoData.fUniqueVectors[ SCardInfoData::EWhichItem::eStraightsAndFlushesDontCount ] =
+            sCardInfoData.fUniqueVectors[ SCardInfoData::EWhichItem::eStraightsAndFlushesDontCount ] = 
             {
                 0, 0, 0, 91, 0, 90, 89, 0, 0, 88, 87, 0, 86, 0, 0, 0, 0, 85, 84, 0,
                 83, 0, 0, 0, 82, 0, 0, 0, 0, 0, 0, 0, 0, 81, 80, 0, 79, 0, 0, 0, 78,
@@ -2055,27 +2055,8 @@ namespace NHandUtils
 
     uint32_t C2CardInfo::evaluateCardHand( const std::vector< std::shared_ptr< CCard > > & cards, const std::shared_ptr< SPlayInfo > & playInfo )
     {
-        if ( cards.size() != 2 )
-            return -1;
-
-        auto cardsValue = NHandUtils::getCardsValue( cards );
-        if ( playInfo && playInfo->fStraightsAndFlushesCount )
-        {
-            if ( NHandUtils::isFlush( cards ) )
-                return sCardInfoData.fFlushes[ cardsValue ];
-        }
-
-        auto && straightOrHighCardVector = sCardInfoData.getUniqueVector( playInfo->fStraightsAndFlushesCount, playInfo->fLowHandWins );
-        auto straightOrHighCard = straightOrHighCardVector[ cardsValue ];
-        if ( straightOrHighCard )
-            return straightOrHighCard;
-
-        auto product = computeHandProduct( cards );
-        auto && productMap = sCardInfoData.getProductMap( playInfo->fStraightsAndFlushesCount, playInfo->fLowHandWins );
-        auto pos = productMap.find( product );
-        if ( pos == productMap.end() )
-            return -1;
-        return ( *pos ).second;
+        initMaps();
+        return sCardInfoData.evaluateCardHand( cards, playInfo, 2 );
     }
 
     EHand C2CardInfo::rankToCardHand( uint32_t rank, const std::shared_ptr< SPlayInfo > & playInfo )

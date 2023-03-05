@@ -91,6 +91,11 @@ namespace NHandUtils
     TCardBitType cardsAndValue( const std::vector< std::shared_ptr< CCard > >& cards );
     uint16_t getCardsValue( const std::vector< std::shared_ptr< CCard > >& cards );
 
+    uint64_t computeHandProduct( const THand & cards );
+    TCardBitType cardsOrValue( const THand & cards );
+    TCardBitType cardsAndValue( const THand & cards );
+    uint16_t getCardsValue( const THand & cards );
+
     uint64_t computeHandProduct( const std::vector< TCardBitType > & cards );
     TCardBitType cardsOrValue( const std::vector< TCardBitType > & cards );
     TCardBitType cardsAndValue( const std::vector< TCardBitType > & cards );
@@ -102,11 +107,11 @@ namespace NHandUtils
 
     EHand rankToHand( uint32_t rank, size_t numCards, const std::shared_ptr< SPlayInfo > & playInfo );
 
+    TCardBitType computeBitValue( const TCard & card );
     TCardBitType computeBitValue( ECard card, ESuit suit );
     bool isFlush( const THand & cards );
 
     uint32_t getCardRank( ECard card );
-
 
     enum EStraightType
     {

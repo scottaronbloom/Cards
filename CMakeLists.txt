@@ -65,7 +65,7 @@ add_subdirectory( Cards/UnitTests )
 add_subdirectory( main )
 add_subdirectory( allfive )
 
-SET( CPACK_PACKAGE_VENDOR "Scott Aron Bloom" )
+SET( CPACK_PACKAGE_VENDOR "Scott Aron Bloom - www.towel42.com" )
 SET( CPACK_PACKAGE_VERSION_MAJOR "1" )
 SET( CPACK_PACKAGE_VERSION_MINOR "0" )
 SET( CPACK_PACKAGE_VERSION_PATCH "0" )
